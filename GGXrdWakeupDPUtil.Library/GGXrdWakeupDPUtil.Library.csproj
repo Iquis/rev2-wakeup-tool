@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\Buttons.cs" />
+    <Compile Include="Keyboard.cs" />
+    <Compile Include="MemoryReader.cs" />
     <Compile Include="NameWakeupData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReversalTool.cs" />

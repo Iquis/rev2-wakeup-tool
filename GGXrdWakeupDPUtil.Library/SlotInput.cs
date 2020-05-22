@@ -4,7 +4,7 @@ namespace GGXrdWakeupDPUtil.Library
 {
     public class SlotInput
     {
-        public SlotInput(string input, IEnumerable<short> inputShorts, int wakeupFrameIndex)
+        public SlotInput(string input, IEnumerable<ushort> inputShorts, int wakeupFrameIndex)
         {
             Input = input;
             InputList = inputShorts;
@@ -12,7 +12,7 @@ namespace GGXrdWakeupDPUtil.Library
         }
 
         public string Input { get; set; }
-        public IEnumerable<short> InputList { get; set; }
+        public IEnumerable<ushort> InputList { get; set; }
         public int WakeupFrameIndex { get; set; }
 
     }
