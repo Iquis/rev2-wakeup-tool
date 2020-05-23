@@ -116,8 +116,8 @@ namespace GGXrdWakeupDPUtil.Library
         public string ReadString(IntPtr address, int length)
         {
             var value = this.ReadBytes(address, length);
-            //TODO Remove \0
-            return Encoding.Default.GetString(value);
+            var result = Encoding.Default.GetString(value);
+            return result?.Replace("\0", "");
         }
 
         public string ReadStringWithOffsets(IntPtr baseAddress, int length, params int[] offsets)

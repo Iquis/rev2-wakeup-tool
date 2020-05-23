@@ -7,7 +7,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Binarysharp.MemoryManagement;
 using GGXrdWakeupDPUtil.Library.Enums;
 
 namespace GGXrdWakeupDPUtil.Library
@@ -68,14 +67,10 @@ namespace GGXrdWakeupDPUtil.Library
 
         private const int RecordingSlotSize = 4808;
 
-        private MemorySharp _memorySharp;
         private Process _process;
 
         private MemoryReader _memoryReader;
-        #region Replay
-        private static bool _written;
-        #endregion
-
+       
         #region Reversal Loop
         private static bool _runReversalThread;
         private static readonly object RunReversalThreadLock = new object();
@@ -128,7 +123,6 @@ namespace GGXrdWakeupDPUtil.Library
             this._process = process;
             this._memoryReader = new MemoryReader(process);
 
-            _memorySharp = new MemorySharp(process);
 
             StartDummyLoop();
         }
@@ -144,7 +138,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         public NameWakeupData GetDummy()
         {
-            IntPtr address = new IntPtr(0x0264BE08); //TODO Config
+            IntPtr address = IntPtr.Add(this._process.MainModule.BaseAddress, 0x1BDBE08); //TODO Config
             var index = this._memoryReader.Read<int>(address);
 
             var result = _nameWakeupDataList[index];
@@ -221,7 +215,7 @@ namespace GGXrdWakeupDPUtil.Library
                         int wakeupTiming = GetWakeupTiming(currentDummy);
 
 
-                        if (wakeupTiming != 0 && !_written)
+                        if (wakeupTiming != 0)
                         {
                             WaitAndReversal(slotInput, wakeupTiming);
                         }
@@ -472,9 +466,6 @@ namespace GGXrdWakeupDPUtil.Library
             var content = header2.Concat(inputList2).ToArray();
 
             this._memoryReader.Write(slotAddr, content);
-
-            ushort b;
-
         }
 
         private string ReadAnimationString(int player)
@@ -500,9 +491,8 @@ namespace GGXrdWakeupDPUtil.Library
 
         private int FrameCount()
         {
-            //TODO
-            return 0;
-            //return _memorySharp.Read<int>(_frameCountOffset);
+            var address = IntPtr.Add(this._process.MainModule.BaseAddress, 0x1BD1F90);
+            return this._memoryReader.Read<int>(address);
         }
         private int GetWakeupTiming(NameWakeupData currentDummy)
         {

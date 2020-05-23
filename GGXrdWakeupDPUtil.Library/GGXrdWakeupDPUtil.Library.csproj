@@ -32,12 +32,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fasm.NET, Version=1.0.4939.27955, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\packages\Fasm.NET.1.70.03\lib\Fasm.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="MemorySharp, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MemorySharp.1.2.0\lib\MemorySharp.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -58,12 +52,6 @@
     <Compile Include="ReversalTool.cs" />
     <Compile Include="ReversalType.cs" />
     <Compile Include="SlotInput.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Fasm.NET.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
