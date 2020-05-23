@@ -12,6 +12,7 @@ namespace GGXrdWakeupDPUtil.Test
         }
 
         private ReversalTool _reversalTool;
+        private Keyboard.DirectXKeyStrokes _stroke;
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -25,6 +26,8 @@ namespace GGXrdWakeupDPUtil.Test
             _reversalTool = new ReversalTool();
 
             _reversalTool.AttachToProcess();
+
+            this._stroke = _reversalTool.GetReplayKeyStroke();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -34,7 +37,7 @@ namespace GGXrdWakeupDPUtil.Test
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _reversalTool.PlayReversal();
+            _reversalTool.PlayReversal(this._stroke);
         }
 
 

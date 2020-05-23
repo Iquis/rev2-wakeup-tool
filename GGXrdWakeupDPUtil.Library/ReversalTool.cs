@@ -70,7 +70,7 @@ namespace GGXrdWakeupDPUtil.Library
         private Process _process;
 
         private MemoryReader _memoryReader;
-       
+
         #region Reversal Loop
         private static bool _runReversalThread;
         private static readonly object RunReversalThreadLock = new object();
@@ -164,19 +164,19 @@ namespace GGXrdWakeupDPUtil.Library
 
             return new SlotInput(input, enumerable, wakeupFrameIndex);
         }
-        private void WaitAndReversal(SlotInput slotInput, int wakeupTiming)
+        private void WaitAndReversal(SlotInput slotInput, int wakeupTiming, Keyboard.DirectXKeyStrokes stroke)
         {
             int fc = FrameCount();
             var frames = wakeupTiming - slotInput.WakeupFrameIndex - 1;
             while (FrameCount() < fc + frames)
             {
             }
-            PlayReversal();
+            PlayReversal(stroke);
 
             Thread.Sleep(320); //20 frames, approximately, it's actually 333.333333333 ms.  Nobody should be able to be knocked down and get up in this time, causing the code to execute again.
         }
 
-        public void PlayReversal()
+        public void PlayReversal(Keyboard.DirectXKeyStrokes stroke)
         {
 
 #if DEBUG
@@ -185,9 +185,13 @@ namespace GGXrdWakeupDPUtil.Library
 
             BringWindowToFront();
             Keyboard keyboard = new Keyboard();
-            keyboard.SendKey(Keyboard.DirectXKeyStrokes.DIK_N, false, Keyboard.InputType.Keyboard);
+
+
+            keyboard.SendKey(stroke, false, Keyboard.InputType.Keyboard);
             Thread.Sleep(150);
-            keyboard.SendKey(Keyboard.DirectXKeyStrokes.DIK_N, true, Keyboard.InputType.Keyboard);
+            keyboard.SendKey(stroke, true, Keyboard.InputType.Keyboard);
+
+
 
 #if DEBUG
             Console.WriteLine("Reversal Wait Finished!");
@@ -207,6 +211,7 @@ namespace GGXrdWakeupDPUtil.Library
                 var currentDummy = GetDummy();
                 bool localRunReversalThread = true;
 
+                Keyboard.DirectXKeyStrokes stroke = this.GetReplayKeyStroke();
 
                 while (localRunReversalThread)
                 {
@@ -217,7 +222,7 @@ namespace GGXrdWakeupDPUtil.Library
 
                         if (wakeupTiming != 0)
                         {
-                            WaitAndReversal(slotInput, wakeupTiming);
+                            WaitAndReversal(slotInput, wakeupTiming, stroke);
                         }
                     }
                     catch (Exception ex)
@@ -273,6 +278,9 @@ namespace GGXrdWakeupDPUtil.Library
                 int valueToBurst = rnd.Next(min, max + 1);
                 bool willBurst = rnd.Next(0, 101) <= burstPercentage;
 
+                Keyboard.DirectXKeyStrokes stroke = this.GetReplayKeyStroke();
+
+
                 while (localRunRandomBurstThread)
                 {
                     try
@@ -285,7 +293,7 @@ namespace GGXrdWakeupDPUtil.Library
                         {
                             if (currentCombo == valueToBurst && willBurst)
                             {
-                                PlayReversal();
+                                PlayReversal(stroke);
                                 Thread.Sleep(850); //50 frames, approximately, Burst recovery is around 50f. 
                             }
 
@@ -524,6 +532,25 @@ namespace GGXrdWakeupDPUtil.Library
 
 
             throw new NotImplementedException();
+        }
+
+        private int GetReplayKey()
+        {
+            IntPtr address = IntPtr.Add(this._process.MainModule.BaseAddress, 0x1AD79EC);
+            return this._memoryReader.Read<int>(address);
+        }
+
+        public Keyboard.DirectXKeyStrokes GetReplayKeyStroke()
+        {
+            int replayKeyCode = this.GetReplayKey();
+            char replayKey = (char)replayKeyCode;
+
+            if (!Enum.TryParse($"DIK_{replayKey}", out Keyboard.DirectXKeyStrokes stroke))
+            {
+                stroke = Keyboard.DirectXKeyStrokes.DIK_P;
+            }
+
+            return stroke;
         }
 
         private void StartDummyLoop()
