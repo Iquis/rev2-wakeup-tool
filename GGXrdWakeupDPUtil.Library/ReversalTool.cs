@@ -525,9 +525,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             if (player == 1)
             {
-                //var ptr = _memorySharp[_p1ComboCountPtr].Read<IntPtr>();
-
-                //return _memorySharp.Read<int>(ptr + _p1ComboCountPtrOffset, false);
+                return this._memoryReader.ReadWithOffsets<int>(_p1ComboCountPtr, _p1ComboCountPtrOffset);
             }
 
 

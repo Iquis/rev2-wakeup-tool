@@ -40,12 +40,16 @@ namespace GGXrdWakeupDPUtil
 
             _reversalTool.DummyChanged += _reversalTool_DummyChanged;
             _reversalTool.ReversalLoopErrorOccured += _reversalTool_ReversalLoopErrorOccured;
+            _reversalTool.RandomBurstlLoopErrorOccured += _reversalTool_RandomBurstlLoopErrorOccured;
 
 
             RefreshBurstInfo();
 
 
         }
+
+        
+
         private void Window_Closed(object sender, EventArgs e)
         {
             _reversalTool?.Dispose();
@@ -285,6 +289,11 @@ namespace GGXrdWakeupDPUtil
                     BurstPercentageLabel.Content = $"{burstPercentage}%";
                 });
             }
+        }
+
+        private void _reversalTool_RandomBurstlLoopErrorOccured(Exception ex)
+        {
+            StopBurst();
         }
 
         #endregion

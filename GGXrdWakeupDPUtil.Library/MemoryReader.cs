@@ -94,7 +94,7 @@ namespace GGXrdWakeupDPUtil.Library
         {
             IntPtr newAddress = IntPtr.Add(this._process.MainModule.BaseAddress, (int)baseAddress);
             IntPtr value = this.Read<IntPtr>(newAddress);
-            T result = (T)Convert.ChangeType(value, typeof(T));
+            T result = UnmanagedConvert<T>(value);
 
             for (int i = 0; i < offsets.Length; i++)
             {
@@ -108,6 +108,25 @@ namespace GGXrdWakeupDPUtil.Library
                 {
                     value = this.Read<IntPtr>(newAddress);
                 }
+            }
+
+            return result;
+        }
+        private T UnmanagedConvert<T>(object value)
+        {
+            Type outputType = typeof(T).IsEnum ? Enum.GetUnderlyingType(typeof(T)) : typeof(T);
+
+            T result;
+
+            GCHandle handle = GCHandle.Alloc(value, GCHandleType.Pinned);
+
+            try
+            {
+                result = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), outputType);
+            }
+            finally
+            {
+                handle.Free();
             }
 
             return result;
