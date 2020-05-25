@@ -56,10 +56,12 @@ namespace GGXrdWakeupDPUtil.Library
         private readonly int _p1AnimStringPtrOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("P1AnimStringPtrOffset"), 16);
         private readonly IntPtr _p2AnimStringPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("P2AnimStringPtr"), 16));
         private readonly int _p2AnimStringPtrOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("P2AnimStringPtrOffset"), 16);
-        private readonly IntPtr _frameCountOffset = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("FrameCountOffset"), 16));
+        private readonly int _frameCountOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("FrameCountOffset"), 16);
         private readonly IntPtr _scriptOffset = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("ScriptOffset"), 16));
         private readonly IntPtr _p1ComboCountPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("P1ComboCountPtr"), 16));
         private readonly int _p1ComboCountPtrOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("P1ComboCountPtrOffset"), 16);
+        private readonly int _dummyIdOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("DummyIdOffset"), 16);
+        private readonly int _replayKeyOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("ReplayKeyOffset"), 16);
         #endregion
 
         private readonly string FaceDownAnimation = "CmnActFDown2Stand";
@@ -138,7 +140,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         public NameWakeupData GetDummy()
         {
-            IntPtr address = IntPtr.Add(this._process.MainModule.BaseAddress, 0x1BDBE08); //TODO Config
+            IntPtr address = IntPtr.Add(this._process.MainModule.BaseAddress, _dummyIdOffset);
             var index = this._memoryReader.Read<int>(address);
 
             var result = _nameWakeupDataList[index];
@@ -456,7 +458,6 @@ namespace GGXrdWakeupDPUtil.Library
             }
             else
             {
-                //TODO test
                 return 0;
             }
         }
@@ -480,18 +481,14 @@ namespace GGXrdWakeupDPUtil.Library
         {
             if (player == 1)
             {
-                var baseAddress = new IntPtr(0x1B18C78);
-                var offset = 0x244C;
                 var length = 32;
-                return this._memoryReader.ReadStringWithOffsets(baseAddress, length, offset);
+                return this._memoryReader.ReadStringWithOffsets(_p1AnimStringPtr, length, _p1AnimStringPtrOffset);
             }
 
             if (player == 2)
             {
-                var baseAddress = new IntPtr(0x1B18C7C);
-                var offset = 0x244C;
                 var length = 32;
-                return this._memoryReader.ReadStringWithOffsets(baseAddress, length, offset);
+                return this._memoryReader.ReadStringWithOffsets(_p2AnimStringPtr, length, _p2AnimStringPtrOffset);
             }
 
             return string.Empty;
@@ -499,7 +496,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         private int FrameCount()
         {
-            var address = IntPtr.Add(this._process.MainModule.BaseAddress, 0x1BD1F90);
+            var address = IntPtr.Add(this._process.MainModule.BaseAddress, _frameCountOffset);
             return this._memoryReader.Read<int>(address);
         }
         private int GetWakeupTiming(NameWakeupData currentDummy)
@@ -534,7 +531,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         private int GetReplayKey()
         {
-            IntPtr address = IntPtr.Add(this._process.MainModule.BaseAddress, 0x1AD79EC);
+            IntPtr address = IntPtr.Add(this._process.MainModule.BaseAddress, _replayKeyOffset);
             return this._memoryReader.Read<int>(address);
         }
 
@@ -563,7 +560,7 @@ namespace GGXrdWakeupDPUtil.Library
                     NameWakeupData currentDummy = null;
                     bool localRunDummyThread = true;
 
-                    while (localRunDummyThread)//TODO !_memorySharp.Handle.IsClosed)
+                    while (localRunDummyThread && !this._process.HasExited)
                     {
                         try
                         {
