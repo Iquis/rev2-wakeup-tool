@@ -110,16 +110,6 @@ namespace GGXrdWakeupDPUtil.Library
         private static extern bool SetForegroundWindow(IntPtr hWnd);
         #endregion
 
-        #region Log
-        private readonly LogManager _logManager = new LogManager();
-        public event EventHandler<string> LogEvent;
-        #endregion
-
-        public ReversalTool()
-        {
-            this._logManager.LineReceived += (sender, e) => { this.LogEvent?.Invoke(sender, e); };
-        }
-
 
         public void AttachToProcess()
         {
@@ -189,7 +179,7 @@ namespace GGXrdWakeupDPUtil.Library
         public void PlayReversal(Keyboard.DirectXKeyStrokes stroke)
         {
 
-            this._logManager.WriteLine("Reversal!");
+            LogManager.Instance.WriteLine("Reversal!");
 
             BringWindowToFront();
             Keyboard keyboard = new Keyboard();
@@ -201,7 +191,7 @@ namespace GGXrdWakeupDPUtil.Library
 
 
 
-            this._logManager.WriteLine("Reversal Done!");
+            LogManager.Instance.WriteLine("Reversal Done!");
 
 
         }
@@ -215,7 +205,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread reversalThread = new Thread(() =>
             {
-                this._logManager.WriteLine("Reversal Thread start");
+                LogManager.Instance.WriteLine("Reversal Thread start");
                 var currentDummy = GetDummy();
                 bool localRunReversalThread = true;
 
@@ -235,7 +225,7 @@ namespace GGXrdWakeupDPUtil.Library
                     }
                     catch (Exception ex)
                     {
-                        this._logManager.WriteException(ex);
+                        LogManager.Instance.WriteException(ex);
                         StopReversalLoop();
                         ReversalLoopErrorOccured?.Invoke(ex);
                         return;
@@ -250,7 +240,7 @@ namespace GGXrdWakeupDPUtil.Library
                 }
 
 
-                this._logManager.WriteLine("Reversal Thread ended");
+                LogManager.Instance.WriteLine("Reversal Thread ended");
 
             })
             { Name = "reversalThread" };
@@ -277,7 +267,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread randomBurstThread = new Thread(() =>
             {
-                this._logManager.WriteLine("RandomBurst Thread start");
+                LogManager.Instance.WriteLine("RandomBurst Thread start");
                 bool localRunRandomBurstThread = true;
 
 
@@ -326,7 +316,7 @@ namespace GGXrdWakeupDPUtil.Library
                     }
                     catch (Exception ex)
                     {
-                        this._logManager.WriteException(ex);
+                        LogManager.Instance.WriteException(ex);
                         StopRandomBurstLoop();
                         RandomBurstlLoopErrorOccured?.Invoke(ex);
                         return;
@@ -334,7 +324,7 @@ namespace GGXrdWakeupDPUtil.Library
 
                 }
 
-                this._logManager.WriteLine("RandomBurst Thread ended");
+                LogManager.Instance.WriteLine("RandomBurst Thread ended");
 
             })
             {
@@ -564,7 +554,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread dummyThread = new Thread(() =>
                 {
-                    this._logManager.WriteLine("dummyThread start"); 
+                    LogManager.Instance.WriteLine("dummyThread start"); 
                     NameWakeupData currentDummy = null;
                     bool localRunDummyThread = true;
 
@@ -583,7 +573,7 @@ namespace GGXrdWakeupDPUtil.Library
                         }
                         catch (Exception ex)
                         {
-                            this._logManager.WriteException(ex);
+                            LogManager.Instance.WriteException(ex);
                             StopDummyLoop();
                             DummyLoopErrorOccured?.Invoke(ex);
                             return;
@@ -597,7 +587,7 @@ namespace GGXrdWakeupDPUtil.Library
                         Thread.Sleep(2000);
                     }
 
-                    this._logManager.WriteLine("dummyThread ended");
+                    LogManager.Instance.WriteLine("dummyThread ended");
                 })
             { Name = "dummyThread" };
 
