@@ -41,14 +41,14 @@ namespace GGXrdWakeupDPUtil
             _reversalTool.DummyChanged += _reversalTool_DummyChanged;
             _reversalTool.ReversalLoopErrorOccured += _reversalTool_ReversalLoopErrorOccured;
             _reversalTool.RandomBurstlLoopErrorOccured += _reversalTool_RandomBurstlLoopErrorOccured;
-
+            _reversalTool.LogEvent += _reversalTool_LogEvent;
 
             RefreshBurstInfo();
 
 
         }
 
-        
+       
 
         private void Window_Closed(object sender, EventArgs e)
         {
@@ -234,6 +234,13 @@ namespace GGXrdWakeupDPUtil
             _reversalTool.StopRandomBurstLoop();;
 
         }
+        private void AppendLog(string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                LogTextBox.AppendText($"{message}{Environment.NewLine}");
+            });
+        }
         private void NumericUpDownMinBurst_ValueChanged(object sender, RoutedEventArgs e)
         {
             if (NumericUpDownMinBurst != null && NumericUpDownMaxBurst != null)
@@ -295,6 +302,12 @@ namespace GGXrdWakeupDPUtil
         {
             StopBurst();
         }
+        private void _reversalTool_LogEvent(object sender, string e)
+        {
+            AppendLog(e);
+        }
+
+       
 
         #endregion
 

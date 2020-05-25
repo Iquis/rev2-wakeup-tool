@@ -110,7 +110,15 @@ namespace GGXrdWakeupDPUtil.Library
         private static extern bool SetForegroundWindow(IntPtr hWnd);
         #endregion
 
+        #region Log
+        private readonly LogManager _logManager = new LogManager();
+        public event EventHandler<string> LogEvent;
+        #endregion
 
+        public ReversalTool()
+        {
+            this._logManager.LineReceived += (sender, e) => { this.LogEvent?.Invoke(sender, e); };
+        }
 
 
         public void AttachToProcess()
@@ -181,9 +189,7 @@ namespace GGXrdWakeupDPUtil.Library
         public void PlayReversal(Keyboard.DirectXKeyStrokes stroke)
         {
 
-#if DEBUG
-            Console.WriteLine("Reversal!");
-#endif
+            this._logManager.WriteLine("Reversal!");
 
             BringWindowToFront();
             Keyboard keyboard = new Keyboard();
@@ -195,9 +201,8 @@ namespace GGXrdWakeupDPUtil.Library
 
 
 
-#if DEBUG
-            Console.WriteLine("Reversal Wait Finished!");
-#endif
+            this._logManager.WriteLine("Reversal Done!");
+
 
         }
 
@@ -210,6 +215,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread reversalThread = new Thread(() =>
             {
+                this._logManager.WriteLine("Reversal Thread start");
                 var currentDummy = GetDummy();
                 bool localRunReversalThread = true;
 
@@ -229,6 +235,7 @@ namespace GGXrdWakeupDPUtil.Library
                     }
                     catch (Exception ex)
                     {
+                        this._logManager.WriteException(ex);
                         StopReversalLoop();
                         ReversalLoopErrorOccured?.Invoke(ex);
                         return;
@@ -242,9 +249,9 @@ namespace GGXrdWakeupDPUtil.Library
                     Thread.Sleep(1);
                 }
 
-#if DEBUG
-                Console.WriteLine("reversalThread ended");
-#endif
+
+                this._logManager.WriteLine("Reversal Thread ended");
+
             })
             { Name = "reversalThread" };
 
@@ -270,6 +277,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread randomBurstThread = new Thread(() =>
             {
+                this._logManager.WriteLine("RandomBurst Thread start");
                 bool localRunRandomBurstThread = true;
 
 
@@ -318,6 +326,7 @@ namespace GGXrdWakeupDPUtil.Library
                     }
                     catch (Exception ex)
                     {
+                        this._logManager.WriteException(ex);
                         StopRandomBurstLoop();
                         RandomBurstlLoopErrorOccured?.Invoke(ex);
                         return;
@@ -325,9 +334,7 @@ namespace GGXrdWakeupDPUtil.Library
 
                 }
 
-#if DEBUG
-                Console.WriteLine("randomBurstThread ended");
-#endif
+                this._logManager.WriteLine("RandomBurst Thread ended");
 
             })
             {
@@ -557,6 +564,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread dummyThread = new Thread(() =>
                 {
+                    this._logManager.WriteLine("dummyThread start"); 
                     NameWakeupData currentDummy = null;
                     bool localRunDummyThread = true;
 
@@ -575,6 +583,7 @@ namespace GGXrdWakeupDPUtil.Library
                         }
                         catch (Exception ex)
                         {
+                            this._logManager.WriteException(ex);
                             StopDummyLoop();
                             DummyLoopErrorOccured?.Invoke(ex);
                             return;
@@ -587,9 +596,8 @@ namespace GGXrdWakeupDPUtil.Library
 
                         Thread.Sleep(2000);
                     }
-#if DEBUG
-                    Console.WriteLine("dummyThread ended");
-#endif
+
+                    this._logManager.WriteLine("dummyThread ended");
                 })
             { Name = "dummyThread" };
 

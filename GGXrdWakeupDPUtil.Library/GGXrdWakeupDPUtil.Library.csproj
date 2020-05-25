@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Enums\Buttons.cs" />
     <Compile Include="Keyboard.cs" />
+    <Compile Include="LogManager.cs" />
     <Compile Include="MemoryReader.cs" />
     <Compile Include="NameWakeupData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

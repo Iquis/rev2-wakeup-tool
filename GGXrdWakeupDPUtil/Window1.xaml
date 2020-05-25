@@ -59,7 +59,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions> 
+                        <Grid.ColumnDefinitions>
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
@@ -91,7 +91,12 @@
 
                 </Grid>
             </TabItem>
+            <TabItem x:Name="Log" Header="Log" HorizontalAlignment="Right">
+                <TextBox x:Name="LogTextBox" AcceptsReturn="True" TextWrapping="Wrap" IsReadOnly="True" VerticalScrollBarVisibility="Visible" />
+            </TabItem>
         </TabControl>
+
+
     </DockPanel>
 
 </Window>
