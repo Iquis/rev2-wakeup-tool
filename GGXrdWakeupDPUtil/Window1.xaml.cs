@@ -159,7 +159,7 @@ namespace GGXrdWakeupDPUtil
                 EnableButton.IsEnabled = true;
                 DisableButton.IsEnabled = false;
                 InputTextBox.IsEnabled = true;
-                BurstTabItem.IsEnabled = false;
+                BurstTabItem.IsEnabled = true;
 
                 Slot1R.IsEnabled = true;
                 Slot2R.IsEnabled = true;
