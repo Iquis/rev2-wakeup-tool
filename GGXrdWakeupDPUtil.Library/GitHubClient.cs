@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 
 namespace GGXrdWakeupDPUtil.Library
 {
@@ -20,19 +18,21 @@ namespace GGXrdWakeupDPUtil.Library
             {
                 string testUrl = "https://api.github.com/repos/Iquis/rev2-wakeup-tool/releases/latest";
 
-                dynamic response;
+                GitHubRelease response;
 
                 using (var webClient = new WebClient())
                 {
                     webClient.Headers["User-Agent"] = dummyUserAgent;
-                    string test = webClient.DownloadString(testUrl);
-                    response = JsonConvert.DeserializeObject(test);
+                    string stringResult = webClient.DownloadString(testUrl);
+
+                    var ser = new DataContractJsonSerializer(typeof(GitHubRelease));
+                    response = ser.ReadObject(new MemoryStream(Encoding.UTF8.GetBytes(stringResult))) as GitHubRelease;
                 }
 
                 return new ReversalToolVersion()
                 {
-                    Version = response.tag_name,
-                    Url = response.assets[0].browser_download_url
+                    Version = response.Version,
+                    Url = response.Url
                 };
             }
             catch (Exception e)
@@ -44,11 +44,24 @@ namespace GGXrdWakeupDPUtil.Library
         }
     }
 
+    [DataContract]
     internal class GitHubRelease
     {
-        public string Url { get; set; }
+        [DataMember(Name = "tag_name")]
+        public string Version { get; set; }
+        public string Url => this.Assets.FirstOrDefault()?.DownloadUrl;
+
+        [DataMember(Name = "assets")]
+        public GitHubReleaseAsset[] Assets { get; set; }
+
     }
 
+    [DataContract]
+    internal class GitHubReleaseAsset
+    {
+        [DataMember(Name = "browser_download_url")]
+        public string DownloadUrl { get; set; }
+    }
 
 
 }

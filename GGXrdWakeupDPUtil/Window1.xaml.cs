@@ -43,7 +43,10 @@ namespace GGXrdWakeupDPUtil
             }
             catch (Exception exception)
             {
-                MessageBox.Show($"Guilty Gear not found open!  Remember, be in training mode paused when you open this program.  This program will now close.{Environment.NewLine}{exception.Message}");
+                string message =
+                    $"Guilty Gear not found open!  Remember, be in training mode paused when you open this program.  This program will now close.";
+                LogManager.Instance.WriteLine(message);
+                MessageBox.Show($"{message}{Environment.NewLine}{exception.Message}");
                 Application.Current.Shutdown();
                 return;
             }
