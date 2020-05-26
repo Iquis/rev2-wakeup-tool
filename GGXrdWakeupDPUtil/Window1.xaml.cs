@@ -11,8 +11,6 @@ namespace GGXrdWakeupDPUtil
     /// </summary>
     public partial class Window1
     {
-
-        private readonly string _updateLink = ConfigurationManager.AppSettings.Get("UpdateLink"); //TODO Remove
         public Window1()
         {
             InitializeComponent();
@@ -21,11 +19,23 @@ namespace GGXrdWakeupDPUtil
         }
 
         private readonly ReversalTool _reversalTool = new ReversalTool();
-        private UpdateManager _updateManager = new UpdateManager();
+        private readonly UpdateManager _updateManager = new UpdateManager();
+        private readonly bool _autoUpdate = ConfigurationManager.AppSettings.Get("AutoUpdate") == "1";
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            _reversalTool.DummyChanged += _reversalTool_DummyChanged;
+            _reversalTool.ReversalLoopErrorOccured += _reversalTool_ReversalLoopErrorOccured;
+            _reversalTool.RandomBurstlLoopErrorOccured += _reversalTool_RandomBurstlLoopErrorOccured;
+            LogManager.Instance.LineReceived += LogManager_LineReceived;
 
+
+
+
+            if (_autoUpdate)
+            {
+                UpdateProcess();
+            }
 
             try
             {
@@ -39,10 +49,6 @@ namespace GGXrdWakeupDPUtil
             }
 
 
-            _reversalTool.DummyChanged += _reversalTool_DummyChanged;
-            _reversalTool.ReversalLoopErrorOccured += _reversalTool_ReversalLoopErrorOccured;
-            _reversalTool.RandomBurstlLoopErrorOccured += _reversalTool_RandomBurstlLoopErrorOccured;
-            LogManager.Instance.LineReceived += LogManager_LineReceived;
 
             RefreshBurstInfo();
 
@@ -317,13 +323,12 @@ namespace GGXrdWakeupDPUtil
         #region Menu
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            UpdateProcess();
-            //System.Diagnostics.Process.Start(_updateLink);
+            UpdateProcess(confirm: true);
         }
 
         #endregion
 
-        private void UpdateProcess()
+        private void UpdateProcess(bool confirm = false)
         {
             string currentVersion = ConfigurationManager.AppSettings.Get("CurrentVersion");
 
@@ -334,23 +339,32 @@ namespace GGXrdWakeupDPUtil
 
                 if (latestVersion != null)
                 {
-                    LogManager.Instance.WriteLine($"Found new version : v{latestVersion.Version}");
-                    bool downloadSuccess = this._updateManager.DownloadUpdate(latestVersion);
-
-                    if (downloadSuccess)
+                    if (!confirm || MessageBox.Show("A new version is available\r\bDo you want do download it?", "New version available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        bool installSuccess = this._updateManager.InstallUpdate();
+                        LogManager.Instance.WriteLine($"Found new version : v{latestVersion.Version}");
+                        bool downloadSuccess = this._updateManager.DownloadUpdate(latestVersion);
 
-                        if (installSuccess)
+                        if (downloadSuccess)
                         {
-                            this._updateManager.SaveVersion(latestVersion.Version);
-                            this._updateManager.RestartApplication();
+                            bool installSuccess = this._updateManager.InstallUpdate();
+
+                            if (installSuccess)
+                            {
+                                this._updateManager.SaveVersion(latestVersion.Version);
+                                this._updateManager.RestartApplication();
+                            }
                         }
                     }
+
                 }
                 else
                 {
                     LogManager.Instance.WriteLine("No updates");
+
+                    if (confirm)
+                    {
+                        MessageBox.Show("Your version is up to date");
+                    }
                 }
             }
             catch (Exception ex)
