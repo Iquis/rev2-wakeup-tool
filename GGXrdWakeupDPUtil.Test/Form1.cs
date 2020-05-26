@@ -13,6 +13,7 @@ namespace GGXrdWakeupDPUtil.Test
 
         private ReversalTool _reversalTool;
         private Keyboard.DirectXKeyStrokes _stroke;
+        private UpdateManager _updateManager = new UpdateManager();
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -25,9 +26,9 @@ namespace GGXrdWakeupDPUtil.Test
         {
             _reversalTool = new ReversalTool();
 
-            _reversalTool.AttachToProcess();
+            //_reversalTool.AttachToProcess();
 
-            this._stroke = _reversalTool.GetReplayKeyStroke();
+            //this._stroke = _reversalTool.GetReplayKeyStroke();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -104,6 +105,40 @@ namespace GGXrdWakeupDPUtil.Test
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
             label3.Text = $@"{trackBar1.Value}%";
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this._updateManager.CleanOldFiles();
+                var latestVersion = this._updateManager.CheckUpdates();
+
+                if (latestVersion != null)
+                {
+                    LogManager.Instance.WriteLine($"Found new version : v{latestVersion}");
+                    bool downloadSuccess = this._updateManager.DownloadUpdate(latestVersion);
+
+                    if (downloadSuccess)
+                    {
+                        bool installSuccess = this._updateManager.InstallUpdate();
+
+                        if (installSuccess)
+                        {
+                            this._updateManager.SaveVersion(latestVersion.Version);
+                            this._updateManager.RestartApplication();
+                        }
+                    }
+                }
+                else
+                {
+                    LogManager.Instance.WriteLine("No updates");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.WriteException(ex);
+            }
         }
     }
 }

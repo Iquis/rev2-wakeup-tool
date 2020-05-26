@@ -27,7 +27,7 @@ namespace GGXrdWakeupDPUtil.Library
         #endregion
 
 
-        private string _fileName = "Log.txt";
+        public string FileName { get; } = "Log.txt";
 
         public event EventHandler<string> LineReceived;
         private readonly ConcurrentQueue<string> _messageQueue = new ConcurrentQueue<string>();
@@ -57,7 +57,7 @@ namespace GGXrdWakeupDPUtil.Library
 #if !DEBUG
             try
             {
-                using (FileStream fileStream = new FileStream(_fileName, FileMode.OpenOrCreate, FileSystemRights.AppendData, FileShare.Write, 4096, FileOptions.None))
+                using (FileStream fileStream = new FileStream(FileName, FileMode.OpenOrCreate, FileSystemRights.AppendData, FileShare.Write, 4096, FileOptions.None))
                 {
                     using (StreamWriter streamWriter = new StreamWriter(fileStream))
                     {

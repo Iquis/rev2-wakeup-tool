@@ -12,7 +12,7 @@ namespace GGXrdWakeupDPUtil
     public partial class Window1
     {
 
-        private readonly string _updateLink = ConfigurationManager.AppSettings.Get("UpdateLink");
+        private readonly string _updateLink = ConfigurationManager.AppSettings.Get("UpdateLink"); //TODO Remove
         public Window1()
         {
             InitializeComponent();
@@ -20,11 +20,12 @@ namespace GGXrdWakeupDPUtil
             InputTextBox.TextChanged += inputTextBox_TextChanged;
         }
 
-        private ReversalTool _reversalTool;
+        private readonly ReversalTool _reversalTool = new ReversalTool();
+        private UpdateManager _updateManager = new UpdateManager();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            _reversalTool = new ReversalTool();
+
 
             try
             {
@@ -48,7 +49,8 @@ namespace GGXrdWakeupDPUtil
 
         }
 
-       
+
+
 
         private void Window_Closed(object sender, EventArgs e)
         {
@@ -112,6 +114,7 @@ namespace GGXrdWakeupDPUtil
 
         private void inputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
+            //TODO add watermark
             CheckValidInput();
         }
 
@@ -193,7 +196,7 @@ namespace GGXrdWakeupDPUtil
             int max = NumericUpDownMaxBurst.Value;
             int burstPercentage = (int)BurstSlider.Value;
 
-            _reversalTool.StartRandomBurstLoop(min, max, slotNumber,burstPercentage);
+            _reversalTool.StartRandomBurstLoop(min, max, slotNumber, burstPercentage);
 
 
 
@@ -231,7 +234,7 @@ namespace GGXrdWakeupDPUtil
                 Slot3RBurst.IsEnabled = true;
             });
 
-            _reversalTool.StopRandomBurstLoop();;
+            _reversalTool.StopRandomBurstLoop(); ;
 
         }
         private void AppendLog(string message)
@@ -283,8 +286,8 @@ namespace GGXrdWakeupDPUtil
                 }
                 else
                 {
-                    text = min == max ? 
-                        $"- The dummy will burst randomly at {min} hit combo ({burstPercentage}% chance)" : 
+                    text = min == max ?
+                        $"- The dummy will burst randomly at {min} hit combo ({burstPercentage}% chance)" :
                         $"- The dummy will burst randomly between {min} and {max} hit combo ({burstPercentage}% chance)";
                     text += Environment.NewLine;
                     text += $"- The dummy won't burst at all ({100 - burstPercentage}% chance)";
@@ -307,18 +310,53 @@ namespace GGXrdWakeupDPUtil
             AppendLog(e);
         }
 
-       
+
 
         #endregion
 
         #region Menu
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(_updateLink);
+            UpdateProcess();
+            //System.Diagnostics.Process.Start(_updateLink);
         }
 
         #endregion
 
+        private void UpdateProcess()
+        {
+            string currentVersion = ConfigurationManager.AppSettings.Get("CurrentVersion");
 
+            LogManager.Instance.WriteLine($"Current Version is {currentVersion}");
+            try
+            {
+                var latestVersion = this._updateManager.CheckUpdates();
+
+                if (latestVersion != null)
+                {
+                    LogManager.Instance.WriteLine($"Found new version : v{latestVersion.Version}");
+                    bool downloadSuccess = this._updateManager.DownloadUpdate(latestVersion);
+
+                    if (downloadSuccess)
+                    {
+                        bool installSuccess = this._updateManager.InstallUpdate();
+
+                        if (installSuccess)
+                        {
+                            this._updateManager.SaveVersion(latestVersion.Version);
+                            this._updateManager.RestartApplication();
+                        }
+                    }
+                }
+                else
+                {
+                    LogManager.Instance.WriteLine("No updates");
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.WriteException(ex);
+            }
+        }
     }
 }
