@@ -338,6 +338,7 @@ namespace GGXrdWakeupDPUtil
             LogManager.Instance.WriteLine($"Current Version is {currentVersion}");
             try
             {
+                this._updateManager.CleanOldFiles();
                 var latestVersion = this._updateManager.CheckUpdates();
 
                 if (latestVersion != null)
