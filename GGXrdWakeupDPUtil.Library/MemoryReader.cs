@@ -41,7 +41,7 @@ namespace GGXrdWakeupDPUtil.Library
             int lpNumberOfBytesRead = 0;
             WriteProcessMemory(handle, address, bytes, bytes.Length, ref lpNumberOfBytesRead);
         }
-        public void Write(IntPtr address, ushort[] shorts)
+        public void Write(IntPtr address, IEnumerable<ushort> shorts)
         {
             List<byte> bytes = new List<byte>();
 

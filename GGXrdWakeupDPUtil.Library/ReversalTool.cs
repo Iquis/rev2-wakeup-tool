@@ -171,12 +171,25 @@ namespace GGXrdWakeupDPUtil.Library
                 throw new Exception("No ! frame specified.  See the readme for more information.");
             }
 
-            IEnumerable<ushort> inputShorts = GetInputShorts(inputList);
+            var inputShorts = GetInputShorts(inputList);
 
-            var enumerable = inputShorts as ushort[] ?? inputShorts.ToArray();
-            OverwriteSlot(slotNumber, enumerable);
+            inputShorts = inputShorts as ushort[] ?? inputShorts.ToArray();
 
-            return new SlotInput(input, enumerable, wakeupFrameIndex);
+
+            var baseAddress = this._memoryReader.ReadWithOffsets<IntPtr>(_recordingSlotPtr);
+            var slotAddress = IntPtr.Add(baseAddress, RecordingSlotSize * (slotNumber - 1));
+
+            var header2 = new List<ushort> { 0, 0, (ushort)inputShorts.Count, 0 };
+
+            var content = header2.Concat(inputShorts).ToArray();
+
+            this._memoryReader.Write(slotAddress, content);
+
+            return new SlotInput(input, inputShorts, wakeupFrameIndex);
+        }
+        public string GetInputInSlot(int slotNumber)
+        {
+            throw new NotImplementedException();
         }
         private void WaitAndReversal(SlotInput slotInput, int wakeupTiming)
         {
@@ -464,7 +477,7 @@ namespace GGXrdWakeupDPUtil.Library
             return splitText.ToList();
         }
 
-        private IEnumerable<ushort> GetInputShorts(List<string> inputList)
+        private IList<ushort> GetInputShorts(List<string> inputList)
         {
             List<ushort> result = inputList.Select(x =>
             {
@@ -538,21 +551,6 @@ namespace GGXrdWakeupDPUtil.Library
             {
                 return 0;
             }
-        }
-
-        private void OverwriteSlot(int slotNumber, IEnumerable<ushort> inputs)
-        {
-            var ptr = this._memoryReader.ReadWithOffsets<IntPtr>(_recordingSlotPtr);
-
-            var slotAddr = IntPtr.Add(ptr, RecordingSlotSize * (slotNumber - 1));
-
-
-            var inputList2 = inputs as ushort[] ?? inputs.ToArray();
-            var header2 = new List<ushort> { 0, 0, (ushort)inputList2.Length, 0 };
-
-            var content = header2.Concat(inputList2).ToArray();
-
-            this._memoryReader.Write(slotAddr, content);
         }
 
         private string ReadAnimationString(int player)
@@ -709,5 +707,7 @@ namespace GGXrdWakeupDPUtil.Library
             StopBlockReversalLoop();
         }
         #endregion
+
+        
     }
 }
