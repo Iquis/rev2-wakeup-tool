@@ -373,21 +373,24 @@ namespace GGXrdWakeupDPUtil.Library
                     bool localRunBlockReversalThread = true;
 
                     this._stroke = this.GetReplayKeyStroke();
+                    int oldBlockstun = 0;
 
                     while (localRunBlockReversalThread && !this._process.HasExited)
                     {
                         try
                         {
                             int blockStun = this.GetBlockstun(2);
-                            
-                            if (slotInput.WakeupFrameIndex + 1 == blockStun)
+
+                            if (slotInput.WakeupFrameIndex + 2 == blockStun && oldBlockstun != blockStun)
                             {
                                 this.PlayReversal();
 
                                 Thread.Sleep(32);
                             }
 
-                            Thread.Sleep(1);
+                            oldBlockstun = blockStun;
+
+                            Thread.Sleep(10); //check about twice by frame
                         }
                         catch (Exception ex)
                         {
