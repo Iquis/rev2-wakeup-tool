@@ -47,10 +47,14 @@
             this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.button10 = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.button11 = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // button1
@@ -255,7 +259,7 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(28, 293);
+            this.button10.Location = new System.Drawing.Point(12, 130);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(119, 23);
             this.button10.TabIndex = 10;
@@ -263,11 +267,43 @@
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.button12);
+            this.groupBox2.Controls.Add(this.button11);
+            this.groupBox2.Location = new System.Drawing.Point(12, 238);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(428, 111);
+            this.groupBox2.TabIndex = 11;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Block Reversal";
+            // 
+            // button11
+            // 
+            this.button11.Location = new System.Drawing.Point(7, 20);
+            this.button11.Name = "button11";
+            this.button11.Size = new System.Drawing.Size(151, 43);
+            this.button11.TabIndex = 0;
+            this.button11.Text = "Block reversal";
+            this.button11.UseVisualStyleBackColor = true;
+            this.button11.Click += new System.EventHandler(this.button11_Click);
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(194, 20);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(179, 43);
+            this.button12.TabIndex = 1;
+            this.button12.Text = "Stop Block Reversal";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(866, 450);
+            this.ClientSize = new System.Drawing.Size(893, 461);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.textBox1);
@@ -287,6 +323,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -313,6 +350,9 @@
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button12;
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -62,6 +63,10 @@ namespace GGXrdWakeupDPUtil.Library
         private readonly int _p1ComboCountPtrOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("P1ComboCountPtrOffset"), 16);
         private readonly int _dummyIdOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("DummyIdOffset"), 16);
         private readonly int _replayKeyOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("ReplayKeyOffset"), 16);
+
+        private readonly IntPtr _blockStunPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunPtr"), 16));
+        private readonly int _blockStunOffset1 = Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunOffset1"), 16);
+        private readonly int _blockStunOffset2 = Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunOffset2"), 16);
         #endregion
 
         private readonly string FaceDownAnimation = "CmnActFDown2Stand";
@@ -72,6 +77,7 @@ namespace GGXrdWakeupDPUtil.Library
         private Process _process;
 
         private MemoryReader _memoryReader;
+        private Keyboard.DirectXKeyStrokes _stroke;
 
         #region Reversal Loop
         private static bool _runReversalThread;
@@ -100,6 +106,14 @@ namespace GGXrdWakeupDPUtil.Library
         private static readonly object RunRandomBurstThreadLock = new object();
         public delegate void RandomBurstLoopErrorHandler(Exception ex);
         public event RandomBurstLoopErrorHandler RandomBurstlLoopErrorOccured;
+        #endregion
+
+        #region Reversal Loop
+        private static bool _runBlockReversalThread;
+        private static readonly object RunBlockReversalThreadLock = new object();
+        public delegate void BlockReversalLoopErrorHandler(Exception ex);
+
+        public event BlockReversalLoopErrorHandler BlockReversalLoopErrorOccured;
         #endregion
 
 
@@ -164,19 +178,19 @@ namespace GGXrdWakeupDPUtil.Library
 
             return new SlotInput(input, enumerable, wakeupFrameIndex);
         }
-        private void WaitAndReversal(SlotInput slotInput, int wakeupTiming, Keyboard.DirectXKeyStrokes stroke)
+        private void WaitAndReversal(SlotInput slotInput, int wakeupTiming)
         {
             int fc = FrameCount();
             var frames = wakeupTiming - slotInput.WakeupFrameIndex - 1;
             while (FrameCount() < fc + frames)
             {
             }
-            PlayReversal(stroke);
+            PlayReversal();
 
             Thread.Sleep(320); //20 frames, approximately, it's actually 333.333333333 ms.  Nobody should be able to be knocked down and get up in this time, causing the code to execute again.
         }
 
-        public void PlayReversal(Keyboard.DirectXKeyStrokes stroke)
+        public void PlayReversal()
         {
 
             LogManager.Instance.WriteLine("Reversal!");
@@ -185,9 +199,9 @@ namespace GGXrdWakeupDPUtil.Library
             Keyboard keyboard = new Keyboard();
 
 
-            keyboard.SendKey(stroke, false, Keyboard.InputType.Keyboard);
+            keyboard.SendKey(_stroke, false, Keyboard.InputType.Keyboard);
             Thread.Sleep(150);
-            keyboard.SendKey(stroke, true, Keyboard.InputType.Keyboard);
+            keyboard.SendKey(_stroke, true, Keyboard.InputType.Keyboard);
 
 
 
@@ -209,9 +223,9 @@ namespace GGXrdWakeupDPUtil.Library
                 var currentDummy = GetDummy();
                 bool localRunReversalThread = true;
 
-                Keyboard.DirectXKeyStrokes stroke = this.GetReplayKeyStroke();
+                this._stroke = this.GetReplayKeyStroke();
 
-                while (localRunReversalThread)
+                while (localRunReversalThread && !this._process.HasExited)
                 {
                     try
                     {
@@ -220,7 +234,7 @@ namespace GGXrdWakeupDPUtil.Library
 
                         if (wakeupTiming != 0)
                         {
-                            WaitAndReversal(slotInput, wakeupTiming, stroke);
+                            WaitAndReversal(slotInput, wakeupTiming);
                         }
                     }
                     catch (Exception ex)
@@ -278,10 +292,10 @@ namespace GGXrdWakeupDPUtil.Library
                 int valueToBurst = rnd.Next(min, max + 1);
                 bool willBurst = rnd.Next(0, 101) <= burstPercentage;
 
-                Keyboard.DirectXKeyStrokes stroke = this.GetReplayKeyStroke();
+                this._stroke = this.GetReplayKeyStroke();
 
 
-                while (localRunRandomBurstThread)
+                while (localRunRandomBurstThread && !this._process.HasExited)
                 {
                     try
                     {
@@ -293,7 +307,7 @@ namespace GGXrdWakeupDPUtil.Library
                         {
                             if (currentCombo == valueToBurst && willBurst)
                             {
-                                PlayReversal(stroke);
+                                PlayReversal();
                                 Thread.Sleep(850); //50 frames, approximately, Burst recovery is around 50f. 
                             }
 
@@ -336,13 +350,77 @@ namespace GGXrdWakeupDPUtil.Library
             this.BringWindowToFront();
         }
 
-
-
         public void StopRandomBurstLoop()
         {
             lock (RunRandomBurstThreadLock)
             {
                 _runRandomBurstThread = false;
+            }
+        }
+
+
+        public void StartBlockReversalLoop(SlotInput slotInput)
+        {
+            lock (RunBlockReversalThreadLock)
+            {
+                _runBlockReversalThread = true;
+            }
+
+            Thread blockReversalThread = new Thread(() =>
+                {
+                    LogManager.Instance.WriteLine("Block Reversal Thread start");
+
+                    bool localRunBlockReversalThread = true;
+
+                    this._stroke = this.GetReplayKeyStroke();
+
+                    while (localRunBlockReversalThread && !this._process.HasExited)
+                    {
+                        try
+                        {
+                            int blockStun = this.GetBlockstun(2);
+                            
+                            if (slotInput.WakeupFrameIndex + 1 == blockStun)
+                            {
+                                this.PlayReversal();
+
+                                Thread.Sleep(32);
+                            }
+
+                            Thread.Sleep(1);
+                        }
+                        catch (Exception ex)
+                        {
+                            LogManager.Instance.WriteException(ex);
+                            StopBlockReversalLoop();
+                            BlockReversalLoopErrorOccured?.Invoke(ex);
+                            return;
+                        }
+
+                        lock (RunBlockReversalThreadLock)
+                        {
+                            localRunBlockReversalThread = _runBlockReversalThread;
+                        }
+
+                        Thread.Sleep(1);
+                    }
+
+
+                    LogManager.Instance.WriteLine("Block Reversal Thread ended");
+
+                })
+            { Name = "blockReversalThread" };
+
+            blockReversalThread.Start();
+
+            this.BringWindowToFront();
+        }
+
+        public void StopBlockReversalLoop()
+        {
+            lock (RunBlockReversalThreadLock)
+            {
+                _runBlockReversalThread = false;
             }
         }
 
@@ -491,6 +569,22 @@ namespace GGXrdWakeupDPUtil.Library
             return string.Empty;
         }
 
+        private int GetBlockstun(int player)
+        {
+            var baseAddress = this._blockStunPtr;
+            var offset1 = this._blockStunOffset1;
+            var offset2 = this._blockStunOffset2;
+
+            if (player == 2)
+            {
+                offset1 += 4;
+            }
+
+            var result = this._memoryReader.ReadWithOffsets<int>(baseAddress, offset1, offset2);
+
+            return result;
+        }
+
         private int FrameCount()
         {
             var address = IntPtr.Add(this._process.MainModule.BaseAddress, _frameCountOffset);
@@ -554,7 +648,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             Thread dummyThread = new Thread(() =>
                 {
-                    LogManager.Instance.WriteLine("dummyThread start"); 
+                    LogManager.Instance.WriteLine("dummyThread start");
                     NameWakeupData currentDummy = null;
                     bool localRunDummyThread = true;
 
@@ -609,10 +703,8 @@ namespace GGXrdWakeupDPUtil.Library
         {
             StopDummyLoop();
             StopReversalLoop();
+            StopBlockReversalLoop();
         }
         #endregion
-
-
-
     }
 }

@@ -27,9 +27,9 @@ namespace GGXrdWakeupDPUtil.Test
         {
             _reversalTool = new ReversalTool();
 
-            //_reversalTool.AttachToProcess();
+            _reversalTool.AttachToProcess();
 
-            //this._stroke = _reversalTool.GetReplayKeyStroke();
+            this._stroke = _reversalTool.GetReplayKeyStroke();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -39,7 +39,7 @@ namespace GGXrdWakeupDPUtil.Test
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _reversalTool.PlayReversal(this._stroke);
+            _reversalTool.PlayReversal();
         }
 
 
@@ -61,10 +61,7 @@ namespace GGXrdWakeupDPUtil.Test
 
         private void button6_Click(object sender, EventArgs e)
         {
-            button6.Enabled = false;
-            button7.Enabled = true;
-            button8.Enabled = false;
-            button9.Enabled = false;
+            ReversalButtonEnable();
             var slotInput = _reversalTool.SetInputInSlot(1, textBox1.Text);
 
             _reversalTool.StartReversalLoop(slotInput);
@@ -72,33 +69,20 @@ namespace GGXrdWakeupDPUtil.Test
 
         private void button7_Click(object sender, EventArgs e)
         {
-            button6.Enabled = true;
-            button7.Enabled = false;
-            button8.Enabled = true;
-            button9.Enabled = false;
+            FunctionButtonsDisable();
             _reversalTool.StopReversalLoop();
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            button8.Enabled = false;
-            button6.Enabled = false;
-            button7.Enabled = false;
-            button9.Enabled = true;
-            numericUpDown1.Enabled = false;
-            numericUpDown2.Enabled = false;
+            RandomBurstButtonEnable();
 
             _reversalTool.StartRandomBurstLoop((int)numericUpDown1.Value, (int)numericUpDown2.Value, 1, trackBar1.Value);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            button8.Enabled = true;
-            button6.Enabled = true;
-            button7.Enabled = true;
-            button9.Enabled = false;
-            numericUpDown1.Enabled = true;
-            numericUpDown2.Enabled = true;
+            FunctionButtonsDisable();
 
             _reversalTool.StopRandomBurstLoop();
         }
@@ -158,5 +142,64 @@ namespace GGXrdWakeupDPUtil.Test
                 LogManager.Instance.WriteException(ex);
             }
         }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            BlockReversalButtonEnable();
+            var slotInput = _reversalTool.SetInputInSlot(1, textBox1.Text);
+            this._reversalTool.StartBlockReversalLoop(slotInput);
+        }
+        private void button12_Click(object sender, EventArgs e)
+        {
+            FunctionButtonsDisable();
+            this._reversalTool.StopBlockReversalLoop();
+        }
+
+        private void ReversalButtonEnable()
+        {
+            button6.Enabled = false;
+            button7.Enabled = true;
+            button8.Enabled = false;
+            button9.Enabled = false;
+            button11.Enabled = false;
+            button12.Enabled = false;
+        }
+        private void BlockReversalButtonEnable()
+        {
+            button6.Enabled = false;
+            button7.Enabled = true;
+            button8.Enabled = false;
+            button9.Enabled = false;
+            button11.Enabled = false;
+            button12.Enabled = true;
+        }
+
+        private void RandomBurstButtonEnable()
+        {
+            button8.Enabled = false;
+            button6.Enabled = false;
+            button7.Enabled = false;
+            button9.Enabled = true;
+            numericUpDown1.Enabled = false;
+            numericUpDown2.Enabled = false;
+            button11.Enabled = false;
+            button12.Enabled = false;
+        }
+
+        private void FunctionButtonsDisable()
+        {
+            button6.Enabled = true;
+            button7.Enabled = true;
+            button8.Enabled = true;
+            button9.Enabled = true;
+
+            numericUpDown1.Enabled = true;
+            numericUpDown2.Enabled = true;
+
+            button11.Enabled = true;
+            button12.Enabled = true;
+        }
+
+
     }
 }

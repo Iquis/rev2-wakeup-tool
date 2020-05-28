@@ -140,6 +140,7 @@ namespace GGXrdWakeupDPUtil.Library
                     fi.Delete();
                 }
             }
+            DeleteFolder(this.releaseFolder);
         }
     }
 
