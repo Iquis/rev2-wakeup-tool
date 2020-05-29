@@ -11,11 +11,13 @@ namespace GGXrdWakeupDPUtil
     /// </summary>
     public partial class Window1
     {
+        //TODO Use mvvm
         public Window1()
         {
             InitializeComponent();
 
-            InputTextBox.TextChanged += inputTextBox_TextChanged;
+            this.InputTextBox.TextChanged += inputTextBox_TextChanged;
+            this.BlockReversalInputTextBox.TextChanged += blockReversalInputTextBox_TextChanged;
         }
 
         private readonly ReversalTool _reversalTool = new ReversalTool();
@@ -32,10 +34,12 @@ namespace GGXrdWakeupDPUtil
 
 
 
+#if !DEBUG
             if (_autoUpdate)
             {
                 UpdateProcess();
-            }
+            } 
+#endif
 
             try
             {
@@ -59,27 +63,26 @@ namespace GGXrdWakeupDPUtil
         }
 
 
-
-
         private void Window_Closed(object sender, EventArgs e)
         {
             _reversalTool?.Dispose();
         }
 
-        #region Reversal tool events
-        private void _reversalTool_ReversalLoopErrorOccured(Exception ex)
-        {
-            StopReversal();
-        }
+        #region Dummy
 
         private void _reversalTool_DummyChanged(NameWakeupData dummy)
         {
             SetDummyName(dummy.CharName);
         }
+
         #endregion
 
-
         #region Reversal
+
+        private void _reversalTool_ReversalLoopErrorOccured(Exception ex)
+        {
+            StopReversal();
+        }
 
         private void enableButton_Click(object sender, RoutedEventArgs e)
         {
@@ -104,14 +107,8 @@ namespace GGXrdWakeupDPUtil
 
             _reversalTool.StartReversalLoop(slotInput);
 
-            EnableButton.IsEnabled = false;
-            DisableButton.IsEnabled = true;
-            InputTextBox.IsEnabled = false;
-            BurstTabItem.IsEnabled = false;
 
-            Slot1R.IsEnabled = false;
-            Slot2R.IsEnabled = false;
-            Slot3R.IsEnabled = false;
+            this.ReversalActivation(true);
         }
 
         private void disableButton_Click(object sender, RoutedEventArgs e)
@@ -124,24 +121,10 @@ namespace GGXrdWakeupDPUtil
         private void inputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             //TODO add watermark
-            CheckValidInput();
-        }
 
-        private void CheckValidInput()
-        {
-            var text = InputTextBox.Text;
+            var text = this.InputTextBox.Text;
 
-            if (string.IsNullOrEmpty(text))
-            {
-                ErrorTextBlock.Visibility = Visibility.Hidden;
-                EnableButton.IsEnabled = false;
-            }
-
-
-
-            bool validInput = _reversalTool != null && _reversalTool.CheckValidInput(text);
-
-            if (validInput)
+            if (this._reversalTool.CheckValidInput(text))
             {
                 ErrorTextBlock.Visibility = Visibility.Hidden;
                 EnableButton.IsEnabled = true;
@@ -149,10 +132,17 @@ namespace GGXrdWakeupDPUtil
             else
             {
                 ErrorTextBlock.Visibility = Visibility.Visible;
-                ErrorTextBlock.Text = "Invalid Input";
+
+                if (!string.IsNullOrEmpty(text))
+                {
+                    ErrorTextBlock.Text = "Invalid Input";
+                }
+
                 EnableButton.IsEnabled = false;
             }
         }
+
+
 
 
 
@@ -168,17 +158,86 @@ namespace GGXrdWakeupDPUtil
         {
             Dispatcher.Invoke(() =>
             {
-                EnableButton.IsEnabled = true;
-                DisableButton.IsEnabled = false;
-                InputTextBox.IsEnabled = true;
-                BurstTabItem.IsEnabled = true;
-
-                Slot1R.IsEnabled = true;
-                Slot2R.IsEnabled = true;
-                Slot3R.IsEnabled = true;
+                this.ReversalActivation(false);
             });
 
             _reversalTool.StopReversalLoop();
+
+        }
+
+
+        #endregion
+
+        #region Block Reversal
+        private void blockReversalEnableButton_Click(object sender, RoutedEventArgs e)
+        {
+            int slotNumber = 0;
+
+            if (BlockReversalSlot1R.IsChecked != null && BlockReversalSlot1R.IsChecked.Value)
+            {
+                slotNumber = 1;
+            }
+            else if (BlockReversalSlot2R.IsChecked != null && BlockReversalSlot2R.IsChecked.Value)
+            {
+                slotNumber = 2;
+            }
+            else if (BlockReversalSlot3R.IsChecked != null && BlockReversalSlot3R.IsChecked.Value)
+            {
+                slotNumber = 3;
+            }
+
+            var slotInput = _reversalTool.SetInputInSlot(slotNumber, BlockReversalInputTextBox.Text);
+
+
+
+            _reversalTool.StartBlockReversalLoop(slotInput);
+
+            this.BlockReversalActivation(true);
+        }
+        private void blockReversaldisableButton_Click(object sender, RoutedEventArgs e)
+        {
+            StopBlockReversal();
+        }
+        private void blockReversalInputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //TODO add watermark
+
+            var text = this.BlockReversalInputTextBox.Text;
+
+
+            if (this._reversalTool.CheckValidInput(text))
+            {
+
+            }
+
+
+            if (this._reversalTool.CheckValidInput(text))
+            {
+                BlockReversalErrorTextBlock.Visibility = Visibility.Hidden;
+                BlockReversalEnableButton.IsEnabled = true;
+            }
+            else
+            {
+                BlockReversalErrorTextBlock.Visibility = Visibility.Visible;
+
+                if (!string.IsNullOrEmpty(text))
+                {
+                    BlockReversalErrorTextBlock.Text = "Invalid Input";
+                }
+
+                BlockReversalEnableButton.IsEnabled = false;
+            }
+        }
+
+
+        private void StopBlockReversal()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                this.BlockReversalActivation(false);
+            });
+
+            _reversalTool.StopBlockReversalLoop();
 
         }
         #endregion
@@ -207,19 +266,7 @@ namespace GGXrdWakeupDPUtil
 
             _reversalTool.StartRandomBurstLoop(min, max, slotNumber, burstPercentage);
 
-
-
-            EnableBurstButton.IsEnabled = false;
-            DisableBurstButton.IsEnabled = true;
-            NumericUpDownMinBurst.IsEnabled = false;
-            NumericUpDownMaxBurst.IsEnabled = false;
-            BurstSlider.IsEnabled = false;
-            ReversalTabItem.IsEnabled = false;
-
-            Slot1RBurst.IsEnabled = false;
-            Slot2RBurst.IsEnabled = false;
-            Slot3RBurst.IsEnabled = false;
-
+            this.BurstActivation(true);
 
         }
 
@@ -231,16 +278,7 @@ namespace GGXrdWakeupDPUtil
         {
             Dispatcher.Invoke(() =>
             {
-                EnableBurstButton.IsEnabled = true;
-                DisableBurstButton.IsEnabled = false;
-                NumericUpDownMinBurst.IsEnabled = true;
-                NumericUpDownMaxBurst.IsEnabled = true;
-                BurstSlider.IsEnabled = true;
-                ReversalTabItem.IsEnabled = true;
-
-                Slot1RBurst.IsEnabled = true;
-                Slot2RBurst.IsEnabled = true;
-                Slot3RBurst.IsEnabled = true;
+                this.BurstActivation(false);
             });
 
             _reversalTool.StopRandomBurstLoop(); ;
@@ -331,6 +369,45 @@ namespace GGXrdWakeupDPUtil
 
         #endregion
 
+
+        private void ReversalActivation(bool isEnabled)
+        {
+            EnableButton.IsEnabled = !isEnabled;
+            DisableButton.IsEnabled = isEnabled;
+            Slot1R.IsEnabled = !isEnabled;
+            Slot2R.IsEnabled = !isEnabled;
+            Slot3R.IsEnabled = !isEnabled;
+            InputTextBox.IsEnabled = !isEnabled;
+
+            BurstTabItem.IsEnabled = !isEnabled;
+            BlockReversalTabItem.IsEnabled = !isEnabled;
+
+        }
+        private void BurstActivation(bool isEnabled)
+        {
+            EnableBurstButton.IsEnabled = !isEnabled;
+            DisableBurstButton.IsEnabled = isEnabled;
+            Slot1RBurst.IsEnabled = !isEnabled;
+            Slot2RBurst.IsEnabled = !isEnabled;
+            Slot3RBurst.IsEnabled = !isEnabled;
+
+            ReversalTabItem.IsEnabled = !isEnabled;
+            BlockReversalTabItem.IsEnabled = !isEnabled;
+        }
+        private void BlockReversalActivation(bool isEnabled)
+        {
+            BlockReversalEnableButton.IsEnabled = !isEnabled;
+            BlockReversalDisableButton.IsEnabled = isEnabled;
+            BlockReversalSlot1R.IsEnabled = !isEnabled;
+            BlockReversalSlot2R.IsEnabled = !isEnabled;
+            BlockReversalSlot3R.IsEnabled = !isEnabled;
+            BlockReversalInputTextBox.IsEnabled = !isEnabled;
+            BurstTabItem.IsEnabled = !isEnabled;
+            ReversalTabItem.IsEnabled = !isEnabled;
+        }
+
+
+
         private void UpdateProcess(bool confirm = false)
         {
             string currentVersion = ConfigurationManager.AppSettings.Get("CurrentVersion");
@@ -376,5 +453,7 @@ namespace GGXrdWakeupDPUtil
                 LogManager.Instance.WriteException(ex);
             }
         }
+
+
     }
 }

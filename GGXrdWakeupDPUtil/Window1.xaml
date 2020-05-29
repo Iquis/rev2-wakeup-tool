@@ -28,7 +28,7 @@
                     <TextBox Grid.Row="2" x:Name="InputTextBox" Text="Enter your inputs" />
                     <TextBlock Grid.Row="3" x:Name="ErrorTextBlock" Text="Enter your inputs" Foreground="Red" Visibility="Hidden"/>
                     <UniformGrid Grid.Row="4" Columns="2">
-                        <Button x:Name="EnableButton" Content="Enable" HorizontalAlignment="Left" Height="30" Width="125" Click="enableButton_Click" IsEnabled="False"/>
+                        <Button x:Name="EnableButton" Content="Enable" HorizontalAlignment="Left" Height="30" Width="125" Click="enableButton_Click" IsEnabled="False" VerticalAlignment="Top"/>
                         <Button x:Name="DisableButton" Content="Disable" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" Click="disableButton_Click"/>
                     </UniformGrid>
                     <Label Grid.Row="5" Content="Slot To Overwrite:" HorizontalAlignment="Left"/>
@@ -36,6 +36,33 @@
                         <RadioButton x:Name="Slot1R" Content="Slot 1" HorizontalAlignment="Center" GroupName="SlotRadio" IsChecked="True"/>
                         <RadioButton x:Name="Slot2R" Content="Slot 2" HorizontalAlignment="Center" GroupName="SlotRadio" />
                         <RadioButton x:Name="Slot3R" Content="Slot 3" HorizontalAlignment="Center" GroupName="SlotRadio"/>
+                    </UniformGrid>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="BlockReversalTabItem" Header="Block Reversal">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock TextWrapping="Wrap" Text="GGXrd Rev 2 Reversal Tool" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Reversal after blockstun" />
+                    <TextBox Grid.Row="2" x:Name="BlockReversalInputTextBox" Text="Enter your inputs" />
+                    <TextBlock Grid.Row="3" x:Name="BlockReversalErrorTextBlock" Text="Enter your inputs" Foreground="Red" Visibility="Hidden"/>
+                    <UniformGrid Grid.Row="4" Columns="2">
+                        <Button x:Name="BlockReversalEnableButton" Content="Enable" HorizontalAlignment="Left" Height="30" Width="125" Click="blockReversalEnableButton_Click" IsEnabled="False"/>
+                        <Button x:Name="BlockReversalDisableButton" Content="Disable" HorizontalAlignment="Right" Width="125" Height="30" IsEnabled="False" Click="blockReversaldisableButton_Click"/>
+                    </UniformGrid>
+                    <Label Grid.Row="5" Content="Slot To Overwrite:" HorizontalAlignment="Left"/>
+                    <UniformGrid Grid.Row="6" Columns="3">
+                        <RadioButton x:Name="BlockReversalSlot1R" Content="Slot 1" HorizontalAlignment="Center" GroupName="BlockReversalSlotRadio" IsChecked="True"/>
+                        <RadioButton x:Name="BlockReversalSlot2R" Content="Slot 2" HorizontalAlignment="Center" GroupName="BlockReversalSlotRadio" />
+                        <RadioButton x:Name="BlockReversalSlot3R" Content="Slot 3" HorizontalAlignment="Center" GroupName="BlockReversalSlotRadio"/>
                     </UniformGrid>
                 </Grid>
             </TabItem>
