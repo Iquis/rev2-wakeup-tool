@@ -201,5 +201,7 @@ namespace GGXrdWakeupDPUtil.Test
         }
 
 
+        //TODO Random slot + % reversal
+        //TODO import inputs from slot
     }
 }
