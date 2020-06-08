@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 using GGXrdWakeupDPUtil.Commands;
 using GGXrdWakeupDPUtil.Library;
 
@@ -49,7 +44,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
                 _wakeupReversalInput = value;
                 this.IsWakeupReversalInputValid = string.IsNullOrEmpty(this.WakeupReversalInput) || this._reversalTool.CheckValidInput(this.WakeupReversalInput);
                 this.OnPropertyChanged();
-                this.OnPropertyChanged("ReversalErrorVisibility");
+                this.OnPropertyChanged(nameof(WakeupReversalErrorVisibility));
             }
         }
 
@@ -61,7 +56,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
             {
                 _isWakeupReversalInputValid = value;
                 this.OnPropertyChanged();
-                this.OnPropertyChanged("ReversalErrorVisibility");
+                this.OnPropertyChanged(nameof(WakeupReversalErrorVisibility));
             }
         }
 
@@ -80,7 +75,65 @@ namespace GGXrdWakeupDPUtil.ViewModels
         #endregion
 
         #region BlockStun Reversal
+        private int _blockstunReversalSlotNumber = 1;
+        public int BlockstunReversalSlotNumber
+        {
+            get => _blockstunReversalSlotNumber;
+            set
+            {
+                _blockstunReversalSlotNumber = value;
+                this.OnPropertyChanged();
+            }
+        }
 
+        private bool _blockstunReversalStarted;
+        public bool BlockstunReversalStarted
+        {
+            get => _blockstunReversalStarted;
+            set
+            {
+                _blockstunReversalStarted = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private string _blockstunReversalInput;
+        public string BlockstunReversalInput
+        {
+            get => _blockstunReversalInput;
+            set
+            {
+                _blockstunReversalInput = value;
+                this.IsBlockstunReversalInputValid = string.IsNullOrEmpty(this.BlockstunReversalInput) || this._reversalTool.CheckValidInput(this.BlockstunReversalInput);
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(BlockstunReversalErrorVisibility));
+            }
+        }
+
+        private bool _isBlockstunReversalInputValid;
+        public bool IsBlockstunReversalInputValid
+        {
+            get => _isBlockstunReversalInputValid;
+            set
+            {
+                _isBlockstunReversalInputValid = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(BlockstunReversalErrorVisibility));
+            }
+        }
+
+        public Visibility BlockstunReversalErrorVisibility
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(this.BlockstunReversalInput) || IsBlockstunReversalInputValid)
+                {
+                    return Visibility.Hidden;
+                }
+
+                return Visibility.Visible;
+            }
+        }
         #endregion
 
 
@@ -132,6 +185,39 @@ namespace GGXrdWakeupDPUtil.ViewModels
 
         #endregion
 
+        #region StartBlockstunReversalCommand
+        private RelayCommand _startBlockstunReversalCommand;
+        public RelayCommand StartBlockstunReversalCommand => this._startBlockstunReversalCommand ?? (this._startBlockstunReversalCommand = new RelayCommand(this.StartBlockstunReversal, this.CanStartBlockstunReversal));
+        private void StartBlockstunReversal()
+        {
+            SlotInput slotInput = this._reversalTool.SetInputInSlot(this.BlockstunReversalSlotNumber, this.BlockstunReversalInput);
+            this._reversalTool.StartBlockReversalLoop(slotInput);
+            this.BlockstunReversalStarted = true;
+        }
+        private bool CanStartBlockstunReversal()
+        {
+            return !this.BlockstunReversalStarted && this.IsBlockstunReversalInputValid && !string.IsNullOrEmpty(this.BlockstunReversalInput);
+        }
+        #endregion
+
+        #region StopReversalCommand
+        private RelayCommand _stopBlockstunReversalCommand;
+
+        public RelayCommand StopBlockstunReversalCommand => this._stopBlockstunReversalCommand ?? (this._stopBlockstunReversalCommand = new RelayCommand(this.StopBlockstunReversal, this.CanStopBlockstunReversal));
+
+        private void StopBlockstunReversal()
+        {
+            this._reversalTool.StopBlockReversalLoop();
+            this.BlockstunReversalStarted = false;
+        }
+
+        private bool CanStopBlockstunReversal()
+        {
+            return this.BlockstunReversalStarted;
+        }
+
+        #endregion
+
         #endregion
 
 
@@ -146,11 +232,10 @@ namespace GGXrdWakeupDPUtil.ViewModels
             catch (Exception exception)
             {
                 string message =
-                    $"Guilty Gear not found open!  Remember, be in training mode paused when you open this program.  This program will now close.";
+                    "Guilty Gear not found open!  Remember, be in training mode paused when you open this program.  This program will now close.";
                 LogManager.Instance.WriteLine(message);
                 MessageBox.Show($"{message}{Environment.NewLine}{exception.Message}");
                 Application.Current.Shutdown();
-                return;
             }
 
         }
