@@ -138,7 +138,8 @@ namespace GGXrdWakeupDPUtil.Library
             this._memoryReader = new MemoryReader(process);
 
 
-            StartDummyLoop();
+            //TODO Remove
+            //StartDummyLoop();
         }
 
         public void BringWindowToFront()

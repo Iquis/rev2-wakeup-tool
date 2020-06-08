@@ -199,9 +199,5 @@ namespace GGXrdWakeupDPUtil.Test
             button11.Enabled = true;
             button12.Enabled = true;
         }
-
-
-        //TODO Random slot + % reversal
-        //TODO import inputs from slot
     }
 }

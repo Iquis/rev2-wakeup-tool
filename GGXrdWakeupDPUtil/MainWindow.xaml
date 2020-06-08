@@ -1,0 +1,31 @@
+﻿<Window xmlns:Controls="clr-namespace:GGXrdWakeupDPUtil.Controls" 
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GGXrdWakeupDPUtil"
+        xmlns:viewModels="clr-namespace:GGXrdWakeupDPUtil.ViewModels"
+        x:Class="GGXrdWakeupDPUtil.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed" Loaded="Window_Loaded">
+
+    <Window.DataContext>
+        <viewModels:MainWindowViewModel/>
+    </Window.DataContext>
+    <DockPanel>
+        <TabControl>
+            <TabItem Header="Wakeup Reversal">
+                <StackPanel>
+                    <TextBox Text="{Binding ReversalInput, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding ReversalErrorVisibility, Mode=OneWay}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding StartReversalCommand}">Enable</Button>
+                        <Button Command="{Binding StopReversalCommand}">Disable</Button>
+                    </StackPanel>
+                    <Controls:SlotsControl SlotNumber="{Binding SlotNumber}" GroupName="Slots to overwrite :"/>
+                </StackPanel>
+
+            </TabItem>
+        </TabControl>
+    </DockPanel>
+</Window>
