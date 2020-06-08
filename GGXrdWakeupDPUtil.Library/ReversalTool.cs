@@ -224,7 +224,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         }
 
-        public void StartReversalLoop(SlotInput slotInput)
+        public void StartWakeupReversalLoop(SlotInput slotInput)
         {
             lock (RunReversalThreadLock)
             {

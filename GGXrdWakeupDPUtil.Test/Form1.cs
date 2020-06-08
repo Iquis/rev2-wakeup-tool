@@ -64,7 +64,7 @@ namespace GGXrdWakeupDPUtil.Test
             ReversalButtonEnable();
             var slotInput = _reversalTool.SetInputInSlot(1, textBox1.Text);
 
-            _reversalTool.StartReversalLoop(slotInput);
+            _reversalTool.StartWakeupReversalLoop(slotInput);
         }
 
         private void button7_Click(object sender, EventArgs e)

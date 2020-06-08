@@ -14,60 +14,62 @@ namespace GGXrdWakeupDPUtil.ViewModels
     {
         private readonly ReversalTool _reversalTool = new ReversalTool();
 
-        private int _slotNumber = 1;
-        public int SlotNumber
+
+
+
+        #region Wakeup Reversal
+        private int _wakeupReversalSlotNumber = 1;
+        public int WakeupReversalSlotNumber
         {
-            get => _slotNumber;
+            get => _wakeupReversalSlotNumber;
             set
             {
-                _slotNumber = value;
+                _wakeupReversalSlotNumber = value;
                 this.OnPropertyChanged();
             }
         }
 
-
-        #region Reversal
-        private bool _reversalStarted;
-        public bool ReversalStarted
+        private bool _wakeupReversalStarted;
+        public bool WakeupReversalStarted
         {
-            get => _reversalStarted;
+            get => _wakeupReversalStarted;
             set
             {
-                _reversalStarted = value;
+                _wakeupReversalStarted = value;
                 this.OnPropertyChanged();
             }
         }
 
-        private string _reversalInput;
-        public string ReversalInput
+        private string _wakeupReversalInput;
+        public string WakeupReversalInput
         {
-            get => _reversalInput;
+            get => _wakeupReversalInput;
             set
             {
-                _reversalInput = value;
-                this.IsReversalInputValid = string.IsNullOrEmpty(this.ReversalInput) || this._reversalTool.CheckValidInput(this.ReversalInput);
-                this.OnPropertyChanged();
-                this.OnPropertyChanged("ReversalErrorVisibility");
-            }
-        }
-
-        private bool _isReversalInputValid;
-        public bool IsReversalInputValid
-        {
-            get => _isReversalInputValid;
-            set
-            {
-                _isReversalInputValid = value;
+                _wakeupReversalInput = value;
+                this.IsWakeupReversalInputValid = string.IsNullOrEmpty(this.WakeupReversalInput) || this._reversalTool.CheckValidInput(this.WakeupReversalInput);
                 this.OnPropertyChanged();
                 this.OnPropertyChanged("ReversalErrorVisibility");
             }
         }
 
-        public Visibility ReversalErrorVisibility
+        private bool _isWakeupReversalInputValid;
+        public bool IsWakeupReversalInputValid
+        {
+            get => _isWakeupReversalInputValid;
+            set
+            {
+                _isWakeupReversalInputValid = value;
+                this.OnPropertyChanged();
+                this.OnPropertyChanged("ReversalErrorVisibility");
+            }
+        }
+
+        public Visibility WakeupReversalErrorVisibility
         {
             get
             {
-                if (string.IsNullOrEmpty(this.ReversalInput) || IsReversalInputValid)
+                if (string.IsNullOrEmpty(this.WakeupReversalInput) || IsWakeupReversalInputValid)
                 {
                     return Visibility.Hidden;
                 }
@@ -75,6 +77,10 @@ namespace GGXrdWakeupDPUtil.ViewModels
                 return Visibility.Visible;
             }
         }
+        #endregion
+
+        #region BlockStun Reversal
+
         #endregion
 
 
@@ -93,35 +99,35 @@ namespace GGXrdWakeupDPUtil.ViewModels
         #endregion
         #endregion
 
-        #region StartReversalCommand
-        private RelayCommand _startReversalCommand;
-        public RelayCommand StartReversalCommand => this._startReversalCommand ?? (this._startReversalCommand = new RelayCommand(this.StartReversal, this.CanStartReversal));
-        private void StartReversal()
+        #region StartWakeupReversalCommand
+        private RelayCommand _startWakeupReversalCommand;
+        public RelayCommand StartWakeupReversalCommand => this._startWakeupReversalCommand ?? (this._startWakeupReversalCommand = new RelayCommand(this.StartWakeupReversal, this.CanStartWakeupReversal));
+        private void StartWakeupReversal()
         {
-            SlotInput slotInput = this._reversalTool.SetInputInSlot(this.SlotNumber, this.ReversalInput);
-            this._reversalTool.StartReversalLoop(slotInput);
-            this.ReversalStarted = true;
+            SlotInput slotInput = this._reversalTool.SetInputInSlot(this.WakeupReversalSlotNumber, this.WakeupReversalInput);
+            this._reversalTool.StartWakeupReversalLoop(slotInput);
+            this.WakeupReversalStarted = true;
         }
-        private bool CanStartReversal()
+        private bool CanStartWakeupReversal()
         {
-            return !this.ReversalStarted && this.IsReversalInputValid && !string.IsNullOrEmpty(this.ReversalInput);
+            return !this.WakeupReversalStarted && this.IsWakeupReversalInputValid && !string.IsNullOrEmpty(this.WakeupReversalInput);
         }
         #endregion
 
         #region StopReversalCommand
-        private RelayCommand _stopReversalCommand;
+        private RelayCommand _stopWakeupReversalCommand;
 
-        public RelayCommand StopReversalCommand => this._stopReversalCommand ?? (this._stopReversalCommand = new RelayCommand(this.StopReversal, this.CanStopReversal));
+        public RelayCommand StopWakeupReversalCommand => this._stopWakeupReversalCommand ?? (this._stopWakeupReversalCommand = new RelayCommand(this.StopWakeupReversal, this.CanStopWakeupReversal));
 
-        private void StopReversal()
+        private void StopWakeupReversal()
         {
             this._reversalTool.StopReversalLoop();
-            this.ReversalStarted = false;
+            this.WakeupReversalStarted = false;
         }
 
-        private bool CanStopReversal()
+        private bool CanStopWakeupReversal()
         {
-            return this.ReversalStarted;
+            return this.WakeupReversalStarted;
         }
 
         #endregion

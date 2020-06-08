@@ -16,13 +16,13 @@
         <TabControl>
             <TabItem Header="Wakeup Reversal">
                 <StackPanel>
-                    <TextBox Text="{Binding ReversalInput, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding ReversalErrorVisibility, Mode=OneWay}"/>
+                    <TextBox Text="{Binding WakeupReversalInput, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding WakeupReversalErrorVisibility, Mode=OneWay}"/>
                     <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding StartReversalCommand}">Enable</Button>
-                        <Button Command="{Binding StopReversalCommand}">Disable</Button>
+                        <Button Command="{Binding StartWakeupReversalCommand}">Enable</Button>
+                        <Button Command="{Binding StopWakeupReversalCommand}">Disable</Button>
                     </StackPanel>
-                    <Controls:SlotsControl SlotNumber="{Binding SlotNumber}" GroupName="Slots to overwrite :"/>
+                    <Controls:SlotsControl SlotNumber="{Binding WakeupReversalSlotNumber}" GroupName="Slots to overwrite :"/>
                 </StackPanel>
 
             </TabItem>
