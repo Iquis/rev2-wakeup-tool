@@ -36,7 +36,20 @@
                     </StackPanel>
                     <Controls:SlotsControl SlotNumber="{Binding BlockstunReversalSlotNumber}" GroupName="Slots to overwrite :"/>
                 </StackPanel>
+            </TabItem>
+            <TabItem Header="Burst">
+                <StackPanel>
+                    <Slider Value="{Binding MinimumBurstComboValue}" />
+                    <Slider Value="{Binding MaximumBurstComboValue}" />
 
+                    <TextBlock Text="{Binding BurstPercentageText, Mode=OneWay}"/>
+                    <Slider Value="{Binding BurstPercentage}" Maximum="100" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding StartRandomBurstCommand}">Enable</Button>
+                        <Button Command="{Binding StopRandomBurstCommand}">Disable</Button>
+                    </StackPanel>
+                    <Controls:SlotsControl SlotNumber="{Binding RandomBurstSlotNumber}" GroupName="Slots to overwrite :"/>
+                </StackPanel>
             </TabItem>
         </TabControl>
     </DockPanel>

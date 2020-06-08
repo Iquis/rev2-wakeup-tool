@@ -136,6 +136,86 @@ namespace GGXrdWakeupDPUtil.ViewModels
         }
         #endregion
 
+        #region Burst
+
+        private int _minimumBurstComboValue = 1;
+        public int MinimumBurstComboValue
+        {
+            get => _minimumBurstComboValue;
+            set
+            {
+                _minimumBurstComboValue = value;
+                if (_minimumBurstComboValue > MaximumBurstComboValue)
+                {
+                    _minimumBurstComboValue = MaximumBurstComboValue;
+                }
+                this.OnPropertyChanged();
+            }
+        }
+
+        private int _maximumBurstComboValue = 10;
+        public int MaximumBurstComboValue
+        {
+            get => _maximumBurstComboValue;
+            set
+            {
+                _maximumBurstComboValue = value;
+
+                if (_maximumBurstComboValue < MinimumBurstComboValue)
+                {
+                    _maximumBurstComboValue = MinimumBurstComboValue;
+                }
+                this.OnPropertyChanged();
+            }
+        }
+
+        private int _burstPercentage = 50;
+        public int BurstPercentage
+        {
+            get => _burstPercentage;
+            set
+            {
+                _burstPercentage = value;
+                if (_burstPercentage < 0)
+                {
+                    _burstPercentage = 0;
+                }
+
+                if (_burstPercentage > 100)
+                {
+                    _burstPercentage = 100;
+                }
+                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(BurstPercentageText));
+            }
+        }
+
+        public string BurstPercentageText => $"Burst Percentage {BurstPercentage}%";
+
+        private int _randomBurstSlotNumber = 1;
+        public int RandomBurstSlotNumber
+        {
+            get => _randomBurstSlotNumber;
+            set
+            {
+                _randomBurstSlotNumber = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private bool _isRandomBurstStarted = false;
+        public bool IsRandomBurstStarted
+        {
+            get => _isRandomBurstStarted;
+            set
+            {
+                _isRandomBurstStarted = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        #endregion
+
 
         #region Commands
 
@@ -214,6 +294,43 @@ namespace GGXrdWakeupDPUtil.ViewModels
         private bool CanStopBlockstunReversal()
         {
             return this.BlockstunReversalStarted;
+        }
+
+        #endregion
+
+        #region StartRandomBurstCommand
+
+        private RelayCommand _startRandomBurstCommand;
+        public RelayCommand StartRandomBurstCommand => _startRandomBurstCommand ?? (_startRandomBurstCommand = new RelayCommand(StartRandomBurst, CanStartRandomBurst));
+
+        private bool CanStartRandomBurst()
+        {
+            return !this.IsRandomBurstStarted;
+        }
+
+        private void StartRandomBurst()
+        {
+            this._reversalTool.StartRandomBurstLoop(this.MinimumBurstComboValue, this.MaximumBurstComboValue, this.RandomBurstSlotNumber, this.BurstPercentage);
+            this.IsRandomBurstStarted = true;
+        }
+
+        #endregion
+
+        #region StopRandomBurstCommand
+
+        private RelayCommand _stopRandomBurstCommand;
+
+        public RelayCommand StopRandomBurstCommand => _stopRandomBurstCommand ?? (_stopRandomBurstCommand = new RelayCommand(StopRandomBurst, CanStopRandomBurst));
+
+        private bool CanStopRandomBurst()
+        {
+            return this.IsRandomBurstStarted;
+        }
+
+        private void StopRandomBurst()
+        {
+            this._reversalTool.StopRandomBurstLoop();
+            this.IsRandomBurstStarted = false;
         }
 
         #endregion
