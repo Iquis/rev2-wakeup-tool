@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Text;
 using System.Windows;
 using GGXrdWakeupDPUtil.Commands;
 using GGXrdWakeupDPUtil.Library;
@@ -8,9 +10,24 @@ namespace GGXrdWakeupDPUtil.ViewModels
     public class MainWindowViewModel : ViewModelBase
     {
         private readonly ReversalTool _reversalTool = new ReversalTool();
+        private readonly UpdateManager _updateManager = new UpdateManager();
+
+        private readonly StringBuilder _logStringBuilder = new StringBuilder();
+        public string LogText => _logStringBuilder.ToString();
+
+        public string Title => $"GGXrd Rev 2 Reversal Tool v{ConfigurationManager.AppSettings.Get("CurrentVersion")}";
+
+        public bool AutoUpdate
+        {
+            get => ConfigurationManager.AppSettings.Get("AutoUpdate") == "1";
+            set
+            {
+                AddUpdateAppSettings("AutoUpdate", value ? "1" : "0");
 
 
-
+                this.OnPropertyChanged();
+            }
+        }
 
         #region Wakeup Reversal
         private int _wakeupReversalSlotNumber = 1;
@@ -216,7 +233,6 @@ namespace GGXrdWakeupDPUtil.ViewModels
 
         #endregion
 
-
         #region Commands
 
         #region Window
@@ -335,6 +351,27 @@ namespace GGXrdWakeupDPUtil.ViewModels
 
         #endregion
 
+        #region CheckUpdatesCommand
+
+        private RelayCommand _checkUpdatesCommand;
+
+        public RelayCommand CheckUpdatesCommand => _checkUpdatesCommand ?? (_checkUpdatesCommand = new RelayCommand(CheckUpdates, CanCheckUpdates));
+
+        private bool CanCheckUpdates()
+        {
+            return true;
+            //TODO pas d'update pendant un loop
+            throw new NotImplementedException();
+        }
+        private void CheckUpdates()
+        {
+            this.UpdateProcess(true);
+        }
+
+        
+
+        #endregion
+
         #endregion
 
 
@@ -342,6 +379,12 @@ namespace GGXrdWakeupDPUtil.ViewModels
 
         private void InitializeWindow()
         {
+#if !DEBUG
+            if (AutoUpdate)
+            {
+                UpdateProcess();
+            } 
+#endif
             try
             {
                 _reversalTool.AttachToProcess();
@@ -355,6 +398,13 @@ namespace GGXrdWakeupDPUtil.ViewModels
                 Application.Current.Shutdown();
             }
 
+            LogManager.Instance.LineReceived += LogManager_LineReceived;
+        }
+
+        private void LogManager_LineReceived(object sender, string e)
+        {
+            _logStringBuilder.AppendLine(e);
+            this.OnPropertyChanged(nameof(LogText));
         }
 
         private void DisposeWindow()
@@ -362,6 +412,75 @@ namespace GGXrdWakeupDPUtil.ViewModels
             this._reversalTool.StopReversalLoop();
             this._reversalTool.StopBlockReversalLoop();
             this._reversalTool.StopRandomBurstLoop();
+        }
+
+        private void UpdateProcess(bool confirm = false)
+        {
+            string currentVersion = ConfigurationManager.AppSettings.Get("CurrentVersion");
+
+            LogManager.Instance.WriteLine($"Current Version is {currentVersion}");
+            try
+            {
+                this._updateManager.CleanOldFiles();
+                var latestVersion = this._updateManager.CheckUpdates();
+
+                if (latestVersion != null)
+                {
+                    if (!confirm || MessageBox.Show("A new version is available\r\nDo you want do download it?", "New version available", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        LogManager.Instance.WriteLine($"Found new version : v{latestVersion.Version}");
+                        bool downloadSuccess = this._updateManager.DownloadUpdate(latestVersion);
+
+                        if (downloadSuccess)
+                        {
+                            bool installSuccess = this._updateManager.InstallUpdate();
+
+                            if (installSuccess)
+                            {
+                                this._updateManager.SaveVersion(latestVersion.Version);
+                                this._updateManager.RestartApplication();
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    LogManager.Instance.WriteLine("No updates");
+
+                    if (confirm)
+                    {
+                        MessageBox.Show("Your version is up to date");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.WriteException(ex);
+            }
+        }
+        private void AddUpdateAppSettings(string key, string value)
+        {
+            try
+            {
+                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                var settings = configFile.AppSettings.Settings;
+                if (settings[key] == null)
+                {
+                    settings.Add(key, value);
+                }
+                else
+                {
+                    settings[key].Value = value;
+                }
+                configFile.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
+            }
+            catch (ConfigurationErrorsException ex)
+            {
+                LogManager.Instance.WriteLine("Error writing app settings");
+                LogManager.Instance.WriteException(ex);
+            }
         }
         #endregion
     }

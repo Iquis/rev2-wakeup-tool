@@ -7,50 +7,74 @@
         xmlns:viewModels="clr-namespace:GGXrdWakeupDPUtil.ViewModels"
         x:Class="GGXrdWakeupDPUtil.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed" Loaded="Window_Loaded">
+        Title="{Binding Title}" Height="450" Width="800" Closed="Window_Closed" Loaded="Window_Loaded">
 
     <Window.DataContext>
         <viewModels:MainWindowViewModel/>
     </Window.DataContext>
-    <DockPanel>
-        <TabControl>
-            <TabItem Header="Wakeup Reversal">
-                <StackPanel>
-                    <TextBox Text="{Binding WakeupReversalInput, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding WakeupReversalErrorVisibility, Mode=OneWay}"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding StartWakeupReversalCommand}">Enable</Button>
-                        <Button Command="{Binding StopWakeupReversalCommand}">Disable</Button>
-                    </StackPanel>
-                    <Controls:SlotsControl SlotNumber="{Binding WakeupReversalSlotNumber}" GroupName="Slots to overwrite :"/>
-                </StackPanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="175*"/>
+            <ColumnDefinition Width="23*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Menu IsMainMenu="True" Grid.ColumnSpan="2">
+            <MenuItem Header="_Help">
+                <MenuItem Header="Check for new version on startup" IsCheckable="True" IsChecked="{Binding AutoUpdate}"></MenuItem>
+                <MenuItem Header="Check New Version" Command="{Binding CheckUpdatesCommand}"></MenuItem>
+            </MenuItem>
+        </Menu>
+        <DockPanel Grid.Row="1" Grid.ColumnSpan="2">
 
-            </TabItem>
-            <TabItem Header="Blockstun Reversal">
-                <StackPanel>
-                    <TextBox Text="{Binding BlockstunReversalInput, UpdateSourceTrigger=PropertyChanged}" />
-                    <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding BlockstunReversalErrorVisibility, Mode=OneWay}"/>
-                    <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding StartBlockstunReversalCommand}">Enable</Button>
-                        <Button Command="{Binding StopBlockstunReversalCommand}">Disable</Button>
+            <TabControl>
+                <TabItem Header="Wakeup Reversal">
+                    <StackPanel>
+                        <TextBox Text="{Binding WakeupReversalInput, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding WakeupReversalErrorVisibility, Mode=OneWay}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding StartWakeupReversalCommand}">Enable</Button>
+                            <Button Command="{Binding StopWakeupReversalCommand}">Disable</Button>
+                        </StackPanel>
+                        <Controls:SlotsControl SlotNumber="{Binding WakeupReversalSlotNumber}" GroupName="Slots to overwrite :"/>
                     </StackPanel>
-                    <Controls:SlotsControl SlotNumber="{Binding BlockstunReversalSlotNumber}" GroupName="Slots to overwrite :"/>
-                </StackPanel>
-            </TabItem>
-            <TabItem Header="Burst">
-                <StackPanel>
-                    <Slider Value="{Binding MinimumBurstComboValue}" />
-                    <Slider Value="{Binding MaximumBurstComboValue}" />
 
-                    <TextBlock Text="{Binding BurstPercentageText, Mode=OneWay}"/>
-                    <Slider Value="{Binding BurstPercentage}" Maximum="100" />
-                    <StackPanel Orientation="Horizontal">
-                        <Button Command="{Binding StartRandomBurstCommand}">Enable</Button>
-                        <Button Command="{Binding StopRandomBurstCommand}">Disable</Button>
+                </TabItem>
+                <TabItem Header="Blockstun Reversal">
+                    <StackPanel>
+                        <TextBox Text="{Binding BlockstunReversalInput, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Text="Invalid Input" Foreground="Red" Visibility="{Binding BlockstunReversalErrorVisibility, Mode=OneWay}"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding StartBlockstunReversalCommand}">Enable</Button>
+                            <Button Command="{Binding StopBlockstunReversalCommand}">Disable</Button>
+                        </StackPanel>
+                        <Controls:SlotsControl SlotNumber="{Binding BlockstunReversalSlotNumber}" GroupName="Slots to overwrite :"/>
                     </StackPanel>
-                    <Controls:SlotsControl SlotNumber="{Binding RandomBurstSlotNumber}" GroupName="Slots to overwrite :"/>
-                </StackPanel>
-            </TabItem>
-        </TabControl>
-    </DockPanel>
+                </TabItem>
+                <TabItem Header="Burst">
+                    <StackPanel>
+                        <Slider Value="{Binding MinimumBurstComboValue}" />
+                        <Slider Value="{Binding MaximumBurstComboValue}" />
+
+                        <TextBlock Text="{Binding BurstPercentageText, Mode=OneWay}"/>
+                        <Slider Value="{Binding BurstPercentage}" Maximum="100" />
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding StartRandomBurstCommand}">Enable</Button>
+                            <Button Command="{Binding StopRandomBurstCommand}">Disable</Button>
+                        </StackPanel>
+                        <Controls:SlotsControl SlotNumber="{Binding RandomBurstSlotNumber}" GroupName="Slots to overwrite :"/>
+                    </StackPanel>
+                </TabItem>
+                <TabItem Header="Log">
+                    <DockPanel>
+                        <TextBox Text="{Binding LogText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"/>
+                    </DockPanel>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Grid>
+
+
 </Window>
