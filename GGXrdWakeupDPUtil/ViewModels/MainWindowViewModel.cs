@@ -41,13 +41,13 @@ namespace GGXrdWakeupDPUtil.ViewModels
             }
         }
 
-        private bool _wakeupReversalStarted;
-        public bool WakeupReversalStarted
+        private bool _isWakeupReversalStarted;
+        public bool IsWakeupReversalStarted
         {
-            get => _wakeupReversalStarted;
+            get => _isWakeupReversalStarted;
             set
             {
-                _wakeupReversalStarted = value;
+                _isWakeupReversalStarted = value;
                 this.OnPropertyChanged();
             }
         }
@@ -103,13 +103,13 @@ namespace GGXrdWakeupDPUtil.ViewModels
             }
         }
 
-        private bool _blockstunReversalStarted;
-        public bool BlockstunReversalStarted
+        private bool _isBlockstunReversalStarted;
+        public bool IsBlockstunReversalStarted
         {
-            get => _blockstunReversalStarted;
+            get => _isBlockstunReversalStarted;
             set
             {
-                _blockstunReversalStarted = value;
+                _isBlockstunReversalStarted = value;
                 this.OnPropertyChanged();
             }
         }
@@ -167,6 +167,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
                     _minimumBurstComboValue = MaximumBurstComboValue;
                 }
                 this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(BurstInfo));
             }
         }
 
@@ -183,6 +184,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
                     _maximumBurstComboValue = MinimumBurstComboValue;
                 }
                 this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(BurstInfo));
             }
         }
 
@@ -204,6 +206,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
                 }
                 this.OnPropertyChanged();
                 this.OnPropertyChanged(nameof(BurstPercentageText));
+                this.OnPropertyChanged(nameof(BurstInfo));
             }
         }
 
@@ -231,6 +234,33 @@ namespace GGXrdWakeupDPUtil.ViewModels
             }
         }
 
+
+
+        public string BurstInfo
+        {
+            get
+            {
+
+                if (this.BurstPercentage == 100)
+                {
+                    return $"The dummy will burst randomly between {this.MinimumBurstComboValue} and {this.MaximumBurstComboValue} hit combo";
+                }
+                else
+                {
+                    string text =
+                        this.MinimumBurstComboValue == this.MaximumBurstComboValue ?
+                            $"- The dummy will burst randomly at {MinimumBurstComboValue} hit combo ({BurstPercentage}% chance)" :
+                            $"- The dummy will burst randomly between {MinimumBurstComboValue} and {MaximumBurstComboValue} hit combo ({BurstPercentage}% chance)";
+
+                    text += Environment.NewLine;
+                    text += $"- The dummy won't burst at all ({100 - BurstPercentage}% chance)";
+
+                    return text;
+
+                }
+            }
+
+        }
         #endregion
 
         #region Commands
@@ -255,11 +285,11 @@ namespace GGXrdWakeupDPUtil.ViewModels
         {
             SlotInput slotInput = this._reversalTool.SetInputInSlot(this.WakeupReversalSlotNumber, this.WakeupReversalInput);
             this._reversalTool.StartWakeupReversalLoop(slotInput);
-            this.WakeupReversalStarted = true;
+            this.IsWakeupReversalStarted = true;
         }
         private bool CanStartWakeupReversal()
         {
-            return !this.WakeupReversalStarted && this.IsWakeupReversalInputValid && !string.IsNullOrEmpty(this.WakeupReversalInput);
+            return !this.IsWakeupReversalStarted && this.IsWakeupReversalInputValid && !string.IsNullOrEmpty(this.WakeupReversalInput);
         }
         #endregion
 
@@ -271,12 +301,12 @@ namespace GGXrdWakeupDPUtil.ViewModels
         private void StopWakeupReversal()
         {
             this._reversalTool.StopReversalLoop();
-            this.WakeupReversalStarted = false;
+            this.IsWakeupReversalStarted = false;
         }
 
         private bool CanStopWakeupReversal()
         {
-            return this.WakeupReversalStarted;
+            return this.IsWakeupReversalStarted;
         }
 
         #endregion
@@ -288,11 +318,11 @@ namespace GGXrdWakeupDPUtil.ViewModels
         {
             SlotInput slotInput = this._reversalTool.SetInputInSlot(this.BlockstunReversalSlotNumber, this.BlockstunReversalInput);
             this._reversalTool.StartBlockReversalLoop(slotInput);
-            this.BlockstunReversalStarted = true;
+            this.IsBlockstunReversalStarted = true;
         }
         private bool CanStartBlockstunReversal()
         {
-            return !this.BlockstunReversalStarted && this.IsBlockstunReversalInputValid && !string.IsNullOrEmpty(this.BlockstunReversalInput);
+            return !this.IsBlockstunReversalStarted && this.IsBlockstunReversalInputValid && !string.IsNullOrEmpty(this.BlockstunReversalInput);
         }
         #endregion
 
@@ -304,12 +334,12 @@ namespace GGXrdWakeupDPUtil.ViewModels
         private void StopBlockstunReversal()
         {
             this._reversalTool.StopBlockReversalLoop();
-            this.BlockstunReversalStarted = false;
+            this.IsBlockstunReversalStarted = false;
         }
 
         private bool CanStopBlockstunReversal()
         {
-            return this.BlockstunReversalStarted;
+            return this.IsBlockstunReversalStarted;
         }
 
         #endregion
@@ -359,16 +389,14 @@ namespace GGXrdWakeupDPUtil.ViewModels
 
         private bool CanCheckUpdates()
         {
-            return true;
-            //TODO pas d'update pendant un loop
-            throw new NotImplementedException();
+            return !IsWakeupReversalStarted && !IsBlockstunReversalStarted && !IsRandomBurstStarted;
         }
         private void CheckUpdates()
         {
             this.UpdateProcess(true);
         }
 
-        
+
 
         #endregion
 

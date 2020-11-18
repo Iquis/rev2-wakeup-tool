@@ -119,6 +119,9 @@
     <Compile Include="Controls\SlotsControl.xaml.cs">
       <DependentUpon>SlotsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\AntiBooleanValueConverter.cs" />
+    <Compile Include="Converters\FeatureRunningValueConverter.cs" />
+    <Compile Include="Converters\HitCounterConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
