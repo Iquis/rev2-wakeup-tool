@@ -48,6 +48,8 @@ namespace GGXrdWakeupDPUtil.Library
             new NameWakeupData("Answer", 25, 25)
         };
 
+        private const int WallSplatWakeupTiming = 15;
+
         
         #region Offsets
         private readonly IntPtr _p2IdOffset = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("P2IdOffset"), 16));
@@ -70,6 +72,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         private readonly string FaceDownAnimation = "CmnActFDown2Stand";
         private readonly string FaceUpAnimation = "CmnActBDown2Stand";
+        private readonly string WallSplatAnimation = "CmnActWallHaritsukiGetUp";
 
         private const int RecordingSlotSize = 4808;
 
@@ -666,6 +669,11 @@ namespace GGXrdWakeupDPUtil.Library
             if (animationString == FaceUpAnimation)
             {
                 return currentDummy.FaceUpFrames;
+            }
+            if (animationString == WallSplatAnimation)
+            {
+                //wakeup timing is universal on wall splat recovery
+                return WallSplatWakeupTiming;
             }
 
             return 0;
