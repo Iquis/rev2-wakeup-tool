@@ -155,6 +155,19 @@ namespace GGXrdWakeupDPUtil.ViewModels
             }
         }
 
+        private bool _playReversalAfterWallsplat = true;
+
+        public bool PlayReversalAfterWallsplat
+        {
+            get => _playReversalAfterWallsplat;
+            set
+            {
+                _playReversalAfterWallsplat = value;
+                this.OnPropertyChanged();
+            }
+
+
+        }
         #endregion
 
         #region BlockStun Reversal
@@ -440,7 +453,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
         {
             SlotInput slotInput = new SlotInput(this.WakeupReversalInput);
             this._reversalTool.SetInputInSlot(this.WakeupReversalSlotNumber, slotInput);
-            this._reversalTool.StartWakeupReversalLoop(slotInput, this.WakeupReversalPercentage);
+            this._reversalTool.StartWakeupReversalLoop(slotInput, this.WakeupReversalPercentage, this.PlayReversalAfterWallsplat);
             this.IsWakeupReversalStarted = true;
         }
         private bool CanStartWakeupReversal()

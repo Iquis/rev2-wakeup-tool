@@ -71,7 +71,7 @@ namespace GGXrdWakeupDPUtil.Test
             SlotInput slotInput = new SlotInput(textBox1.Text);
             _reversalTool.SetInputInSlot(1, slotInput);
 
-            _reversalTool.StartWakeupReversalLoop(slotInput, trackBar2.Value);
+            _reversalTool.StartWakeupReversalLoop(slotInput, trackBar2.Value, true);
         }
 
         private void button7_Click(object sender, EventArgs e)

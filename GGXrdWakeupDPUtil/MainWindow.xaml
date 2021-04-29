@@ -51,6 +51,7 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock Text="GGXrd Rev 2 Wakeup Reversal Tool" HorizontalAlignment="Center" />
                         <TextBlock Grid.Row="1" TextWrapping="Wrap" Text="{Binding DummyName, ConverterParameter=Current Dummy : \{0\}, Converter={StaticResource InterpolarConverter}}" HorizontalAlignment="Center" />
@@ -60,13 +61,14 @@
                             <Button Margin="10,0,0,0" Content="Export" Command="{Binding WakeupTranslateIntoFileCommand, Mode=OneWay}"/>
                         </UniformGrid>
                         <TextBlock Grid.Row="4" Text="{Binding WakeupReversalErrorMessage}" Foreground="Red" Visibility="{Binding WakeupReversalErrorVisibility, Mode=OneWay}" />
-                        <TextBlock Grid.Row="5" Text="{Binding WakeupReversalPercentage, ConverterParameter=Wakeup Reversal Percentage \{0\}%, Converter={StaticResource InterpolarConverter}}" HorizontalAlignment="Center"/>
-                        <Slider Grid.Row="6" Value="{Binding WakeupReversalPercentage}" Maximum="100" Minimum="0" IsEnabled="{Binding IsWakeupReversalStarted, Converter={StaticResource AntiBooleanValueConverter}}" TickPlacement="BottomRight" LargeChange="20" SmallChange="1" />
-                        <UniformGrid Grid.Row="7" Height="30" Columns="2" >
+                        <CheckBox Grid.Row="5" Content="Play Reversal after Wallsplat" HorizontalAlignment="Center" IsChecked="{Binding PlayReversalAfterWallsplat}" IsEnabled="{Binding IsWakeupReversalStarted, Converter={StaticResource AntiBooleanValueConverter}}"/>
+                        <TextBlock Grid.Row="6" Text="{Binding WakeupReversalPercentage, ConverterParameter=Wakeup Reversal Percentage \{0\}%, Converter={StaticResource InterpolarConverter}}" HorizontalAlignment="Center"/>
+                        <Slider Grid.Row="7" Value="{Binding WakeupReversalPercentage}" Maximum="100" Minimum="0" IsEnabled="{Binding IsWakeupReversalStarted, Converter={StaticResource AntiBooleanValueConverter}}" TickPlacement="BottomRight" LargeChange="20" SmallChange="1" />
+                        <UniformGrid Grid.Row="8" Height="30" Columns="2" >
                             <Button Command="{Binding StartWakeupReversalCommand}" Margin="0,0,10,0" Content="Enable"/>
                             <Button Command="{Binding StopWakeupReversalCommand}" Margin="10,0,0,0" Content="Disable"/>
                         </UniformGrid>
-                        <Controls:SlotsControl Grid.Row="8" SlotNumber="{Binding WakeupReversalSlotNumber}" GroupName="Slots to overwrite :" IsEnabled="{Binding IsWakeupReversalStarted, Converter={StaticResource AntiBooleanValueConverter}}" />
+                        <Controls:SlotsControl Grid.Row="9" SlotNumber="{Binding WakeupReversalSlotNumber}" GroupName="Slots to overwrite :" IsEnabled="{Binding IsWakeupReversalStarted, Converter={StaticResource AntiBooleanValueConverter}}" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="Blockstun Reversal">

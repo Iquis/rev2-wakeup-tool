@@ -50,7 +50,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         private const int WallSplatWakeupTiming = 15;
 
-        
+
         #region Offsets
         private readonly IntPtr _p2IdOffset = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("P2IdOffset"), 16));
         private readonly IntPtr _recordingSlotPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("RecordingSlotPtr"), 16));
@@ -190,7 +190,7 @@ namespace GGXrdWakeupDPUtil.Library
 
             return result;
         }
-        
+
         public bool WriteInputFile(string filePath, byte[] input)
         {
             try
@@ -304,7 +304,7 @@ namespace GGXrdWakeupDPUtil.Library
 
         }
 
-        public void StartWakeupReversalLoop(SlotInput slotInput, int wakeupReversalPercentage)
+        public void StartWakeupReversalLoop(SlotInput slotInput, int wakeupReversalPercentage, bool playReversalOnWallSplat)
         {
             lock (RunReversalThreadLock)
             {
@@ -327,7 +327,7 @@ namespace GGXrdWakeupDPUtil.Library
                 {
                     try
                     {
-                        int wakeupTiming = GetWakeupTiming(currentDummy);
+                        int wakeupTiming = GetWakeupTiming(currentDummy, playReversalOnWallSplat);
 
 
                         if (wakeupTiming != 0)
@@ -658,7 +658,7 @@ namespace GGXrdWakeupDPUtil.Library
             var address = IntPtr.Add(this._process.MainModule.BaseAddress, _frameCountOffset);
             return this._memoryReader.Read<int>(address);
         }
-        private int GetWakeupTiming(NameWakeupData currentDummy)
+        private int GetWakeupTiming(NameWakeupData currentDummy, bool playReversalOnWallSplat)
         {
             var animationString = ReadAnimationString(2);
 
@@ -670,7 +670,7 @@ namespace GGXrdWakeupDPUtil.Library
             {
                 return currentDummy.FaceUpFrames;
             }
-            if (animationString == WallSplatAnimation)
+            if (animationString == WallSplatAnimation && playReversalOnWallSplat)
             {
                 //wakeup timing is universal on wall splat recovery
                 return WallSplatWakeupTiming;
@@ -799,6 +799,6 @@ namespace GGXrdWakeupDPUtil.Library
         #endregion
 
 
-        
+
     }
 }
