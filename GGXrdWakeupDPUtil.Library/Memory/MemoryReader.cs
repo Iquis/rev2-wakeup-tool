@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace GGXrdWakeupDPUtil.Library
+namespace GGXrdWakeupDPUtil.Library.Memory
 {
     public class MemoryReader
     {
@@ -34,8 +33,7 @@ namespace GGXrdWakeupDPUtil.Library
         {
             this._process = process;
         }
-
-        //TODO Remove?
+        
         public bool Write(IntPtr address, IEnumerable<byte> bytes)
         {
             IntPtr handle = this._process.Handle;

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using GGXrdWakeupDPUtil.Library.Enums;
+using GGXrdWakeupDPUtil.Library.Memory;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using GGXrdWakeupDPUtil.Library.Enums;
+using GGXrdWakeupDPUtil.Library.Replay;
+using GGXrdWakeupDPUtil.Library.Replay.AsmInjection;
+using GGXrdWakeupDPUtil.Library.Replay.Keyboard;
 
 namespace GGXrdWakeupDPUtil.Library
 {
@@ -59,7 +60,6 @@ namespace GGXrdWakeupDPUtil.Library
         private readonly IntPtr _p2AnimStringPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("P2AnimStringPtr"), 16));
         private readonly int _p2AnimStringPtrOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("P2AnimStringPtrOffset"), 16);
         private readonly int _frameCountOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("FrameCountOffset"), 16);
-        private readonly IntPtr _scriptOffset = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("ScriptOffset"), 16));
         private readonly IntPtr _p1ComboCountPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("P1ComboCountPtr"), 16));
         private readonly int _p1ComboCountPtrOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("P1ComboCountPtrOffset"), 16);
         private readonly int _dummyIdOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("DummyIdOffset"), 16);
@@ -79,7 +79,9 @@ namespace GGXrdWakeupDPUtil.Library
         private Process _process;
 
         private MemoryReader _memoryReader;
-        private Keyboard.DirectXKeyStrokes _stroke;
+        private ReplayTrigger _replayTrigger;
+        private readonly string _replayTriggerType = ConfigurationManager.AppSettings.Get("ReplayTriggerType");
+
 
         #region Reversal Loop
         private static bool _runReversalThread;
@@ -127,6 +129,30 @@ namespace GGXrdWakeupDPUtil.Library
         #endregion
 
 
+        #region Replay Trigger
+        private ReplayTrigger GetReplayTrigger()
+        {
+            if (!Enum.TryParse(this._replayTriggerType, false, out ReplayTriggerTypes replayTriggerType))
+            {
+                replayTriggerType = ReplayTriggerTypes.AsmInjection;
+            }
+            
+            ReplayTriggerFactory factory;
+            
+            if (replayTriggerType == ReplayTriggerTypes.Keystroke)
+            {
+                Keyboard.DirectXKeyStrokes keyStroke = this.GetReplayKeyStroke();
+                factory = new KeyboardTriggerFactory(keyStroke);
+            }
+            else
+            {
+                factory = new AsmInjectionTriggerFactory(this._process, this._memoryReader);
+            }
+
+            return factory.GetReplayTrigger();
+        }
+        #endregion
+
         public void AttachToProcess()
         {
             var process = Process.GetProcessesByName(_ggprocname).FirstOrDefault();
@@ -140,8 +166,14 @@ namespace GGXrdWakeupDPUtil.Library
             this._memoryReader = new MemoryReader(process);
 
 
+            this._replayTrigger = GetReplayTrigger();
+
+            this._replayTrigger.InitTrigger();
+
             StartDummyLoop();
         }
+
+
 
         public void BringWindowToFront()
         {
@@ -286,22 +318,13 @@ namespace GGXrdWakeupDPUtil.Library
 
         public void PlayReversal()
         {
-
             LogManager.Instance.WriteLine("Reversal!");
 
             BringWindowToFront();
-            Keyboard keyboard = new Keyboard();
 
-
-            keyboard.SendKey(_stroke, false, Keyboard.InputType.Keyboard);
-            Thread.Sleep(150);
-            keyboard.SendKey(_stroke, true, Keyboard.InputType.Keyboard);
-
-
+            this._replayTrigger.TriggerReplay();
 
             LogManager.Instance.WriteLine("Reversal Done!");
-
-
         }
 
         public void StartWakeupReversalLoop(SlotInput slotInput, int wakeupReversalPercentage, bool playReversalOnWallSplat)
@@ -320,8 +343,6 @@ namespace GGXrdWakeupDPUtil.Library
                 Random rnd = new Random();
 
                 bool willReversal = rnd.Next(0, 101) <= wakeupReversalPercentage;
-
-                this._stroke = this.GetReplayKeyStroke();
 
                 while (localRunReversalThread && !this._process.HasExited)
                 {
@@ -403,8 +424,6 @@ namespace GGXrdWakeupDPUtil.Library
 
                 int valueToBurst = rnd.Next(min, max + 1);
                 bool willBurst = rnd.Next(0, 101) <= burstPercentage;
-
-                this._stroke = this.GetReplayKeyStroke();
 
 
                 while (localRunRandomBurstThread && !this._process.HasExited)
@@ -488,7 +507,6 @@ namespace GGXrdWakeupDPUtil.Library
 
                     bool willReversal = rnd.Next(0, 101) <= blockstunReversalPercentage;
 
-                    this._stroke = this.GetReplayKeyStroke();
                     int oldBlockstun = 0;
 
                     while (localRunBlockReversalThread && !this._process.HasExited)
@@ -699,6 +717,7 @@ namespace GGXrdWakeupDPUtil.Library
             return this._memoryReader.Read<int>(address);
         }
 
+        //TODO Remove?
         public Keyboard.DirectXKeyStrokes GetReplayKeyStroke()
         {
             int replayKeyCode = this.GetReplayKey();

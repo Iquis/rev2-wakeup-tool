@@ -21,7 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -33,6 +33,9 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Fasm.NET, Version=1.0.4939.27955, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\Fasm.NET.1.70.03.2\lib\Fasm.NET.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -51,14 +54,28 @@
     <Compile Include="GitHubClient.cs" />
     <Compile Include="Keyboard.cs" />
     <Compile Include="LogManager.cs" />
-    <Compile Include="MemoryReader.cs" />
+    <Compile Include="Memory\MemoryReader.cs" />
     <Compile Include="NameWakeupData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Replay\AsmInjection\AsmInjectionReplayTrigger.cs" />
+    <Compile Include="Replay\AsmInjection\AsmInjectionTriggerFactory.cs" />
+    <Compile Include="Replay\AsmInjection\MemoryAllocation.cs" />
+    <Compile Include="Replay\AsmInjection\MemoryAllocationFlags.cs" />
+    <Compile Include="Replay\AsmInjection\MemoryAllocator.cs" />
+    <Compile Include="Replay\AsmInjection\MemoryProtectionFlags.cs" />
+    <Compile Include="Replay\AsmInjection\MemoryReleaseFlags.cs" />
+    <Compile Include="Replay\ReplayTrigger.cs" />
+    <Compile Include="Replay\Keyboard\KeyboardReplayTrigger.cs" />
+    <Compile Include="Replay\Keyboard\KeyboardTriggerFactory.cs" />
+    <Compile Include="Replay\ReplayTriggerFactory.cs" />
+    <Compile Include="Replay\ReplayTriggerType.cs" />
     <Compile Include="ReversalTool.cs" />
     <Compile Include="ReversalType.cs" />
     <Compile Include="SlotInput.cs" />
     <Compile Include="UpdateManager.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Configuration;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using GGXrdWakeupDPUtil.Library;
 
@@ -39,7 +36,7 @@ namespace GGXrdWakeupDPUtil.Test
         {
             _reversalTool.Dispose();
         }
-
+        
         private void button3_Click(object sender, EventArgs e)
         {
             _reversalTool.PlayReversal();
