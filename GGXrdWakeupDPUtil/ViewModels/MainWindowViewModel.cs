@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Forms;
 using GGXrdWakeupDPUtil.Commands;
 using GGXrdWakeupDPUtil.Library;
+using GGXrdWakeupDPUtil.Library.Replay;
 using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
@@ -25,7 +26,7 @@ namespace GGXrdWakeupDPUtil.ViewModels
             get => ConfigurationManager.AppSettings.Get("AutoUpdate") == "1";
             set
             {
-                AddUpdateAppSettings("AutoUpdate", value ? "1" : "0");
+                ConfigManager.Set("AutoUpdate", value ? "1" : "0");
 
 
                 this.OnPropertyChanged();
@@ -895,29 +896,34 @@ namespace GGXrdWakeupDPUtil.ViewModels
                 LogManager.Instance.WriteException(ex);
             }
         }
-        private void AddUpdateAppSettings(string key, string value)
+        #endregion
+
+        #region ReplayTrigger
+
+        public bool IsAsmReplayTypeChecked => ConfigurationManager.AppSettings.Get("ReplayTriggerType") == ReplayTriggerTypes.AsmInjection.ToString();
+        public bool IsKeyStrokeReplayTypeChecked => ConfigurationManager.AppSettings.Get("ReplayTriggerType") == ReplayTriggerTypes.Keystroke.ToString();
+
+
+
+        private RelayCommand<string> _changeReplayTypeCommand;
+        public RelayCommand<string> ChangeReplayTypeCommand => _changeReplayTypeCommand ?? (_changeReplayTypeCommand = new RelayCommand<string>(ChangeReplayTypeCommandExecute, ChangeReplayTypeCommandCanExecute));
+        private void ChangeReplayTypeCommandExecute(string parameter)
         {
-            try
-            {
-                var configFile = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                var settings = configFile.AppSettings.Settings;
-                if (settings[key] == null)
-                {
-                    settings.Add(key, value);
-                }
-                else
-                {
-                    settings[key].Value = value;
-                }
-                configFile.Save(ConfigurationSaveMode.Modified);
-                ConfigurationManager.RefreshSection(configFile.AppSettings.SectionInformation.Name);
-            }
-            catch (ConfigurationErrorsException ex)
-            {
-                LogManager.Instance.WriteLine("Error writing app settings");
-                LogManager.Instance.WriteException(ex);
-            }
+            ReplayTriggerTypes replayTriggerType =
+                (ReplayTriggerTypes) Enum.Parse(typeof(ReplayTriggerTypes), parameter);
+
+            this._reversalTool.ChangeReplayTrigger(replayTriggerType);
+
+            this.OnPropertyChanged(nameof(IsAsmReplayTypeChecked));
+            this.OnPropertyChanged(nameof(IsKeyStrokeReplayTypeChecked));
         }
+        private bool ChangeReplayTypeCommandCanExecute(string parameter)
+        {
+            return this._reversalTool.ReplayTriggerType.ToString() != parameter;
+        }
+
+        
+
         #endregion
     }
 }

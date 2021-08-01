@@ -50,6 +50,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigManager.cs" />
     <Compile Include="Enums\Buttons.cs" />
     <Compile Include="GitHubClient.cs" />
     <Compile Include="Keyboard.cs" />

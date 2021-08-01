@@ -6,7 +6,7 @@ using GGXrdWakeupDPUtil.Library.Memory;
 
 namespace GGXrdWakeupDPUtil.Library.Replay.AsmInjection
 {
-    public class AsmInjectionReplayTrigger : ReplayTrigger, IDisposable
+    public class AsmInjectionReplayTrigger : ReplayTrigger
     {
         private readonly Process _process;
         private readonly MemoryReader _memoryReader;
@@ -78,7 +78,7 @@ namespace GGXrdWakeupDPUtil.Library.Replay.AsmInjection
             this._memoryReader.Write(_nonRelativeScriptOffset, bytes);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             string mnemonics = "mov ebp,[eax+0x40]\nmov ebp,[ebp+0x0C]\n";
 

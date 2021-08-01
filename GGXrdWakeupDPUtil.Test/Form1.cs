@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.Windows.Forms;
 using GGXrdWakeupDPUtil.Library;
+using GGXrdWakeupDPUtil.Library.Replay;
 
 namespace GGXrdWakeupDPUtil.Test
 {
@@ -36,7 +37,7 @@ namespace GGXrdWakeupDPUtil.Test
         {
             _reversalTool.Dispose();
         }
-        
+
         private void button3_Click(object sender, EventArgs e)
         {
             _reversalTool.PlayReversal();
@@ -253,6 +254,17 @@ namespace GGXrdWakeupDPUtil.Test
                 this.textBox2.Text = this._reversalTool.TranslateFromFile(ofd.FileName);
             }
 
+        }
+        
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            ReplayTriggerTypes replayTriggerType =
+                this._reversalTool.ReplayTriggerType == ReplayTriggerTypes.AsmInjection
+                    ? ReplayTriggerTypes.Keystroke
+                    : ReplayTriggerTypes.AsmInjection;
+
+            this._reversalTool.ChangeReplayTrigger(replayTriggerType);
         }
     }
 }

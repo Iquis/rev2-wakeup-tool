@@ -6,9 +6,11 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Xml.Linq;
 using GGXrdWakeupDPUtil.Library.Replay;
 using GGXrdWakeupDPUtil.Library.Replay.AsmInjection;
 using GGXrdWakeupDPUtil.Library.Replay.Keyboard;
@@ -80,8 +82,20 @@ namespace GGXrdWakeupDPUtil.Library
 
         private MemoryReader _memoryReader;
         private ReplayTrigger _replayTrigger;
-        private readonly string _replayTriggerType = ConfigurationManager.AppSettings.Get("ReplayTriggerType");
+        
+        public ReplayTriggerTypes ReplayTriggerType
+        {
+            get
+            {
+                if (!Enum.TryParse(ConfigurationManager.AppSettings.Get("ReplayTriggerType"), false, out ReplayTriggerTypes replayTriggerType))
+                {
+                    replayTriggerType = ReplayTriggerTypes.AsmInjection;
+                }
 
+                return replayTriggerType;
+            }
+            private set => ConfigManager.Set("ReplayTriggerType", value.ToString());
+        }
 
         #region Reversal Loop
         private static bool _runReversalThread;
@@ -132,11 +146,8 @@ namespace GGXrdWakeupDPUtil.Library
         #region Replay Trigger
         private ReplayTrigger GetReplayTrigger()
         {
-            if (!Enum.TryParse(this._replayTriggerType, false, out ReplayTriggerTypes replayTriggerType))
-            {
-                replayTriggerType = ReplayTriggerTypes.AsmInjection;
-            }
-            
+            ReplayTriggerTypes replayTriggerType = this.ReplayTriggerType;
+
             ReplayTriggerFactory factory;
             
             if (replayTriggerType == ReplayTriggerTypes.Keystroke)
@@ -151,18 +162,28 @@ namespace GGXrdWakeupDPUtil.Library
 
             return factory.GetReplayTrigger();
         }
+
+        public void ChangeReplayTrigger(ReplayTriggerTypes replayTriggerType)
+        {
+            if (replayTriggerType != this.ReplayTriggerType)
+            {
+                this.ReplayTriggerType = replayTriggerType;
+
+                this._replayTrigger?.Dispose();
+
+                this._replayTrigger = GetReplayTrigger();
+
+                this._replayTrigger.InitTrigger();
+            }
+        }
         #endregion
 
         public void AttachToProcess()
         {
             var process = Process.GetProcessesByName(_ggprocname).FirstOrDefault();
 
-            if (process == null)
-            {
-                throw new Exception("GG process not found!");
-            }
+            this._process = process ?? throw new Exception("GG process not found!");
 
-            this._process = process;
             this._memoryReader = new MemoryReader(process);
 
 
