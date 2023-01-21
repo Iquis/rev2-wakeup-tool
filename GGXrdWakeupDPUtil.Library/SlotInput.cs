@@ -31,7 +31,7 @@ namespace GGXrdWakeupDPUtil.Library
             }
 
             var input = inputShorts
-                .Select(x => { return SingleInputParse(x, isP2); })
+                .Select(x => SingleInputParse(x, isP2))
                 .Aggregate((a, b) => $"{a},{b}");
 
             this.ProcessBuild(input);
@@ -277,7 +277,7 @@ namespace GGXrdWakeupDPUtil.Library
                 this.ReversalFrameIndex = InputSplit.ToList().FindLastIndex(x => x.StartsWith(WakeUpFrameDelimiter.ToString()));
                 this.InputList = GetInputShorts(InputSplit);
 
-                var header = new List<ushort> { 0, 0, (ushort)InputList.Count(), 0 };
+                var header = new List<ushort> {  0,0 , (ushort)InputList.Count(), 0 };
 
 
                 this.Content = header.Concat(InputList).ToArray();

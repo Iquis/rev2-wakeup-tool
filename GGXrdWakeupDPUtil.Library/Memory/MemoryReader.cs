@@ -56,6 +56,18 @@ namespace GGXrdWakeupDPUtil.Library.Memory
 
         }
 
+        //TODO add method for multiple offsets
+        public IntPtr GetAddressWithOffsets(IntPtr address, int offset)
+        {
+            IntPtr newAddress = IntPtr.Add(this._process.MainModule.BaseAddress, (int)address);
+            
+            IntPtr value = this.Read<IntPtr>(newAddress);
+
+            newAddress = IntPtr.Add(value, offset);
+
+            return newAddress;
+        }
+
         public byte[] ReadBytes(IntPtr address, int length)
         {
             IntPtr handle = this._process.Handle;
