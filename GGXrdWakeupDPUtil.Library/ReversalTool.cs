@@ -70,8 +70,8 @@ namespace GGXrdWakeupDPUtil.Library
         private readonly int _replayKeyOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("ReplayKeyOffset"), 16);
 
         private readonly IntPtr _blockStunPtr = new IntPtr(Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunPtr"), 16));
-        private readonly int _blockStunOffset1 = Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunOffset1"), 16);
-        private readonly int _blockStunOffset2 = Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunOffset2"), 16);
+        private readonly int _blockStunOffset = Convert.ToInt32(ConfigurationManager.AppSettings.Get("BlockStunPtrOffset"), 16);
+        
         #endregion
 
         private readonly string FaceDownAnimation = "CmnActFDown2Stand";
@@ -679,18 +679,12 @@ namespace GGXrdWakeupDPUtil.Library
 
         private int GetBlockstun(int player)
         {
-            var baseAddress = this._blockStunPtr;
-            var offset1 = this._blockStunOffset1;
-            var offset2 = this._blockStunOffset2;
-
             if (player == 2)
             {
-                offset1 += 4;
+                return this._memoryReader.ReadWithOffsets<int>(this._blockStunPtr, this._blockStunOffset);
             }
 
-            var result = this._memoryReader.ReadWithOffsets<int>(baseAddress, offset1, offset2);
-
-            return result;
+            throw new NotImplementedException();
         }
 
         private int FrameCount()
