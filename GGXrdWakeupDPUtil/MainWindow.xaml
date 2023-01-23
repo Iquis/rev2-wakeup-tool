@@ -28,9 +28,10 @@
         <Menu IsMainMenu="True" Grid.ColumnSpan="2">
             <MenuItem Header="_Config">
                 <MenuItem Header="_Replay Type" IsCheckable="False">
-                    <MenuItem Header="_Asm Injection" IsCheckable="True" IsChecked="{Binding IsAsmReplayTypeChecked, Mode=OneWay}" Command="{Binding ChangeReplayTypeCommand, Mode=OneWay}" CommandParameter="AsmInjection"/>
+                    <!-- TODO fix asm injection -->
+                    <!-- <MenuItem Header="_Asm Injection" IsCheckable="True" IsChecked="{Binding IsAsmReplayTypeChecked, Mode=OneWay}" Command="{Binding ChangeReplayTypeCommand, Mode=OneWay}" CommandParameter="AsmInjection"/> -->
                     <MenuItem Header="_Keyboard Stroke" IsCheckable="True" IsChecked="{Binding IsKeyStrokeReplayTypeChecked, Mode=OneWay}" Command="{Binding ChangeReplayTypeCommand, Mode=OneWay}" CommandParameter="Keystroke"/>
-                    </MenuItem>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="_Help">
                 <MenuItem Header="Check for new version on startup" IsCheckable="True" IsChecked="{Binding AutoUpdate}"/>
