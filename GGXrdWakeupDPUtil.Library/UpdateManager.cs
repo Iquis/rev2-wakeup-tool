@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Linq;
 
 namespace GGXrdWakeupDPUtil.Library
