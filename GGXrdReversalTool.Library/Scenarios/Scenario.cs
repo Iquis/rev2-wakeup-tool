@@ -1,7 +1,6 @@
 ﻿using GGXrdReversalTool.Library.Characters;
 using GGXrdReversalTool.Library.Logging;
 using GGXrdReversalTool.Library.Memory;
-using GGXrdReversalTool.Library.Models;
 using GGXrdReversalTool.Library.Models.Inputs;
 using GGXrdReversalTool.Library.Scenarios.Action;
 using GGXrdReversalTool.Library.Scenarios.Event;
@@ -65,11 +64,13 @@ public class Scenario : IDisposable
             LogManager.Instance.WriteLine("Scenario Thread start");
             bool localRunThread = true;
 
+            var oldEventType = ScenarioEventTypes.None;
+
 
             while (localRunThread)
             {
                 var eventType = _scenarioEvent.CheckEvent();
-                if (eventType != ScenarioEventTypes.None)
+                if (eventType != oldEventType && eventType != ScenarioEventTypes.None)
                 {
                     LogManager.Instance.WriteLine("Event Occured");
                     
@@ -81,10 +82,7 @@ public class Scenario : IDisposable
 
                     Wait(timing);
 
-                    //TODO fix event frquency
-                    //var shouldExecuteAction = _scenarioFrequency.ShouldHappen();
-
-                    var shouldExecuteAction = true;
+                    var shouldExecuteAction = _scenarioFrequency.ShouldHappen();
 
                     if (shouldExecuteAction)
                     {
@@ -95,6 +93,7 @@ public class Scenario : IDisposable
                 }
                 
 
+                oldEventType = eventType;
 
 
                 lock (RunThreadLock)
