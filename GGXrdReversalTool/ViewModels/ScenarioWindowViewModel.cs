@@ -249,6 +249,8 @@ public class ScenarioWindowViewModel : ViewModelBase
             return;
         }
 
+        ScenarioAction.SlotNumber = SlotNumber;
+
         _scenario = new Scenario(_memoryReader, SelectedScenarioEvent, ScenarioAction, ScenarioFrequency);
         
         _scenario.Run();
@@ -313,7 +315,18 @@ public class ScenarioWindowViewModel : ViewModelBase
 
     
     public string LogText => _logStringBuilder.ToString();
-    
+
+    private int _slotNumber = 1;
+    public int SlotNumber
+    {
+        get => _slotNumber;
+        set
+        {
+            if (value == _slotNumber) return;
+            _slotNumber = value;
+            OnPropertyChanged();
+        }
+    }
 
     private void UpdateProcess(bool confirm = false)
     {

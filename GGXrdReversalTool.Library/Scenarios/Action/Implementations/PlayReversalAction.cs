@@ -16,16 +16,21 @@ public class PlayReversalAction : IScenarioAction
 
     private IReplayTrigger? _replayTrigger;
 
+
     public void Init()
     {
-        if (MemoryReader != null)
+        if (MemoryReader == null)
         {
-            InitReplayTrigger();
-
-
-            MemoryReader.WriteInputInSlot(1, Input);
+            return;
         }
+
+        InitReplayTrigger();
+
+
+        MemoryReader.WriteInputInSlot(SlotNumber, Input);
     }
+
+    public int SlotNumber { get; set; } = 1;
 
     public void Execute()
     {

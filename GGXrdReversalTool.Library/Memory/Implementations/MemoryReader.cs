@@ -62,6 +62,10 @@ public class MemoryReader : IMemoryReader
 
     public bool WriteInputInSlot(int slotNumber, SlotInput slotInput)
     {
+        if (slotNumber is < 1 or > 3)
+        {
+            throw new ArgumentException("Invalid Slot number", nameof(slotNumber));
+        }
         var baseAddress = GetAddressWithOffsets(_recordingSlotPtr.Pointer, _recordingSlotPtr.Offsets.ToArray());
         var slotAddress = IntPtr.Add(baseAddress, RecordingSlotSize * (slotNumber - 1));
 

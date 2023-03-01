@@ -30,16 +30,18 @@ public partial class SlotsControl : UserControl
 
     private static object OnCoerceSlotNumberProperty(DependencyObject source, object baseValue)
     {
-        if (baseValue is int value)
+        if (baseValue is not int value)
         {
-            switch (value)
-            {
-                case 1:
-                case 2:
-                case 3:
-                    return value;
+            return SlotNumberProperty.DefaultMetadata.DefaultValue;
+        }
 
-            }
+        switch (value)
+        {
+            case 1:
+            case 2:
+            case 3:
+                return value;
+
         }
 
         return SlotNumberProperty.DefaultMetadata.DefaultValue;
@@ -74,17 +76,17 @@ public partial class SlotsControl : UserControl
 
     private void RadioButton1_Checked(object sender, RoutedEventArgs e)
     {
-        this.SlotNumber = 1;
+        SlotNumber = 1;
     }
 
     private void RadioButton2_Checked(object sender, RoutedEventArgs e)
     {
-        this.SlotNumber = 2;
+        SlotNumber = 2;
     }
 
     private void RadioButton3_Checked(object sender, RoutedEventArgs e)
     {
-        this.SlotNumber = 3;
+        SlotNumber = 3;
     }
 
     #endregion

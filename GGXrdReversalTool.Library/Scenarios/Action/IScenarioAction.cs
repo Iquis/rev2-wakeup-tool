@@ -11,4 +11,6 @@ public interface IScenarioAction
     
     SlotInput Input { get; set; }
     void Init();
+    
+    int SlotNumber { get; set; }
 }

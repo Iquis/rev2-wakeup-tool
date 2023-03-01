@@ -489,7 +489,7 @@
                                 <Button Margin="10,0,0,0" Content="Disable" Command="{Binding DisableCommand}"/>
                             </UniformGrid>
                             
-                            <slotsControl:SlotsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" GroupName="Recording Slot"></slotsControl:SlotsControl>
+                            <slotsControl:SlotsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" GroupName="Recording Slot" SlotNumber="{Binding SlotNumber}"/>
                         </Grid>
                     </GroupBox>
                 </DockPanel>
