@@ -1,0 +1,137 @@
+﻿<Menu x:Class="GGXrdReversalTool.Controls.PresetMenu.PresetMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GGXrdReversalTool.Controls.PresetMenu"
+             xmlns:presets="clr-namespace:GGXrdReversalTool.Library.Presets;assembly=GGXrdReversalTool.Library"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300"
+             HorizontalAlignment="Center"
+             >
+    <Menu.Resources>
+        <Image x:Shared="false" x:Key="SolIcon" Source="../../Images/Characters/GGXRD-R2_Sol_Badguy_Icon.png"/>
+        <Image x:Shared="false" x:Key="KyIcon" Source="../../Images/Characters/GGXRD-R2_Ky_Kiske_Icon.png"/>
+        <Image x:Shared="false" x:Key="MayIcon" Source="../../Images/Characters/GGXRD-R2_May_Icon.png"/>
+        <Image x:Shared="false" x:Key="MilliaIcon" Source="../../Images/Characters/GGXRD-R2_Millia_Rage_Icon.png"/>
+        <Image x:Shared="false" x:Key="ZatoIcon" Source="../../Images/Characters/GGXRD-R2_Zato-1_Icon.png"/>
+        <Image x:Shared="false" x:Key="PotemkinIcon" Source="../../Images/Characters/GGXRD-R2_Potemkin_Icon.png"/>
+        <Image x:Shared="false" x:Key="ChippIcon" Source="../../Images/Characters/GGXRD-R2_Chipp_Zanuff_Icon.png"/>
+        <Image x:Shared="false" x:Key="FaustIcon" Source="../../Images/Characters/GGXRD-R2_Faust_Icon.png"/>
+        <Image x:Shared="false" x:Key="AxlIcon" Source="../../Images/Characters/GGXRD-R2_Axl_Low_Icon.png"/>
+        <Image x:Shared="false" x:Key="VenomIcon" Source="../../Images/Characters/GGXRD-R2_Venom_Icon.png"/>
+        <Image x:Shared="false" x:Key="SlayerIcon" Source="../../Images/Characters/GGXRD-R2_Slayer_Icon.png"/>
+        <Image x:Shared="false" x:Key="INoIcon" Source="../../Images/Characters/GGXRD-R2_I-No_Icon.png"/>
+        <Image x:Shared="false" x:Key="BedmanIcon" Source="../../Images/Characters/GGXRD-R2_Bedman_Icon.png"/>
+        <Image x:Shared="false" x:Key="RamlethalIcon" Source="../../Images/Characters/GGXRD-R2_Ramlethal_Valentine_Icon.png"/>
+        <Image x:Shared="false" x:Key="SinIcon" Source="../../Images/Characters/GGXRD-R2_Sin_Kiske_Icon.png"/>
+        <Image x:Shared="false" x:Key="ElpheltIcon" Source="../../Images/Characters/GGXRD-R2_Elphelt_Valentine_Icon.png"/>
+        <Image x:Shared="false" x:Key="LeoIcon" Source="../../Images/Characters/GGXRD-R2_Leo_Whitefang_Icon.png"/>
+        <Image x:Shared="false" x:Key="JohnnyIcon" Source="../../Images/Characters/GGXRD-R2_Johnny_Icon.png"/>
+        <Image x:Shared="false" x:Key="JackOIcon" Source="../../Images/Characters/GGXRD-R2_Jack-O_Icon.png"/>
+        <Image x:Shared="false" x:Key="JamIcon" Source="../../Images/Characters/GGXRD-R2_Jam_Kuradoberi_Icon.png"/>
+        <Image x:Shared="false" x:Key="HaehyunIcon" Source="../../Images/Characters/GGXRD-R2_Kum_Haehyun_Icon.png"/>
+        <Image x:Shared="false" x:Key="RavenIcon" Source="../../Images/Characters/GGXRD-R2_Raven_Icon.png"/>
+        <Image x:Shared="false" x:Key="DizzyIcon" Source="../../Images/Characters/GGXRD-R2_Dizzy_Icon.png"/>
+        <Image x:Shared="false" x:Key="BaikenIcon" Source="../../Images/Characters/GGXRD-R2_Baiken_Icon.png"/>
+        <Image x:Shared="false" x:Key="AnswerIcon" Source="../../Images/Characters/GGXRD-R2_Answer_Icon.png"/>
+    </Menu.Resources>
+    
+    <MenuItem Header="Presets" ItemsSource="{Binding Presets}">
+        <MenuItem.ItemContainerStyle>
+            <Style TargetType="{x:Type MenuItem}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Sol">
+                        <Setter Property="Icon" Value="{StaticResource SolIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Ky">
+                        <Setter Property="Icon" Value="{StaticResource KyIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="May">
+                        <Setter Property="Icon" Value="{StaticResource MayIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Millia">
+                        <Setter Property="Icon" Value="{StaticResource MilliaIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Zato">
+                        <Setter Property="Icon" Value="{StaticResource ZatoIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Potemkin">
+                        <Setter Property="Icon" Value="{StaticResource PotemkinIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Chipp">
+                        <Setter Property="Icon" Value="{StaticResource ChippIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Faust">
+                        <Setter Property="Icon" Value="{StaticResource FaustIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Axl">
+                        <Setter Property="Icon" Value="{StaticResource AxlIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Venom">
+                        <Setter Property="Icon" Value="{StaticResource VenomIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Slayer">
+                        <Setter Property="Icon" Value="{StaticResource SlayerIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="I-No">
+                        <Setter Property="Icon" Value="{StaticResource INoIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Bedman">
+                        <Setter Property="Icon" Value="{StaticResource BedmanIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Ramlethal">
+                        <Setter Property="Icon" Value="{StaticResource RamlethalIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Sin">
+                        <Setter Property="Icon" Value="{StaticResource SinIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Elphelt">
+                        <Setter Property="Icon" Value="{StaticResource ElpheltIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Leo">
+                        <Setter Property="Icon" Value="{StaticResource LeoIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Johnny">
+                        <Setter Property="Icon" Value="{StaticResource JohnnyIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Jack-O">
+                        <Setter Property="Icon" Value="{StaticResource JackOIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Jam">
+                        <Setter Property="Icon" Value="{StaticResource JamIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Haehyun">
+                        <Setter Property="Icon" Value="{StaticResource HaehyunIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Raven">
+                        <Setter Property="Icon" Value="{StaticResource RavenIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Dizzy">
+                        <Setter Property="Icon" Value="{StaticResource DizzyIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Baiken">
+                        <Setter Property="Icon" Value="{StaticResource BaikenIcon}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Character.CharName}" Value="Answer">
+                        <Setter Property="Icon" Value="{StaticResource AnswerIcon}"/>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </MenuItem.ItemContainerStyle>
+        <MenuItem.Resources>
+            <HierarchicalDataTemplate DataType="{x:Type presets:Preset}" ItemsSource="{Binding CharacterMoves}">
+                <TextBlock Text="{Binding Character.CharName, FallbackValue=Universal}"/>
+                <HierarchicalDataTemplate.ItemContainerStyle>
+                    <Style TargetType="{x:Type MenuItem}">
+                        <Setter Property="Command" Value="{Binding InsertPresetInputCommand, ElementName=ViewModel}" />
+                        <Setter Property="CommandParameter" Value="{Binding Input}" />
+                    </Style>
+                </HierarchicalDataTemplate.ItemContainerStyle>
+            </HierarchicalDataTemplate>
+            <HierarchicalDataTemplate DataType="{x:Type presets:CharacterMove}">                                                    
+                <TextBlock Text="{Binding Name}"/>
+            </HierarchicalDataTemplate>
+        </MenuItem.Resources>
+    </MenuItem>
+</Menu>

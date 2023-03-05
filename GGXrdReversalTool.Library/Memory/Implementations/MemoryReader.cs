@@ -69,7 +69,7 @@ public class MemoryReader : IMemoryReader
         var baseAddress = GetAddressWithOffsets(_recordingSlotPtr.Pointer, _recordingSlotPtr.Offsets.ToArray());
         var slotAddress = IntPtr.Add(baseAddress, RecordingSlotSize * (slotNumber - 1));
 
-        return Write(slotAddress, slotInput.Content);
+        return Write(slotAddress, slotInput.Header.Concat(slotInput.Content));
     }
 
     public int GetComboCount(int player)

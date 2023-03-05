@@ -1,22 +1,254 @@
 ﻿using System.Text.RegularExpressions;
+using GGXrdReversalTool.Library.Extensions;
 
 namespace GGXrdReversalTool.Library.Models.Inputs;
 
-//TODO Refactor
 public class SlotInput
 {
+    private const char FrameDelimiter = ',';
+    private const char WakeUpFrameDelimiter = '!';
+    private const int WakeupFrameMask = 0x200;
+    private readonly string _inputPattern = @"(?<frameInput>" + WakeUpFrameDelimiter + @"{0,1}[1-9]{1}[pkshd]{0,5})(?>(?>\*(?<multiplicator>[0-9]+))|)";
+    //TODO Replace by Enum Directions?
+    private readonly int[] _directions = { 0b0110, 0b0010, 0b1010, 0b0100, 0b0000, 0b1000, 0b0101, 0b0001, 0b1001 };
+
+    #region Constructors
+    public SlotInput(string rawInputText)
+    {
+        RawInputText = rawInputText;
+    }
+
     public SlotInput()
+        :this(string.Empty)
+    {
+    }
+
+    #endregion
+    
+    public string RawInputText { get; set; }
+
+    public IEnumerable<string> ExpandedInputList => GetExpandedFrameInputList(RawInputText);
+    public IEnumerable<string> CondensedInputListText => GetCondensedFrameInputListText(RawInputText);
+    public IEnumerable<CondensedInput> CondensedInputList => GetCondensedFrameInputList(RawInputText);
+    public IEnumerable<ushort> Content => GetContent(RawInputText);
+
+
+    
+
+    public int ReversalFrameIndex
+    {
+        get
+        {
+            return ExpandedInputList.FirstIndexOf(input => input.Contains(WakeUpFrameDelimiter));
+        }
+    }
+
+    
+
+    private IEnumerable<string> GetExpandedFrameInputList(string rawInputText)
+    {
+        var regex = new Regex(_inputPattern, RegexOptions.IgnoreCase);
+        
+        var frameInputList = rawInputText
+            .Split(FrameDelimiter)
+            .Where(frameInput => !string.IsNullOrEmpty(frameInput))
+            .Where(frameInput => regex.IsMatch(frameInput))
+            .Select(frameInput =>
+            {
+                var match = regex.Match(frameInput);
+                var frameInputWithoutMultiplicator = match.Groups["frameInput"].Value;
+                var multiplicator = int.TryParse(match.Groups["multiplicator"].Value, out var tmpMultiplicative)
+                    ? tmpMultiplicative
+                    : 1;
+                
+                return new
+                {
+                    FrameInputWithoutMultiplicator = frameInputWithoutMultiplicator,
+                    Multiplicator = multiplicator
+                };
+            })
+            .SelectMany(x => Enumerable.Range(0, x.Multiplicator).Select(_ => x.FrameInputWithoutMultiplicator))
+            ;
+
+        return frameInputList;
+    }
+
+    private IEnumerable<ushort> GetContent(string rawInputText)
+    {
+        var inputList = GetExpandedFrameInputList(rawInputText);
+        
+        var regex = new Regex(_inputPattern, RegexOptions.IgnoreCase);
+        
+        var result = inputList
+                .SelectMany(rawFrameInput =>
+                {
+                    if (!regex.IsMatch(rawFrameInput))
+                    {
+                        return Enumerable.Empty<ushort>();
+                    }
+
+                    var match = regex.Match(rawFrameInput);
+                    var frameInput = match.Groups["frameInput"].Value;
+
+                    var multiplicative = int.TryParse(match.Groups["multiplicator"].Value, out var tmpMultiplicative)
+                        ? tmpMultiplicative
+                        : 1;
+
+                    var values = frameInput
+                            .Select(singleFrameInput =>
+                            {
+                                if (int.TryParse(singleFrameInput.ToString(), out var direction) &&
+                                    direction is >= 1 and <= 9)
+                                {
+                                    return _directions[direction - 1];
+                                }
+
+                                var buttonText = singleFrameInput.ToString().ToUpper();
+
+                                if (buttonText is not ("P" or "K" or "S" or "H" or "D"))
+                                {
+                                    return 0;
+                                }
+
+                                var button = Enum.Parse<Buttons>(buttonText);
+
+                                return (int)button;
+
+                            })
+                        ;
+
+                    var value = values.Aggregate((a, b) => a | b);
+
+                    return Enumerable.Range(0, multiplicative).Select(_ => (ushort)value);
+
+                })
+            ;
+        return result;
+    }
+
+
+    [Obsolete]
+    private IEnumerable<ushort> ProcessInput(string inputText)
+    {
+        IEnumerable<string> inputList = inputText.Split(FrameDelimiter).Where(i => !string.IsNullOrEmpty(i));
+
+        var regex = new Regex(_inputPattern, RegexOptions.IgnoreCase);
+
+        var result = inputList
+                .SelectMany(rawFrameInput =>
+                {
+                    if (!regex.IsMatch(rawFrameInput))
+                    {
+                        return Enumerable.Empty<ushort>();
+                    }
+
+                    var match = regex.Match(rawFrameInput);
+                    var frameInput = match.Groups["frameInput"].Value;
+
+                    var multiplicative = int.TryParse(match.Groups["multiplicator"].Value, out var tmpMultiplicative)
+                        ? tmpMultiplicative
+                        : 1;
+
+                    var values = frameInput
+                            .Select(singleFrameInput =>
+                            {
+                                if (int.TryParse(singleFrameInput.ToString(), out var direction) &&
+                                    direction is >= 1 and <= 9)
+                                {
+                                    return _directions[direction - 1];
+                                }
+
+                                var buttonText = singleFrameInput.ToString().ToUpper();
+
+                                if (buttonText is not ("P" or "K" or "S" or "H" or "D"))
+                                {
+                                    return 0;
+                                }
+
+                                var button = Enum.Parse<Buttons>(buttonText);
+
+                                return (int)button;
+
+                            })
+                        ;
+
+                    var value = values.Aggregate((a, b) => a | b);
+
+                    return Enumerable.Range(0, multiplicative).Select(_ => (ushort)value);
+
+                })
+            ;
+    
+
+        return result;
+    }
+
+
+    private IEnumerable<CondensedInput> GetCondensedFrameInputList(string rawInputText)
+    {
+        var expandedFrameInputList = GetExpandedFrameInputList(rawInputText).ToList();
+
+        return expandedFrameInputList
+                .GroupWhile((prev, next) => prev == next)
+                .Select(group =>
+                {
+                    var enumerable = group.ToList();
+                    return new CondensedInput
+                    {
+                        FrameInput = enumerable.First(),
+                        Multiplicator = enumerable.Count
+                    };
+                })
+            ;
+
+    }
+
+    private IEnumerable<string> GetCondensedFrameInputListText(string rawInputText)
+    {
+        return GetCondensedFrameInputList(rawInputText)
+            .Select(x => x.Multiplicator > 1 ? $"{x.FrameInput}*{x.Multiplicator}" : $"{x.FrameInput}");
+    }
+    //TODO Unit tests
+
+
+    public bool IsReversalValid => Content.Any(); //TODO check reversal frame mask
+
+    public bool IsValid => Content.Any();
+    
+
+
+    public IEnumerable<ushort> Header => new List<ushort> { 0, 0, (ushort)Content.Count(), 0 };
+
+    public IEnumerable<string> InputSplit
+    {
+        get
+        {
+            // var pattern = @"(?<frameInput>" + WakeUpFrameDelimiter + "{0,1}[1-9]{1}[pkshd]{0,5})";
+            // var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            // return _inputText.Split(FrameDelimiter).Where(i => regex.IsMatch(i));
+            
+            return Enumerable.Empty<string>(); //TODO Implement
+        }
+    }
+}
+
+
+
+//TODO Remove
+public class SlotInput_Old
+{
+    public SlotInput_Old()
         : this(string.Empty)
     {
 
     }
 
-    public SlotInput(string input)
+    public SlotInput_Old(string input)
     {
         InputText = input;
     }
 
-    public SlotInput(IList<byte> result)
+    public SlotInput_Old(IList<byte> result)
     {
         var header = result.Take(8).ToArray();
         bool isP2 = header[0] == 1;
@@ -304,3 +536,5 @@ public class SlotInput
 
     #endregion
 }
+
+

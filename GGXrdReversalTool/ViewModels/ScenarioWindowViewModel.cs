@@ -297,8 +297,8 @@ public class ScenarioWindowViewModel : ViewModelBase
     {
         if (_scenarioAction is PlayReversalAction playReversal)
         {
-            var newInput = playReversal.Input.InputText +
-                           $"{(!playReversal.Input.InputText.EndsWith(",") && !string.IsNullOrWhiteSpace(playReversal.Input.InputText)  ? "," : "")}" +
+            var newInput = playReversal.Input.RawInputText +
+                           $"{(!playReversal.Input.RawInputText.EndsWith(",") && !string.IsNullOrWhiteSpace(playReversal.Input.RawInputText)  ? "," : "")}" +
                            input;
 
             ScenarioAction = new PlayReversalAction()
