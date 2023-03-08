@@ -8,10 +8,10 @@
         xmlns:scenarioEventImplementations="clr-namespace:GGXrdReversalTool.Library.Scenarios.Event.Implementations;assembly=GGXrdReversalTool.Library"
         xmlns:scenarioActionImplementations="clr-namespace:GGXrdReversalTool.Library.Scenarios.Action.Implementations;assembly=GGXrdReversalTool.Library"
         xmlns:scenarioFrequencyImplementations="clr-namespace:GGXrdReversalTool.Library.Scenarios.Frequency.Implementations;assembly=GGXrdReversalTool.Library"
-        xmlns:presets="clr-namespace:GGXrdReversalTool.Library.Presets;assembly=GGXrdReversalTool.Library"
         xmlns:slotsControl="clr-namespace:GGXrdReversalTool.Controls.SlotsControl"
         xmlns:inputControl="clr-namespace:GGXrdReversalTool.Controls.InputControl"
         xmlns:presetMenu="clr-namespace:GGXrdReversalTool.Controls.PresetMenu"
+        xmlns:condensedInputControl="clr-namespace:GGXrdReversalTool.Controls.CondensedInputControl"
         xmlns:converters="clr-namespace:GGXrdReversalTool.Converters"
         mc:Ignorable="d"
         Title="{Binding Title}"
@@ -26,6 +26,7 @@
         <converters:PercentageFrequencyConverter x:Key="PercentageFrequencyConverter"/>
         <converters:InputConverter x:Key="InputConverter"/>
         <converters:InputSplitConverter x:Key="InputSplitConverter"/>
+        <converters:DebugDummyConverter x:Key="DebugDummyConverter"></converters:DebugDummyConverter>
     </Window.Resources>
     <Window.DataContext>
         <viewModels:ScenarioWindowViewModel x:Name="ViewModel"/>
@@ -157,67 +158,48 @@
                                     <ContentControl Content="{Binding ScenarioAction}">
                                         <ContentControl.Resources>
                                             <DataTemplate DataType="{x:Type scenarioActionImplementations:PlayReversalAction}">
-                                                <ItemsControl>
-                                                    <ItemsControl.ItemContainerStyle>
-                                                        <Style>
-                                                            <Setter Property="Control.Margin" Value="0,5,0,5"/>
-                                                        </Style>
-                                                    </ItemsControl.ItemContainerStyle>
-                                                    <ItemsControl.ItemsPanel>
-                                                        <ItemsPanelTemplate>
-                                                            <Grid>
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition Height="Auto"/>
-                                                                    <RowDefinition Height="Auto"/>
-                                                                    <RowDefinition/>
-                                                                </Grid.RowDefinitions>
-                                                            </Grid>
-                                                        </ItemsPanelTemplate>
-                                                    </ItemsControl.ItemsPanel>
-
+                                                <Grid Margin="0,5">
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition/>
+                                                    </Grid.RowDefinitions>
                                                     <TextBlock TextWrapping="Wrap" Text="Action to perform :" Margin="0,5"/>
                                                     <TextBox Grid.Row="1" Height="60" Text="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged}" />
-                                                    <ItemsControl Grid.Row="2" ItemsSource="{Binding Input.RawInputText, Converter={StaticResource InputConverter}}">
-                                                        <ItemsControl.ItemsPanel>
-                                                            <ItemsPanelTemplate>
-                                                                <WrapPanel Orientation="Horizontal"/>
-                                                            </ItemsPanelTemplate>
-                                                        </ItemsControl.ItemsPanel>
-                                                        <ItemsControl.ItemTemplate>
-                                                            <DataTemplate>
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="Auto"/>
-                                                                        <ColumnDefinition Width="Auto"/>
-                                                                        <ColumnDefinition Width="Auto"/>
-                                                                    </Grid.ColumnDefinitions>
-                                                                    <ItemsControl Grid.Column="0" ItemsSource="{Binding Converter={StaticResource InputSplitConverter}}">
-                                                                        <ItemsControl.ItemsPanel>
-                                                                            <ItemsPanelTemplate>
-                                                                                <StackPanel Orientation="Horizontal"/>
-                                                                            </ItemsPanelTemplate>
-                                                                        </ItemsControl.ItemsPanel>
-                                                                        <ItemsControl.ItemTemplate>
-                                                                            <DataTemplate>
-                                                                                <inputControl:InputControl Content="{Binding}"/>
-                                                                            </DataTemplate>
-                                                                        </ItemsControl.ItemTemplate>
-                                                                    </ItemsControl>
-                                                                    <TextBlock Grid.Column="1" Text="*"/>
-                                                                    <TextBlock Grid.Column="2" Text="{Binding Multiplicator}"/>
-                                                                </Grid>
-                                                            </DataTemplate>
-                                                        </ItemsControl.ItemTemplate>
-                                                    </ItemsControl>
-                                                </ItemsControl>
+                                                    <!-- <TextBlock Grid.Row="2" Height="60" Text="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}" /> -->
+                                                    
+                                                    <!-- <ItemsControl Grid.Row="2" Height="60" ItemsSource="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"> -->
+                                                    <!--     <ItemsControl.ItemsPanel> -->
+                                                    <!--         <ItemsPanelTemplate> -->
+                                                    <!--             <StackPanel Orientation="Horizontal"/> -->
+                                                    <!--         </ItemsPanelTemplate> -->
+                                                    <!--     </ItemsControl.ItemsPanel> -->
+                                                    <!--     <ItemsControl.ItemTemplate> -->
+                                                    <!--         <DataTemplate> -->
+                                                    <!--             <Border BorderThickness="2" BorderBrush="Black"> -->
+                                                    <!--                 <Grid> -->
+                                                    <!--                     <Grid.ColumnDefinitions> -->
+                                                    <!--                         <ColumnDefinition Width="Auto"/> -->
+                                                    <!--                         <ColumnDefinition Width="Auto"/> -->
+                                                    <!--                         <ColumnDefinition Width="Auto"/> -->
+                                                    <!--                     </Grid.ColumnDefinitions> -->
+                                                    <!--                     <TextBlock Grid.Column="0" Text="{Binding FrameInput}"/> -->
+                                                    <!--                     <TextBlock Grid.Column="1" Text="*"/> -->
+                                                    <!--                     <TextBlock Grid.Column="2" Text="{Binding Multiplicator}"/> -->
+                                                    <!--                 </Grid> -->
+                                                    <!--             </Border> -->
+                                                    <!--         </DataTemplate> -->
+                                                    <!--     </ItemsControl.ItemTemplate> -->
+                                                    <!-- </ItemsControl> -->
+                                                    <condensedInputControl:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
+                                                    <!-- <condensedInputControl:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.CondensedInputList}"/> -->
+                                                </Grid>
                                             </DataTemplate>
                                         </ContentControl.Resources>
                                     </ContentControl>
 
-                                    <presetMenu:PresetMenu Grid.Row="1">
-                                        
-                                    </presetMenu:PresetMenu>
-                                    
+                                    <presetMenu:PresetMenu Grid.Row="1" GroupName="{Binding ScenarioAction.Input.RawInputText, FallbackValue='null'}" Presets="{Binding Presets, Converter={StaticResource DebugDummyConverter}}" InsertPresetInputCommand="{Binding InsertPresetInputCommand}"/>
+
                                 </Grid>
                                 
                             </GroupBox>

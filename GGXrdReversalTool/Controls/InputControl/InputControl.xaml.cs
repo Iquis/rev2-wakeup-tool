@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.Collections.Generic;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace GGXrdReversalTool.Controls.InputControl;
 
@@ -8,4 +10,8 @@ public partial class InputControl : ContentControl
     {
         InitializeComponent();
     }
+
+    public IEnumerable<string> Inputs { get; set; }
+    
+    public static readonly DependencyProperty InputsProperty = DependencyProperty.Register(nameof(Inputs), typeof(IEnumerable<string>), typeof(InputControl));
 }

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:GGXrdReversalTool.Controls.InputControl"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Content="{Binding Content}"
+             Content="{Binding Inputs}"
              >
     <ContentControl.ContentTemplate>
         <DataTemplate>

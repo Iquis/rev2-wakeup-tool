@@ -188,7 +188,7 @@ public class SlotInput
     {
         var expandedFrameInputList = GetExpandedFrameInputList(rawInputText).ToList();
 
-        return expandedFrameInputList
+        var result = expandedFrameInputList
                 .GroupWhile((prev, next) => prev == next)
                 .Select(group =>
                 {
@@ -199,7 +199,10 @@ public class SlotInput
                         Multiplicator = enumerable.Count
                     };
                 })
+                .ToList() //TODO Remove
             ;
+
+        return result;
 
     }
 

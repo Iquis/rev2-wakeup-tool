@@ -62,6 +62,8 @@ public class SlotInputTests
     [InlineData("6,5*7",new []{"6","5","5","5","5","5","5","5"})]
     [InlineData("6*1,5*7",new []{"6","5","5","5","5","5","5","5"})]
     [InlineData("6*0,5*7",new []{"5","5","5","5","5","5","5"})]
+    [InlineData("5*7,5*1", new []{"5","5","5","5","5","5","5","5"})]
+    [InlineData("5h*7,5H*1", new []{"5H","5H","5H","5H","5H","5H","5H","5H"})]
     public void SlotInput_ExpandedInputList_Test(string rawInputText, IEnumerable<string> expected)
     {
         var slotInput1 = new SlotInput(rawInputText);
@@ -75,6 +77,8 @@ public class SlotInputTests
     [InlineData("6,5*7", new []{"6","5*7"})]
     [InlineData("6*1,5*7", new []{"6","5*7"})]
     [InlineData("6*0,5*7", new []{"5*7"})]
+    [InlineData("5*7,5*1", new []{"5*8"})]
+    [InlineData("5h*7,5H*1", new []{"5H*8"})]
     public void SlotInput_CondensedInputList_Test(string rawInputText, IEnumerable<string> expected)
     {
         var slotInput1 = new SlotInput(rawInputText);

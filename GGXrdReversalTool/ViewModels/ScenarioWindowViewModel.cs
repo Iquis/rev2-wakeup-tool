@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using GGXrdReversalTool.Commands;
+using GGXrdReversalTool.Library.Characters;
 using GGXrdReversalTool.Library.Configuration;
 using GGXrdReversalTool.Library.Logging;
 using GGXrdReversalTool.Library.Memory;
@@ -24,6 +26,7 @@ using GGXrdReversalTool.Updates;
 
 namespace GGXrdReversalTool.ViewModels;
 
+[Obsolete]
 public class ScenarioWindowViewModel : ViewModelBase
 {
     private readonly IMemoryReader _memoryReader;
@@ -195,7 +198,30 @@ public class ScenarioWindowViewModel : ViewModelBase
         }
     }
 
-    public IEnumerable<Preset> Presets => Preset.Presets;
+    // public IEnumerable<Preset> Presets
+    // {
+    //     get
+    //     {
+    //         var result = Preset.Presets;
+    //         return result;
+    //     }
+    //     set
+    //     {
+    //         
+    //     }
+    // }
+
+    public IEnumerable<Preset> Presets
+    {
+        get => _presets;
+        set
+        {
+            if (Equals(value, _presets)) return;
+            _presets = value;
+            OnPropertyChanged();
+        }
+    }
+
 
     private ObservableCollection<IScenarioEvent> _scenarioEvents;
     public ObservableCollection<IScenarioEvent> ScenarioEvents
@@ -317,6 +343,9 @@ public class ScenarioWindowViewModel : ViewModelBase
     public string LogText => _logStringBuilder.ToString();
 
     private int _slotNumber = 1;
+    private IEnumerable<Preset> _presets;
+
+
     public int SlotNumber
     {
         get => _slotNumber;
@@ -327,6 +356,10 @@ public class ScenarioWindowViewModel : ViewModelBase
             OnPropertyChanged();
         }
     }
+
+    public IEnumerable Options => new []{ 1,2,3};
+
+    public int SelectedOption { get; set; } = 1;
 
     private void UpdateProcess(bool confirm = false)
     {
