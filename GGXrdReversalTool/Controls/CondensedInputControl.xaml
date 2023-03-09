@@ -25,8 +25,8 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <local:FrameInputControl Grid.Column="0" FrameInput="{Binding FrameInput}"/>
-                    <TextBlock Grid.Column="1" Text="*"/>
-                    <TextBlock Grid.Column="2" Text="{Binding Multiplicator}"/>
+                    <TextBlock Grid.Column="1" Text="*" FontSize="16"/>
+                    <TextBlock Grid.Column="2" Text="{Binding Multiplicator}" FontSize="16"/>
                 </Grid>
             </Border>
         </DataTemplate>
