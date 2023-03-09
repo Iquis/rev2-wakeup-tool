@@ -10,12 +10,16 @@ namespace GGXrdReversalTool.Converters;
 [ValueConversion(typeof(string),typeof(IEnumerable<CondensedInput>))]
 public class InputConverter : IValueConverter
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
     {
-        SlotInput slotInput = new SlotInput(value.ToString() ?? "");
+        if (value == null)
+        {
+            return Enumerable.Empty<CondensedInput>();
+        }
+        
+        var slotInput = new SlotInput(value.ToString() ?? "");
 
-        IEnumerable<CondensedInput> result = slotInput.CondensedInputList;
-        return result;
+        return slotInput.CondensedInputList;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

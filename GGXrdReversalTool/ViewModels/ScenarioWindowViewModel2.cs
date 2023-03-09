@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using GGXrdReversalTool.Commands;
 using GGXrdReversalTool.Library.Configuration;
 using GGXrdReversalTool.Library.Logging;
 using GGXrdReversalTool.Library.Models;
+using GGXrdReversalTool.Library.Presets;
+using GGXrdReversalTool.Library.Scenarios.Action;
 using GGXrdReversalTool.Updates;
 
 namespace GGXrdReversalTool.ViewModels;
@@ -178,6 +181,130 @@ public class ScenarioWindowViewModel2 : ViewModelBase
         string target = "https://paypal.me/Iquisiquis";
         Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
 
+    }
+
+    #endregion
+
+
+    public IEnumerable<ScenarioActionTypes> ActionTypes => Enum.GetValues<ScenarioActionTypes>();
+
+
+
+    private int _percentage = 100;
+    public int Percentage
+    {
+        get => _percentage;
+        set
+        {
+            var coerceValue = Math.Clamp(value, 0, 100);
+            
+            if (coerceValue == _percentage) return;
+            _percentage = coerceValue;
+            OnPropertyChanged();
+        }
+    }
+
+    public IEnumerable<Preset> Presets => Preset.Presets;
+
+
+    private string _rawInputText = string.Empty;
+    public string RawInputText
+    {
+        get => _rawInputText;
+        set
+        {
+            if (value == _rawInputText) return;
+            _rawInputText = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #region InsertPresetInputCommand
+
+    public RelayCommand<string> InsertPresetInputCommand => new(InsertPresetInput, CanInsertPresetInput);
+
+    private void InsertPresetInput(string input)
+    {
+        RawInputText = RawInputText +
+                       $"{(!RawInputText.EndsWith(",") && !string.IsNullOrWhiteSpace(RawInputText)  ? "," : "")}" +
+                       input;
+    }
+
+    private bool CanInsertPresetInput(string input)
+    {
+        //TODO implement
+        return true;
+
+        // return _scenario is not { IsRunning: true };
+    }
+
+    #endregion
+    
+
+    private int _slotNumber = 1;
+    public int SlotNumber
+    {
+        get => _slotNumber;
+        set
+        {
+            if (value == _slotNumber) return;
+            _slotNumber = value;
+            OnPropertyChanged();
+        }
+    }
+
+    #region EnableCommand
+
+    public RelayCommand EnableCommand => new(Enable, CanEnable);
+
+    private void Enable()
+    {
+        //TODO Implement
+        // if (SelectedScenarioEvent == null || ScenarioAction == null || ScenarioFrequency == null)
+        // {
+        //     return;
+        // }
+        //
+        // ScenarioAction.SlotNumber = SlotNumber;
+        //
+        // _scenario = new Scenario(_memoryReader, SelectedScenarioEvent, ScenarioAction, ScenarioFrequency);
+        //
+        // _scenario.Run();
+    }
+
+    private bool CanEnable()
+    {
+        //TODO Implement
+        return true;
+        //
+        // return _selectedScenarioEvent != null &&
+        //        _scenarioAction != null &&
+        //        _scenarioFrequency != null &&
+        //        
+        //        //TODO check with all event types
+        //        ((_selectedScenarioEvent is AnimationEvent && _scenarioAction.Input.IsReversalValid) || (_selectedScenarioEvent is ComboEvent && _scenarioAction.Input.IsValid)) &&
+        //        _scenario is not { IsRunning: true };
+    }
+
+    #endregion
+
+    #region DisableCommand
+
+    public RelayCommand DisableCommand => new(Disable, CanDisable);
+
+    private void Disable()
+    {
+        //TODO Implement
+        // _scenario?.Stop();
+    }
+
+    private bool CanDisable()
+    {
+        return true;
+        // return _scenario?.IsRunning ?? false;
+
+
+        //TODO Implement
     }
 
     #endregion

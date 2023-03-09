@@ -28,6 +28,33 @@
                            AboutCommand="{Binding AboutCommand}"
                            MainWindow="{Binding ElementName=Window}"
                            DonateCommand="{Binding DonateCommand}"  />
+        <TabControl Grid.Row="1">
+            <TabItem Header="Scenario">
+                <DockPanel>
+                    <GroupBox Header="Scenario Maker">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <controls:EventControl Grid.Column="0" Grid.Row="0" ActionTypes="{Binding ActionTypes}"/>
+                            <controls:ActionControl Presets="{Binding Presets}" RawInputText="{Binding RawInputText}" InsertPresetInputCommand="{Binding InsertPresetInputCommand}" Grid.Column="1" Grid.Row="0"/>
+                            <controls:FrequencyControl Grid.Column="2" Grid.Row="0" Percentage="{Binding Percentage}"/>
+                            <controls:EnableDisableScenarioControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,0" EnableCommand="{Binding EnableCommand}" DisableCommand="{Binding DisableCommand}"/>
+                            <controls:SlotsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" GroupName="Recording Slot" SlotNumber="{Binding SlotNumber}"/>
+                        </Grid>
+                    </GroupBox>
+                </DockPanel>
+            </TabItem>
+            <TabItem Header="Import/Export" IsEnabled="False"></TabItem>
+            <TabItem Header="Log"></TabItem>
+        </TabControl>
         
     </Grid>
 </Window>

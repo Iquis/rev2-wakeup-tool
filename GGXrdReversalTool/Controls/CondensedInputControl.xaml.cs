@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using GGXrdReversalTool.Library.Models.Inputs;
 
-namespace GGXrdReversalTool.Controls.CondensedInputControl;
+namespace GGXrdReversalTool.Controls;
 
 public partial class CondensedInputControl : ItemsControl
 {
@@ -24,6 +23,7 @@ public partial class CondensedInputControl : ItemsControl
         DependencyProperty.Register(nameof(CondensedInputs), typeof(IEnumerable<CondensedInput>),
             typeof(CondensedInputControl), new PropertyMetadata(Enumerable.Empty<CondensedInput>()));
 
+    //TODO Implement
 
     // public IEnumerable ItemsSource
     // {

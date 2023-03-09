@@ -1,0 +1,30 @@
+﻿<UserControl x:Class="GGXrdReversalTool.Controls.ActionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:GGXrdReversalTool.Controls"
+             x:Name="Control"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <GroupBox Header="Do">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <Grid Margin="0,5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock TextWrapping="Wrap" Text="Action to perform :" Margin="0,5"/>
+                <TextBox Grid.Row="1" Height="60" Text="{Binding ElementName=Control, Path=RawInputText, UpdateSourceTrigger=PropertyChanged}" />
+                <local:CondensedInputControl Grid.Row="2" ItemsSource="{Binding ElementName=Control, Path=RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
+            </Grid>
+            <local:PresetMenu Grid.Row="1" Presets="{Binding ElementName=Control, Path=Presets}" InsertPresetInputCommand="{Binding ElementName=Control, Path=InsertPresetInputCommand}"/>
+        </Grid>
+    </GroupBox>
+</UserControl>

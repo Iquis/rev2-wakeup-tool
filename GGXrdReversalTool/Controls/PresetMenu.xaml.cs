@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using GGXrdReversalTool.Commands;
 using GGXrdReversalTool.Library.Presets;
 
-namespace GGXrdReversalTool.Controls.PresetMenu;
+namespace GGXrdReversalTool.Controls;
 
 public partial class PresetMenu : UserControl
 {
@@ -36,28 +34,5 @@ public partial class PresetMenu : UserControl
 
     public static readonly DependencyProperty InsertPresetInputCommandProperty =
         DependencyProperty.Register(nameof(InsertPresetInputCommand), typeof(ICommand), typeof(PresetMenu));
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    public string GroupName
-    {
-        get => (string)GetValue(GroupNameProperty);
-        set => SetValue(GroupNameProperty, value);
-    }
-
-    // Using a DependencyProperty as the backing store for GroupName.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty GroupNameProperty =
-        DependencyProperty.Register(nameof(GroupName), typeof(string), typeof(PresetMenu),
-            new PropertyMetadata("GroupName"));
 
 }

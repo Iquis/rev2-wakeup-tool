@@ -8,11 +8,8 @@
         xmlns:scenarioEventImplementations="clr-namespace:GGXrdReversalTool.Library.Scenarios.Event.Implementations;assembly=GGXrdReversalTool.Library"
         xmlns:scenarioActionImplementations="clr-namespace:GGXrdReversalTool.Library.Scenarios.Action.Implementations;assembly=GGXrdReversalTool.Library"
         xmlns:scenarioFrequencyImplementations="clr-namespace:GGXrdReversalTool.Library.Scenarios.Frequency.Implementations;assembly=GGXrdReversalTool.Library"
-        xmlns:slotsControl="clr-namespace:GGXrdReversalTool.Controls.SlotsControl"
-        xmlns:inputControl="clr-namespace:GGXrdReversalTool.Controls.InputControl"
-        xmlns:presetMenu="clr-namespace:GGXrdReversalTool.Controls.PresetMenu"
-        xmlns:condensedInputControl="clr-namespace:GGXrdReversalTool.Controls.CondensedInputControl"
         xmlns:converters="clr-namespace:GGXrdReversalTool.Converters"
+        xmlns:controls="clr-namespace:GGXrdReversalTool.Controls"
         mc:Ignorable="d"
         Title="{Binding Title}"
         Height="450" Width="800"
@@ -191,14 +188,14 @@
                                                     <!--         </DataTemplate> -->
                                                     <!--     </ItemsControl.ItemTemplate> -->
                                                     <!-- </ItemsControl> -->
-                                                    <condensedInputControl:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
+                                                    <controls:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
                                                     <!-- <condensedInputControl:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.CondensedInputList}"/> -->
                                                 </Grid>
                                             </DataTemplate>
                                         </ContentControl.Resources>
                                     </ContentControl>
 
-                                    <presetMenu:PresetMenu Grid.Row="1" GroupName="{Binding ScenarioAction.Input.RawInputText, FallbackValue='null'}" Presets="{Binding Presets, Converter={StaticResource DebugDummyConverter}}" InsertPresetInputCommand="{Binding InsertPresetInputCommand}"/>
+                                    <controls:PresetMenu Grid.Row="1" Presets="{Binding Presets, Converter={StaticResource DebugDummyConverter}}" InsertPresetInputCommand="{Binding InsertPresetInputCommand}"/>
 
                                 </Grid>
                                 
@@ -224,7 +221,7 @@
                                 <Button Margin="10,0,0,0" Content="Disable" Command="{Binding DisableCommand}"/>
                             </UniformGrid>
                             
-                            <slotsControl:SlotsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" GroupName="Recording Slot" SlotNumber="{Binding SlotNumber}"/>
+                            <controls:SlotsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" GroupName="Recording Slot" SlotNumber="{Binding SlotNumber}"/>
                         </Grid>
                     </GroupBox>
                 </DockPanel>

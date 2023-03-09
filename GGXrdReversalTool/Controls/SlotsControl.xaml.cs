@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace GGXrdReversalTool.Controls.SlotsControl;
+namespace GGXrdReversalTool.Controls;
 
 public partial class SlotsControl : UserControl
 {
