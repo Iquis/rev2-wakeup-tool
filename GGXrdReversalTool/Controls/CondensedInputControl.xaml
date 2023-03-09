@@ -1,4 +1,4 @@
-﻿<ItemsControl x:Class="GGXrdReversalTool.Controls.CondensedInputControl"
+﻿<UserControl x:Class="GGXrdReversalTool.Controls.CondensedInputControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -8,39 +8,39 @@
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="Control"
-             DataContext="{Binding ElementName=Control}"
-             ItemsSource="{Binding CondensedInputs}"
              >
-    <ItemsControl.Resources>
-        <DataTemplate x:Key="MultipleMultiplicator">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="*" FontSize="16"/>
-                <TextBlock Grid.Column="1" Text="{Binding}" FontSize="16"/>
-            </Grid>
-        </DataTemplate>
-        <local:CondensedInputTemplateSelector x:Key="CondensedInputTemplateSelector" MultipleMultiplicator="{StaticResource MultipleMultiplicator}" />
-    </ItemsControl.Resources>
-    <ItemsControl.ItemsPanel>
-        <ItemsPanelTemplate>
-            <WrapPanel Orientation="Horizontal"/>
-        </ItemsPanelTemplate>
-    </ItemsControl.ItemsPanel>
-    <ItemsControl.ItemTemplate>
-        <DataTemplate>
-            <Border BorderThickness="2" BorderBrush="Black">
-                <Grid Margin="2">
+    <ItemsControl ItemsSource="{Binding ElementName=Control, Path=CondensedInputs}">
+        <ItemsControl.Resources>
+            <DataTemplate x:Key="MultipleMultiplicator">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <local:FrameInputControl Grid.Column="0" FrameInput="{Binding FrameInput}"/>
-                    <ContentControl Grid.Column="1" Content="{Binding Multiplicator}" ContentTemplateSelector="{StaticResource CondensedInputTemplateSelector}"/>
+                    <TextBlock Grid.Column="0" Text="*" FontSize="16"/>
+                    <TextBlock Grid.Column="1" Text="{Binding}" FontSize="16"/>
                 </Grid>
-            </Border>
-        </DataTemplate>
-    </ItemsControl.ItemTemplate>
-</ItemsControl>
+            </DataTemplate>
+            <local:CondensedInputTemplateSelector x:Key="CondensedInputTemplateSelector" MultipleMultiplicator="{StaticResource MultipleMultiplicator}" />
+        </ItemsControl.Resources>
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <Border BorderThickness="2" BorderBrush="Black">
+                    <Grid Margin="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <local:FrameInputControl Grid.Column="0" FrameInput="{Binding FrameInput}"/>
+                        <ContentControl Grid.Column="1" Content="{Binding Multiplicator}" ContentTemplateSelector="{StaticResource CondensedInputTemplateSelector}"/>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <controls:MainMenu IsMainMenu="True" Grid.ColumnSpan="2" 
+        <controls:MainMenu Grid.ColumnSpan="2" 
                            IsAsmReplayTypeChecked="{Binding IsAsmReplayTypeChecked}"
                            IsKeyStrokeReplayTypeChecked="{Binding IsKeyStrokeReplayTypeChecked}"
                            ChangeReplayTypeCommand="{Binding ChangeReplayTypeCommand}"

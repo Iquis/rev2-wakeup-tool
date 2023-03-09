@@ -13,60 +13,11 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <ComboBox ItemsSource="{Binding ElementName=Control, Path=ActionTypes}" SelectedValue="{Binding SelectedScenarioEvent}" VerticalAlignment="Center" Margin="0,5,0,5">
+            <ComboBox ItemsSource="{Binding ElementName=Control, Path=ActionTypes}" SelectedValue="{Binding ElementName=Control, Path=SelectedScenarioEvent}" VerticalAlignment="Center" Margin="0,5,0,5">
             </ComboBox>
 
-            <ContentControl Grid.Row="1" Content="{Binding SelectedScenarioEvent}">
-                <!-- <ContentControl.Resources> -->
-                <!--     <DataTemplate DataType="{x:Type scenarioEventImplementations:ComboEvent}"> -->
-                <!--         <Grid> -->
-                <!--             <Grid.RowDefinitions> -->
-                <!--                 <RowDefinition/> -->
-                <!--                 <RowDefinition/> -->
-                <!--                 <RowDefinition/> -->
-                <!--             </Grid.RowDefinitions> -->
-                <!--             <TextBlock TextWrapping="Wrap"> -->
-                <!--                 <TextBlock.Text> -->
-                <!--                     <MultiBinding Converter="{StaticResource ComboEventConverter}"> -->
-                <!--                         <Binding Path="MinComboCount"/> -->
-                <!--                         <Binding Path="MaxComboCount"/> -->
-                <!--                     </MultiBinding> -->
-                <!--                 </TextBlock.Text> -->
-                <!--             </TextBlock> -->
-                <!--             <Slider Grid.Row="1" Value="{Binding MinComboCount}" Minimum="1" Maximum="{Binding MaxComboCount}"/> -->
-                <!--             <Slider Grid.Row="2" Value="{Binding MaxComboCount}" Minimum="{Binding MinComboCount}" Maximum="99"/> -->
-                <!--         </Grid> -->
-                <!--     </DataTemplate> -->
-                <!--     <DataTemplate DataType="{x:Type scenarioEventImplementations:AnimationEvent}"> -->
-                <!--         <Grid> -->
-                <!--             <Grid.RowDefinitions> -->
-                <!--                 <RowDefinition/> -->
-                <!--                 <RowDefinition/> -->
-                <!--             </Grid.RowDefinitions> -->
-                <!--             <TextBlock TextWrapping="Wrap"> -->
-                <!--                 <TextBlock.Text> -->
-                <!--                     <MultiBinding Converter="{StaticResource AnimationEventConverter}"> -->
-                <!--                         <Binding Path="ShouldCheckWakingUp"/> -->
-                <!--                         <Binding Path="ShouldCheckWallSplat"/> -->
-                <!--                         <Binding Path="ShouldCheckAirTech"/> -->
-                <!--                         <Binding Path="ShouldCheckStartBlocking"/> -->
-                <!--                     </MultiBinding> -->
-                <!--                 </TextBlock.Text> -->
-                <!--             </TextBlock> -->
-                <!--             <WrapPanel Grid.Row="1"> -->
-                <!--                 <WrapPanel.Resources> -->
-                <!--                     <Style TargetType="{x:Type CheckBox}"> -->
-                <!--                         <Setter Property="Margin" Value="5,5,5,5"/> -->
-                <!--                     </Style> -->
-                <!--                 </WrapPanel.Resources> -->
-                <!--                 <CheckBox Content="Waking up" IsChecked="{Binding ShouldCheckWakingUp}"/> -->
-                <!--                 <CheckBox Content="Wallsplat recovering" IsChecked="{Binding ShouldCheckWallSplat}"/> -->
-                <!--                 <CheckBox Content="Air Teching" IsChecked="{Binding ShouldCheckAirTech}"/> -->
-                <!--                 <CheckBox Content="Start Blocking" IsChecked="{Binding ShouldCheckStartBlocking}"/> -->
-                <!--             </WrapPanel> -->
-                <!--         </Grid> -->
-                <!--     </DataTemplate> -->
-                <!-- </ContentControl.Resources> -->
+            <ContentControl Grid.Row="1" Content="{Binding ElementName=Control, Path=SelectedScenarioEvent}">
+                
             </ContentControl>
         </Grid>
         

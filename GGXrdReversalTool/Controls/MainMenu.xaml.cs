@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace GGXrdReversalTool.Controls;
 
-public partial class MainMenu : Menu
+public partial class MainMenu : UserControl
 {
     public MainMenu()
     {

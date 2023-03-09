@@ -188,7 +188,7 @@
                                                     <!--         </DataTemplate> -->
                                                     <!--     </ItemsControl.ItemTemplate> -->
                                                     <!-- </ItemsControl> -->
-                                                    <controls:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
+                                                    <controls:CondensedInputControl Grid.Row="2" CondensedInputs="{Binding Input.RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
                                                     <!-- <condensedInputControl:CondensedInputControl Grid.Row="2" ItemsSource="{Binding Input.CondensedInputList}"/> -->
                                                 </Grid>
                                             </DataTemplate>

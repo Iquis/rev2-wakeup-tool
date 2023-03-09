@@ -7,7 +7,7 @@ using GGXrdReversalTool.Library.Models.Inputs;
 
 namespace GGXrdReversalTool.Controls;
 
-public partial class CondensedInputControl : ItemsControl
+public partial class CondensedInputControl : UserControl
 {
     public CondensedInputControl()
     {

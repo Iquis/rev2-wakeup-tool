@@ -22,7 +22,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock TextWrapping="Wrap" Text="Action to perform :" Margin="0,5"/>
                 <TextBox Grid.Row="1" Height="60" Text="{Binding ElementName=Control, Path=RawInputText, UpdateSourceTrigger=PropertyChanged}" />
-                <local:CondensedInputControl Grid.Row="2" Margin="0,5" ItemsSource="{Binding ElementName=Control, Path=RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
+                <local:CondensedInputControl Grid.Row="2" Margin="0,5" CondensedInputs="{Binding ElementName=Control, Path=RawInputText, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource InputConverter}}"/>
             </Grid>
             <local:PresetMenu Grid.Row="1" Presets="{Binding ElementName=Control, Path=Presets}" InsertPresetInputCommand="{Binding ElementName=Control, Path=InsertPresetInputCommand}"/>
         </Grid>
