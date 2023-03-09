@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,14 +23,14 @@ public partial class CondensedInputControl : ItemsControl
     public static readonly DependencyProperty CondensedInputsProperty =
         DependencyProperty.Register(nameof(CondensedInputs), typeof(IEnumerable<CondensedInput>),
             typeof(CondensedInputControl), new PropertyMetadata(Enumerable.Empty<CondensedInput>()));
-
-    //TODO Implement
-
-    // public IEnumerable ItemsSource
-    // {
-    //     get => (IEnumerable)GetValue(TestProperty);
-    //     set => SetValue(TestProperty);
-    // }
-    //
-    // public static readonly DependencyProperty TestProperty = DependencyProperty.Register(nameof (ItemsSource), typeof (IEnumerable), typeof (CondensedInputControl), (PropertyMetadata) new FrameworkPropertyMetadata((object) null, new PropertyChangedCallback((object) null, OnItemsSourceChanged)));
 }
+
+public class CondensedInputTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate MultipleMultiplicator { get; set; } = null!;
+
+    public override DataTemplate? SelectTemplate(object? item, DependencyObject container)
+    {
+        return item is <= 1 ? new DataTemplate() : MultipleMultiplicator;
+    }
+} 
