@@ -7,8 +7,7 @@
              xmlns:inputs="clr-namespace:GGXrdReversalTool.Library.Models.Inputs;assembly=GGXrdReversalTool.Library"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Name="Control"
-             >
+             Name="Control">
     <ItemsControl ItemsSource="{Binding ElementName=Control, Path=CondensedInputs}">
         <ItemsControl.Resources>
             <DataTemplate x:Key="MultipleMultiplicator">

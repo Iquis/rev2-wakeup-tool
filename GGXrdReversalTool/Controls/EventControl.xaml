@@ -4,21 +4,71 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:GGXrdReversalTool.Controls"
+             xmlns:converters="clr-namespace:GGXrdReversalTool.Converters"
              x:Name="Control"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <converters:ComboEventConverter x:Key="ComboEventConverter" />
+        <DataTemplate x:Key="ComboDataTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock TextWrapping="Wrap">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource ComboEventConverter}">
+                            <Binding Path="MinComboCount" ElementName="Control"/>
+                            <Binding Path="MaxComboCount" ElementName="Control"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <Slider Grid.Row="1" Value="{Binding ElementName=Control, Path=MinComboCount}" Minimum="1" Maximum="{Binding ElementName=Control, Path=MaxComboCount}"/>
+                <Slider Grid.Row="2" Value="{Binding ElementName=Control, Path=MaxComboCount}" Minimum="{Binding ElementName=Control, Path=MinComboCount}" Maximum="99"/>
+            </Grid>
+        </DataTemplate>
+        <converters:AnimationEventConverter x:Key="AnimationEventConverter" />
+        <DataTemplate x:Key="AnimationDataTemplate">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBlock TextWrapping="Wrap">
+                    <TextBlock.Text>
+                        <MultiBinding Converter="{StaticResource AnimationEventConverter}">
+                            <Binding Path="ShouldCheckWakingUp" ElementName="Control"/>
+                            <Binding Path="ShouldCheckWallSplat" ElementName="Control"/>
+                            <Binding Path="ShouldCheckAirTech" ElementName="Control"/>
+                            <Binding Path="ShouldCheckStartBlocking" ElementName="Control"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                </TextBlock>
+                <WrapPanel Grid.Row="1">
+                    <WrapPanel.Resources>
+                        <Style TargetType="{x:Type CheckBox}">
+                            <Setter Property="Margin" Value="5,5,5,5"/>
+                        </Style>
+                    </WrapPanel.Resources>
+                    <CheckBox Content="Waking up" IsChecked="{Binding ElementName=Control, Path=ShouldCheckWakingUp}"/>
+                    <CheckBox Content="Wallsplat recovering" IsChecked="{Binding ElementName=Control, Path=ShouldCheckWallSplat}"/>
+                    <CheckBox Content="Air Teching" IsChecked="{Binding ElementName=Control, Path=ShouldCheckAirTech}"/>
+                    <CheckBox Content="Start Blocking" IsChecked="{Binding ElementName=Control, Path=ShouldCheckStartBlocking}"/>
+                </WrapPanel>
+            </Grid>
+        </DataTemplate>
+        <local:EventControlDataTemplateSelector x:Key="EventControlDataTemplateSelector" ComboDataTemplate="{StaticResource ComboDataTemplate}" AnimationDataTemplate="{StaticResource AnimationDataTemplate}" />
+    </UserControl.Resources>
     <GroupBox Header="When">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <ComboBox ItemsSource="{Binding ElementName=Control, Path=ActionTypes}" SelectedValue="{Binding ElementName=Control, Path=SelectedScenarioEvent}" VerticalAlignment="Center" Margin="0,5,0,5">
-            </ComboBox>
-
-            <ContentControl Grid.Row="1" Content="{Binding ElementName=Control, Path=SelectedScenarioEvent}">
-                
-            </ContentControl>
+            <ComboBox ItemsSource="{Binding ElementName=Control, Path=ActionTypes}" SelectedValue="{Binding ElementName=Control, Path=SelectedScenarioEvent}" VerticalAlignment="Center" Margin="0,5,0,5"/>
+            <ContentControl Grid.Row="1" Content="{Binding ElementName=Control, Path=SelectedScenarioEvent}" ContentTemplateSelector="{StaticResource EventControlDataTemplateSelector}"/>
         </Grid>
         
     </GroupBox>
