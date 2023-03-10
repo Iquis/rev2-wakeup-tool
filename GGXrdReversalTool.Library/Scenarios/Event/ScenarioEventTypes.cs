@@ -2,11 +2,6 @@
 
 public enum ScenarioEventTypes
 {
-    None,
-    KDFaceUp,
-    KDFaceDown,
-    WallSplat,
-    Blocking,
     Combo,
-    Tech
+    Animation
 }

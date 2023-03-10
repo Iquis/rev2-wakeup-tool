@@ -5,5 +5,5 @@ namespace GGXrdReversalTool.Library.Scenarios.Event;
 public interface IScenarioEvent
 {
     IMemoryReader MemoryReader { get; internal set; }
-    ScenarioEventTypes CheckEvent();
+    AnimationEventTypes CheckEvent();
 }

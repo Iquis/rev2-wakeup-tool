@@ -195,7 +195,7 @@
                                         </ContentControl.Resources>
                                     </ContentControl>
 
-                                    <controls:PresetMenu Grid.Row="1" Presets="{Binding Presets, Converter={StaticResource DebugDummyConverter}}" InsertPresetInputCommand="{Binding InsertPresetInputCommand}"/>
+                                    <controls:PresetMenu Grid.Row="1" InsertPresetInputCommand="{Binding InsertPresetInputCommand}"/>
 
                                 </Grid>
                                 

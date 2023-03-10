@@ -8,5 +8,6 @@
         <converters:PercentageFrequencyConverter x:Key="PercentageFrequencyConverter" />
         <converters:InputConverter x:Key="InputConverter" />
         <converters:InputSplitConverter x:Key="InputSplitConverter" />
+        <converters:AntiBooleanConverter x:Key="AntiBooleanConverter" />
     </Application.Resources>
 </Application>

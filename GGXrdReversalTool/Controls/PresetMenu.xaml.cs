@@ -14,17 +14,7 @@ public partial class PresetMenu : UserControl
         InitializeComponent();
     }
 
-    public IEnumerable<Preset> Presets
-    {
-        get => (IEnumerable<Preset>)GetValue(PresetsProperty);
-        set => SetValue(PresetsProperty, value);
-    }
-
-    public static readonly DependencyProperty PresetsProperty =
-        DependencyProperty.Register(nameof(Presets), typeof(IEnumerable<Preset>), typeof(PresetMenu), new FrameworkPropertyMetadata()
-        {
-            BindsTwoWayByDefault = true, DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-        });
+    public IEnumerable<Preset> Presets => Preset.Presets;
     
     public ICommand InsertPresetInputCommand
     {

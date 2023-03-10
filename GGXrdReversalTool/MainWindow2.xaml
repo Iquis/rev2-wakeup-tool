@@ -43,9 +43,9 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <controls:EventControl Grid.Column="0" Grid.Row="0" ActionTypes="{Binding ActionTypes}"/>
-                            <controls:ActionControl Presets="{Binding Presets}" RawInputText="{Binding RawInputText}" InsertPresetInputCommand="{Binding InsertPresetInputCommand}" Grid.Column="1" Grid.Row="0"/>
-                            <controls:FrequencyControl Grid.Column="2" Grid.Row="0" Percentage="{Binding Percentage}"/>
+                            <controls:EventControl Grid.Column="0" Grid.Row="0" ScenarioEvent="{Binding ScenarioEvent, Mode=OneWayToSource}" IsEnabled="{Binding IsRunning, Converter={StaticResource AntiBooleanConverter}}"/>
+                            <controls:ActionControl Grid.Column="1" Grid.Row="0" ScenarioAction="{Binding ScenarioAction, Mode=OneWayToSource}" IsEnabled="{Binding IsRunning, Converter={StaticResource AntiBooleanConverter}}"/>
+                            <controls:FrequencyControl Grid.Column="2" Grid.Row="0" ScenarioFrequency="{Binding ScenarioFrequency, Mode=OneWayToSource}" IsEnabled="{Binding IsRunning, Converter={StaticResource AntiBooleanConverter}}"/>
                             <controls:EnableDisableScenarioControl Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Margin="0,5,0,0" EnableCommand="{Binding EnableCommand}" DisableCommand="{Binding DisableCommand}"/>
                             <controls:SlotsControl Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" GroupName="Recording Slot" SlotNumber="{Binding SlotNumber}"/>
                         </Grid>
@@ -53,7 +53,11 @@
                 </DockPanel>
             </TabItem>
             <TabItem Header="Import/Export" IsEnabled="False"></TabItem>
-            <TabItem Header="Log"></TabItem>
+            <TabItem Header="Log">
+                <DockPanel>
+                    <TextBox Text="{Binding LogText, Mode=OneWay}" IsReadOnly="True" TextWrapping="Wrap"/>
+                </DockPanel>
+            </TabItem>
         </TabControl>
         
     </Grid>

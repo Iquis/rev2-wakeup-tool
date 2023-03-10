@@ -1,44 +1,74 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using GGXrdReversalTool.Library.Presets;
+using GGXrdReversalTool.Commands;
+using GGXrdReversalTool.Library.Models.Inputs;
+using GGXrdReversalTool.Library.Scenarios.Action;
+using GGXrdReversalTool.Library.Scenarios.Action.Implementations;
 
 namespace GGXrdReversalTool.Controls;
 
-public partial class ActionControl : UserControl
+public sealed partial class ActionControl
 {
     public ActionControl()
     {
         InitializeComponent();
     }
 
-
+    private string _rawInputText = String.Empty;
     public string RawInputText
     {
-        get => (string)GetValue(RawInputTextProperty);
-        set => SetValue(RawInputTextProperty, value);
-    }
-    public static readonly DependencyProperty RawInputTextProperty = DependencyProperty.Register(
-        nameof(RawInputText), typeof(string), typeof(ActionControl), new FrameworkPropertyMetadata(default(string))
+        get => _rawInputText;
+        set
         {
-            BindsTwoWayByDefault = true
-        });
-
-
-    public IEnumerable<Preset> Presets
-    {
-        get => (IEnumerable<Preset>)GetValue(PresetsProperty);
-        set => SetValue(PresetsProperty, value);
+            if (value == _rawInputText) return;
+            _rawInputText = value;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
-    public static readonly DependencyProperty PresetsProperty = DependencyProperty.Register(
-        nameof(Presets), typeof(IEnumerable<Preset>), typeof(ActionControl), new PropertyMetadata(default(IEnumerable<Preset>)));
+    
 
-    public ICommand InsertPresetInputCommand
+    #region InsertPresetInputCommand
+
+    public RelayCommand<string> InsertPresetInputCommand => new(InsertPresetInput, CanInsertPresetInput);
+
+    
+
+    private void InsertPresetInput(string input)
     {
-        get => (ICommand)GetValue(InsertPresetInputCommandProperty);
-        set => SetValue(InsertPresetInputCommandProperty, value);
+        RawInputText = RawInputText +
+                       $"{(!RawInputText.EndsWith(",") && !string.IsNullOrWhiteSpace(RawInputText)  ? "," : "")}" +
+                       input;
     }
-    public static readonly DependencyProperty InsertPresetInputCommandProperty = DependencyProperty.Register(
-        nameof(InsertPresetInputCommand), typeof(ICommand), typeof(ActionControl), new PropertyMetadata(default(ICommand)));
+
+    private bool CanInsertPresetInput(string input)
+    {
+        //TODO implement
+        return true;
+
+        // return _scenario is not { IsRunning: true };
+    }
+
+    #endregion
+    
+    public IScenarioAction? ScenarioAction
+    {
+        get => (IScenarioAction?)GetValue(ScenarioActionProperty);
+        set => SetValue(ScenarioActionProperty, value);
+    }
+
+    public static readonly DependencyProperty ScenarioActionProperty =
+        DependencyProperty.Register(nameof(ScenarioAction), typeof(IScenarioAction), typeof(ActionControl),
+            new PropertyMetadata(default(IScenarioAction?)));
+
+
+    private void CreateScenario()
+    {
+        ScenarioAction = new PlayReversalAction
+        {
+            Input = new SlotInput(RawInputText)
+        };
+    }
+
+    
 }

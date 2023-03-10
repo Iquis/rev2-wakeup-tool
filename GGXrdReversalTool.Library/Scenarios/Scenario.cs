@@ -64,13 +64,13 @@ public class Scenario : IDisposable
             LogManager.Instance.WriteLine("Scenario Thread start");
             bool localRunThread = true;
 
-            var oldEventType = ScenarioEventTypes.None;
+            var oldEventType = AnimationEventTypes.None;
 
 
             while (localRunThread)
             {
                 var eventType = _scenarioEvent.CheckEvent();
-                if (eventType != oldEventType && eventType != ScenarioEventTypes.None)
+                if (eventType != oldEventType && eventType != AnimationEventTypes.None)
                 {
                     LogManager.Instance.WriteLine("Event Occured");
                     
@@ -124,26 +124,26 @@ public class Scenario : IDisposable
     }
 
     
-    private int GetTiming(ScenarioEventTypes eventType, Character currentDummy, SlotInput scenarioActionInput)
+    private int GetTiming(AnimationEventTypes animationEventType, Character currentDummy, SlotInput scenarioActionInput)
     {
         //TODO fix why - 2 ?
-        switch (eventType)
+        switch (animationEventType)
         {
-            case ScenarioEventTypes.KDFaceUp:
+            case AnimationEventTypes.KDFaceUp:
                 return currentDummy.FaceUpFrames - scenarioActionInput.ReversalFrameIndex - 2;
-            case ScenarioEventTypes.KDFaceDown:
+            case AnimationEventTypes.KDFaceDown:
                 return currentDummy.FaceDownFrames - scenarioActionInput.ReversalFrameIndex - 2;
-            case ScenarioEventTypes.WallSplat:
+            case AnimationEventTypes.WallSplat:
                 return currentDummy.WallSplatWakeupTiming - scenarioActionInput.ReversalFrameIndex - 2;
-            case ScenarioEventTypes.Blocking:
+            case AnimationEventTypes.Blocking:
                 return 0;
-            case ScenarioEventTypes.Combo:
+            case AnimationEventTypes.Combo:
                 return 0;
-            case ScenarioEventTypes.Tech:
+            case AnimationEventTypes.Tech:
                 //TODO tech reversal recovery = 6?
                 return 6 - 2;
             default:
-                throw new ArgumentOutOfRangeException(nameof(eventType), eventType, null);
+                throw new ArgumentOutOfRangeException(nameof(animationEventType), animationEventType, null);
         }
     }
     private void Wait(int frames)

@@ -1,38 +1,46 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
+using GGXrdReversalTool.Library.Scenarios.Frequency;
+using GGXrdReversalTool.Library.Scenarios.Frequency.Implementations;
 
 namespace GGXrdReversalTool.Controls;
 
-public partial class FrequencyControl : UserControl
+public sealed partial class FrequencyControl : NotifiedUserControl
 {
     public FrequencyControl()
     {
         InitializeComponent();
     }
 
-
+    private int _percentage = 100;
     public int Percentage
     {
-        get => (int)GetValue(PercentageProperty);
-        set => SetValue(PercentageProperty, value);
-    }
-
-    public static readonly DependencyProperty PercentageProperty = DependencyProperty.Register(
-        nameof(Percentage), typeof(int), typeof(FrequencyControl),
-        new FrameworkPropertyMetadata(100, null, OnCoercePercentageProperty)
+        get => _percentage;
+        set
         {
-            BindsTwoWayByDefault = true,
-            DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged
-        });
-
-    private static object OnCoercePercentageProperty(DependencyObject source, object baseValue)
-    {
-        return baseValue is not int value ? 
-            PercentageProperty.DefaultMetadata.DefaultValue : 
-            Math.Clamp(value, 0, 100);
+            var coercedValue = Math.Clamp(value, 0, 100);
+            if (coercedValue == _percentage) return;
+            _percentage = coercedValue;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
 
-    
+    public IScenarioFrequency? ScenarioFrequency
+    {
+        get => (IScenarioFrequency)GetValue(ScenarioFrequencyProperty);
+        set => SetValue(ScenarioFrequencyProperty, value);
+    }
+
+    public static readonly DependencyProperty ScenarioFrequencyProperty =
+        DependencyProperty.Register(nameof(ScenarioFrequency), typeof(IScenarioFrequency), typeof(FrequencyControl),
+            new PropertyMetadata(new PercentageFrequency { Percentage = 100 }));
+
+    private void CreateScenario()
+    {
+        ScenarioFrequency = new PercentageFrequency()
+        {
+            Percentage = Percentage
+        };
+    }
 }

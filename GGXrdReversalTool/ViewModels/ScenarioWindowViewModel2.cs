@@ -1,13 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using System.Windows;
 using GGXrdReversalTool.Commands;
 using GGXrdReversalTool.Library.Configuration;
 using GGXrdReversalTool.Library.Logging;
+using GGXrdReversalTool.Library.Memory;
+using GGXrdReversalTool.Library.Memory.Implementations;
 using GGXrdReversalTool.Library.Models;
 using GGXrdReversalTool.Library.Presets;
+using GGXrdReversalTool.Library.Scenarios;
 using GGXrdReversalTool.Library.Scenarios.Action;
+using GGXrdReversalTool.Library.Scenarios.Event;
+using GGXrdReversalTool.Library.Scenarios.Event.Implementations;
+using GGXrdReversalTool.Library.Scenarios.Frequency;
 using GGXrdReversalTool.Updates;
 
 namespace GGXrdReversalTool.ViewModels;
@@ -16,14 +24,34 @@ namespace GGXrdReversalTool.ViewModels;
 public class ScenarioWindowViewModel2 : ViewModelBase
 {
     private readonly UpdateManager _updateManager = new();
+    private readonly IMemoryReader _memoryReader;
+    private readonly StringBuilder _logStringBuilder = new();
+    private Scenario? _scenario;
+    public IScenarioEvent? ScenarioEvent { get; set; }
+    public IScenarioAction? ScenarioAction { get; set; }
+    public IScenarioFrequency? ScenarioFrequency { get; set; }
 
     public ScenarioWindowViewModel2()
     {
+        var process = Process.GetProcessesByName("GuiltyGearXrd").FirstOrDefault();
+        
+#if !DEBUG
+        if (process == null)
+        {
+            string message =
+                "Guilty Gear not found open!  Remember, be in training mode paused when you open this program.  This program will now close.";
+            LogManager.Instance.WriteLine(message);
+            MessageBox.Show(message);
+            Application.Current.Shutdown();
+        }
+#endif
+        LogManager.Instance.MessageDequeued += InstanceOnMessageDequeued;
+        
+        _memoryReader = new MemoryReader(process!);
+        
         
     }
-    
-    
-    
+
     public string Title => $"GGXrd Rev 2 Reversal Tool v{ReversalToolConfiguration.Get("CurrentVersion")}";
     
     #region ReplayTrigger
@@ -83,9 +111,7 @@ public class ScenarioWindowViewModel2 : ViewModelBase
 
     private bool CanCheckUpdates()
     {
-        return true;
-        //TODO Implement
-        // return _scenario is not { IsRunning: true };
+        return _scenario is not { IsRunning: true };
     }
     private void CheckUpdates()
     {
@@ -185,61 +211,15 @@ public class ScenarioWindowViewModel2 : ViewModelBase
 
     #endregion
 
+    public bool IsRunning => _scenario is { IsRunning: true };
 
-    public IEnumerable<ScenarioActionTypes> ActionTypes => Enum.GetValues<ScenarioActionTypes>();
-
-
-
-    private int _percentage = 100;
-    public int Percentage
+    private void InstanceOnMessageDequeued(object? sender, string e)
     {
-        get => _percentage;
-        set
-        {
-            var coerceValue = Math.Clamp(value, 0, 100);
-            
-            if (coerceValue == _percentage) return;
-            _percentage = coerceValue;
-            OnPropertyChanged();
-        }
+        _logStringBuilder.AppendLine(e);
+        OnPropertyChanged(nameof(LogText));
     }
-
-    public IEnumerable<Preset> Presets => Preset.Presets;
-
-
-    private string _rawInputText = string.Empty;
-    public string RawInputText
-    {
-        get => _rawInputText;
-        set
-        {
-            if (value == _rawInputText) return;
-            _rawInputText = value;
-            OnPropertyChanged();
-        }
-    }
-
-    #region InsertPresetInputCommand
-
-    public RelayCommand<string> InsertPresetInputCommand => new(InsertPresetInput, CanInsertPresetInput);
-
-    private void InsertPresetInput(string input)
-    {
-        RawInputText = RawInputText +
-                       $"{(!RawInputText.EndsWith(",") && !string.IsNullOrWhiteSpace(RawInputText)  ? "," : "")}" +
-                       input;
-    }
-
-    private bool CanInsertPresetInput(string input)
-    {
-        //TODO implement
-        return true;
-
-        // return _scenario is not { IsRunning: true };
-    }
-
-    #endregion
     
+    public string LogText => _logStringBuilder.ToString();
 
     private int _slotNumber = 1;
     public int SlotNumber
@@ -259,31 +239,44 @@ public class ScenarioWindowViewModel2 : ViewModelBase
 
     private void Enable()
     {
-        //TODO Implement
-        // if (SelectedScenarioEvent == null || ScenarioAction == null || ScenarioFrequency == null)
-        // {
-        //     return;
-        // }
-        //
-        // ScenarioAction.SlotNumber = SlotNumber;
-        //
-        // _scenario = new Scenario(_memoryReader, SelectedScenarioEvent, ScenarioAction, ScenarioFrequency);
-        //
-        // _scenario.Run();
+        ScenarioAction!.SlotNumber = SlotNumber;
+        _scenario = new Scenario(_memoryReader, ScenarioEvent!, ScenarioAction, ScenarioFrequency!);
+        
+        _scenario.Run();
+        
+        OnPropertyChanged(nameof(IsRunning));
     }
 
     private bool CanEnable()
     {
-        //TODO Implement
-        return true;
-        //
-        // return _selectedScenarioEvent != null &&
-        //        _scenarioAction != null &&
-        //        _scenarioFrequency != null &&
-        //        
-        //        //TODO check with all event types
-        //        ((_selectedScenarioEvent is AnimationEvent && _scenarioAction.Input.IsReversalValid) || (_selectedScenarioEvent is ComboEvent && _scenarioAction.Input.IsValid)) &&
-        //        _scenario is not { IsRunning: true };
+        if (_scenario is {IsRunning: true})
+        {
+            return false;
+        }
+
+        if (ScenarioEvent is null)
+        {
+            return false;
+        }
+
+        if (ScenarioAction is null)
+        {
+            return false;
+        }
+
+        if (ScenarioFrequency is null)
+        {
+            return false;
+        }
+        
+        switch (ScenarioEvent)
+        {
+            case ComboEvent when ScenarioAction.Input.IsValid:
+            case AnimationEvent when ScenarioAction.Input.IsReversalValid:
+                return true;
+            default:
+                return false;
+        }
     }
 
     #endregion
@@ -294,17 +287,14 @@ public class ScenarioWindowViewModel2 : ViewModelBase
 
     private void Disable()
     {
-        //TODO Implement
-        // _scenario?.Stop();
+        _scenario?.Stop();
+        
+        OnPropertyChanged(nameof(IsRunning));
     }
 
     private bool CanDisable()
     {
-        return true;
-        // return _scenario?.IsRunning ?? false;
-
-
-        //TODO Implement
+        return _scenario is { IsRunning: true };
     }
 
     #endregion

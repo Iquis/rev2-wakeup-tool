@@ -214,7 +214,7 @@ public class SlotInput
     //TODO Unit tests
 
 
-    public bool IsReversalValid => Content.Any(); //TODO check reversal frame mask
+    public bool IsReversalValid => Content.Any() && ReversalFrameIndex > -1; 
 
     public bool IsValid => Content.Any();
     

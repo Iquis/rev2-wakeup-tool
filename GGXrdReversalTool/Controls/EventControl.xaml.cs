@@ -1,30 +1,23 @@
-﻿using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using GGXrdReversalTool.Library.Scenarios.Action;
+using GGXrdReversalTool.Library.Scenarios.Event;
+using GGXrdReversalTool.Library.Scenarios.Event.Implementations;
 
 namespace GGXrdReversalTool.Controls;
 
-public partial class EventControl : UserControl, INotifyPropertyChanged
+public sealed partial class EventControl
 {
     public EventControl()
     {
         InitializeComponent();
     }
 
-    public IEnumerable<ScenarioActionTypes> ActionTypes
-    {
-        get => (IEnumerable<ScenarioActionTypes>)GetValue(ActionTypesProperty);
-        set => SetValue(ActionTypesProperty, value);
-    }
-    public static readonly DependencyProperty ActionTypesProperty = DependencyProperty.Register(
-        nameof(ActionTypes), typeof(IEnumerable<ScenarioActionTypes>), typeof(EventControl), new PropertyMetadata(default(IEnumerable<ScenarioActionTypes>)));
+    public IEnumerable<ScenarioEventTypes> ActionTypes => Enum.GetValues<ScenarioEventTypes>();
 
-    private ScenarioActionTypes? _selectedScenarioEvent;
-    public ScenarioActionTypes? SelectedScenarioEvent
+    private ScenarioEventTypes? _selectedScenarioEvent;
+    public ScenarioEventTypes? SelectedScenarioEvent
     {
         get => _selectedScenarioEvent;
         set
@@ -33,62 +26,128 @@ public partial class EventControl : UserControl, INotifyPropertyChanged
             
             _selectedScenarioEvent = value;
             
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SelectedScenarioEvent)));
+            OnPropertyChanged();
+            
+            CreateScenario();
         }
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-
+    private int _minComboCount = 1;
     public int MinComboCount
     {
-        get => (int)GetValue(MinComboCountProperty);
-        set => SetValue(MinComboCountProperty, value);
+        get => _minComboCount;
+        set
+        {
+            var coercedValue = Math.Clamp(value, 1, MaxComboCount);
+            if (coercedValue == _minComboCount) return;
+            _minComboCount = coercedValue;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
-    public static readonly DependencyProperty MinComboCountProperty = DependencyProperty.Register(
-        nameof(MinComboCount), typeof(int), typeof(EventControl), new PropertyMetadata(1));
 
+    
+    private int _maxComboCount = 100;
     public int MaxComboCount
     {
-        get => (int)GetValue(MaxComboCountProperty);
-        set => SetValue(MaxComboCountProperty, value);
+        get => _maxComboCount;
+        set
+        {
+            var coercedValue = Math.Max(value, MinComboCount);
+            if (coercedValue == _maxComboCount) return;
+            _maxComboCount = coercedValue;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
-    public static readonly DependencyProperty MaxComboCountProperty = DependencyProperty.Register(
-        nameof(MaxComboCount), typeof(int), typeof(EventControl), new PropertyMetadata(100));
+    
 
-
+    private bool _shouldCheckWakingUp = true;
     public bool ShouldCheckWakingUp
     {
-        get => (bool)GetValue(ShouldCheckWakingUpProperty);
-        set => SetValue(ShouldCheckWakingUpProperty, value);
+        get => _shouldCheckWakingUp;
+        set
+        {
+            if (value == _shouldCheckWakingUp) return;
+            _shouldCheckWakingUp = value;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
-    public static readonly DependencyProperty ShouldCheckWakingUpProperty = DependencyProperty.Register(
-        nameof(ShouldCheckWakingUp), typeof(bool), typeof(EventControl), new PropertyMetadata(true));
-
+    
+    
+    private bool _shouldCheckWallSplat;
     public bool ShouldCheckWallSplat
     {
-        get => (bool)GetValue(ShouldCheckWallSplatProperty);
-        set => SetValue(ShouldCheckWallSplatProperty, value);
+        get => _shouldCheckWallSplat;
+        set
+        {
+            if (value == _shouldCheckWallSplat) return;
+            _shouldCheckWallSplat = value;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
-    public static readonly DependencyProperty ShouldCheckWallSplatProperty = DependencyProperty.Register(
-        nameof(ShouldCheckWallSplat), typeof(bool), typeof(EventControl), new PropertyMetadata(default(bool)));
 
+    private bool _shouldCheckAirTech;
     public bool ShouldCheckAirTech
     {
-        get => (bool)GetValue(ShouldCheckAirTechProperty);
-        set => SetValue(ShouldCheckAirTechProperty, value);
+        get => _shouldCheckAirTech;
+        set
+        {
+            if (value == _shouldCheckAirTech) return;
+            _shouldCheckAirTech = value;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
-    public static readonly DependencyProperty ShouldCheckAirTechProperty = DependencyProperty.Register(
-        nameof(ShouldCheckAirTech), typeof(bool), typeof(EventControl), new PropertyMetadata(default(bool)));
 
+    private bool _shouldCheckStartBlocking;
     public bool ShouldCheckStartBlocking
     {
-        get => (bool)GetValue(ShouldCheckStartBlockingProperty);
-        set => SetValue(ShouldCheckStartBlockingProperty, value);
+        get => _shouldCheckStartBlocking;
+        set
+        {
+            if (value == _shouldCheckStartBlocking) return;
+            _shouldCheckStartBlocking = value;
+            OnPropertyChanged();
+            CreateScenario();
+        }
     }
 
-    public static readonly DependencyProperty ShouldCheckStartBlockingProperty = DependencyProperty.Register(
-        nameof(ShouldCheckStartBlocking), typeof(bool), typeof(EventControl), new PropertyMetadata(default(bool)));
+    public IScenarioEvent? ScenarioEvent
+    {
+        get => (IScenarioEvent)GetValue(ScenarioEventProperty);
+        set => SetValue(ScenarioEventProperty, value);
+    }
+    
+    public static readonly DependencyProperty ScenarioEventProperty = DependencyProperty.Register(nameof(ScenarioEvent),
+        typeof(IScenarioEvent), typeof(EventControl), new PropertyMetadata(default(IScenarioEvent)));
+
+    
+    
+    private void CreateScenario()
+    {
+        ScenarioEvent = _selectedScenarioEvent switch
+        {
+            ScenarioEventTypes.Animation => new AnimationEvent
+            {
+                ShouldCheckAirTech = ShouldCheckAirTech,
+                ShouldCheckStartBlocking = ShouldCheckStartBlocking,
+                ShouldCheckWakingUp = ShouldCheckWakingUp,
+                ShouldCheckWallSplat = ShouldCheckWallSplat
+            },
+            ScenarioEventTypes.Combo => new ComboEvent
+            {
+                MaxComboCount = MaxComboCount,
+                MinComboCount = MinComboCount
+            },
+            _ => null
+            
+        };
+    }
+    
+    
 }
 
 public class EventControlDataTemplateSelector : DataTemplateSelector
@@ -98,12 +157,12 @@ public class EventControlDataTemplateSelector : DataTemplateSelector
 
     public override DataTemplate SelectTemplate(object item, DependencyObject container)
     {
-        if (item is ScenarioActionTypes actionType)
+        if (item is ScenarioEventTypes actionType)
         {
             return actionType switch
             {
-                ScenarioActionTypes.Animation => AnimationDataTemplate,
-                ScenarioActionTypes.Combo => ComboDataTemplate,
+                ScenarioEventTypes.Animation => AnimationDataTemplate,
+                ScenarioEventTypes.Combo => ComboDataTemplate,
                 _ => new DataTemplate()
             };
         }
