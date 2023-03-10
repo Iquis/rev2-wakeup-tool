@@ -10,14 +10,17 @@ public class PercentageFrequencyConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        int percentage = (int)value;
-
-        return percentage switch
+        if (value is int percentage)
         {
-            <= 0 => "It will never be triggered",
-            >= 100 => "It will always be triggered",
-            _ => $"It will be triggered {percentage}% of the time"
-        };
+            return percentage switch
+            {
+                <= 0 => "It will never be triggered",
+                >= 100 => "It will always be triggered",
+                _ => $"It will be triggered {percentage}% of the time"
+            };
+        }
+
+        return "N/A";
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

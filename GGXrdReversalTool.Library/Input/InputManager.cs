@@ -17,7 +17,7 @@ internal static class InputManager
             new Input()
             {
                 type = (int)inputType,
-                u = new InputUnion()
+                union = new InputUnion()
                 {
                     ki = new KeyboardInput()
                     {

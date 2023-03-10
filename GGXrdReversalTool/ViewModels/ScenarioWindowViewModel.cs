@@ -69,16 +69,13 @@ public class ScenarioWindowViewModel : ViewModelBase
         var config = ReversalToolConfiguration.GetConfig();
         config.ReplayTriggerType = parameter;
         ReversalToolConfiguration.SaveConfig(config);
-        
-        //TODO Implement
-        //_scenarioAction?.Init();
 
         OnPropertyChanged(nameof(IsAsmReplayTypeChecked));
         OnPropertyChanged(nameof(IsKeyStrokeReplayTypeChecked));
     }
     private bool ChangeReplayTypeCommandCanExecute(string parameter)
     {
-        return ReversalToolConfiguration.Get("ReplayTriggerType") != parameter;
+        return ReversalToolConfiguration.Get("ReplayTriggerType") != parameter && _scenario is not { IsRunning: true };
     }
 
         

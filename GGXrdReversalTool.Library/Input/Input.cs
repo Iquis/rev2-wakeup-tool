@@ -2,7 +2,6 @@
 
 internal struct Input
 {
-    //TODO Rename
     public int type;
-    public InputUnion u;
+    public InputUnion union;
 }

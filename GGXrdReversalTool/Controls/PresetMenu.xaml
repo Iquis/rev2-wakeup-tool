@@ -126,8 +126,8 @@
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type MenuItem}">
                             <Setter Property="Command" Value="{Binding InsertPresetInputCommand, ElementName=Control}" />
-                            <!-- TODO set type -->
-                            <Setter Property="CommandParameter" Value="{Binding Input}" /> 
+                            <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+                            <Setter Property="CommandParameter" Value="{Binding Path=Input}" /> 
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>

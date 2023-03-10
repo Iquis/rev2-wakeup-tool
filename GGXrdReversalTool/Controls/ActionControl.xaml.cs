@@ -14,7 +14,7 @@ public sealed partial class ActionControl
         InitializeComponent();
     }
 
-    private string _rawInputText = String.Empty;
+    private string _rawInputText = string.Empty;
     public string RawInputText
     {
         get => _rawInputText;
@@ -43,10 +43,7 @@ public sealed partial class ActionControl
 
     private bool CanInsertPresetInput(string input)
     {
-        //TODO implement
-        return true;
-
-        // return _scenario is not { IsRunning: true };
+        return IsEnabled;
     }
 
     #endregion
