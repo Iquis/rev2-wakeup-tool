@@ -17,16 +17,14 @@ public class AnimationEvent : IScenarioEvent
     public bool ShouldCheckWakingUp { get; set; } = true;
     public bool ShouldCheckWallSplat { get; set; } = true;
     public bool ShouldCheckAirTech { get; set; } = false;
-
     public bool ShouldCheckStartBlocking { get; set; } = false;
 
+    public bool IsValid =>
+        ShouldCheckWakingUp || ShouldCheckWallSplat || ShouldCheckAirTech || ShouldCheckStartBlocking;
 
-    private string _oldAnimation = "";
     public AnimationEventTypes CheckEvent()
     {
         var animationString = MemoryReader.ReadAnimationString(2);
-
-        _oldAnimation = animationString;
 
         return animationString switch
         {

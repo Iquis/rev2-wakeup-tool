@@ -11,6 +11,8 @@ public class ComboEvent : IScenarioEvent
 
     private int _oldComboCount;
 
+    public bool IsValid => MinComboCount <= MaxComboCount;
+
     public AnimationEventTypes CheckEvent()
     {
         var comboCount = MemoryReader.GetComboCount(1);
