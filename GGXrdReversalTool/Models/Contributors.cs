@@ -1,16 +1,10 @@
 ﻿using System.Collections.Generic;
+using GGXrdReversalTool.Library.Models;
 
-namespace GGXrdReversalTool.Contributors;
+namespace GGXrdReversalTool.Models;
 
-
-public class Contributor
+public static class Contributors
 {
-    public string Name { get; set; }
-    public Link Link { get; set; }
-    public string Role { get; set; }
-
-
-
     public static IEnumerable<Contributor> AppContributors => new[]
     {
         new Contributor { Name = "//FIXMESTEVE", Role = "Technical advice", Link = new Link { Name = "@TomSolacroup", Url = "https://twitter.com/TomSolacroup"}},

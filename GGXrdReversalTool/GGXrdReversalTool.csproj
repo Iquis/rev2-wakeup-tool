@@ -2,10 +2,11 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net7.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
-        <ApplicationIcon>haehead_Jpy_icon.ico</ApplicationIcon>
+        <ApplicationIcon>Assets\haehead_Jpy_icon.ico</ApplicationIcon>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,6 +26,13 @@
 
     <ItemGroup>
       <None Remove="Images\Inputs\22px-GGXRD_P_Prompt.png" />
+      <Resource Include="Assets\facebook.ico" />
+      <Resource Include="Assets\gmail.ico" />
+      <Resource Include="Assets\Haehyun.png" />
+      <Resource Include="Assets\ko-fi.png" />
+      <Resource Include="Assets\patreon.png" />
+      <Resource Include="Assets\paypal.ico" />
+      <Resource Include="Assets\twitter.ico" />
       <Resource Include="Images\Inputs\22px-GGXRD_P_Prompt.png" />
       <None Remove="Images\Inputs\22px-GGXRD_D_Prompt.png" />
       <Resource Include="Images\Inputs\22px-GGXRD_D_Prompt.png" />
@@ -103,19 +111,25 @@
       <None Remove="Images\Characters\GGXRD-R2_Elphelt_Valentine_Icon.png" />
       <Resource Include="Images\Characters\GGXRD-R2_Elphelt_Valentine_Icon.png" />
       <None Remove="Haehyun.png" />
-      <Resource Include="Haehyun.png" />
       <None Remove="twitter.ico" />
-      <Resource Include="twitter.ico" />
       <None Remove="facebook.ico" />
-      <Resource Include="facebook.ico" />
       <None Remove="gmail.ico" />
-      <Resource Include="gmail.ico" />
       <None Remove="ko-fi.png" />
-      <Resource Include="ko-fi.png" />
       <None Remove="patreon.png" />
-      <Resource Include="patreon.png" />
       <None Remove="paypal.ico" />
-      <Resource Include="paypal.ico" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Page Update="Views\AboutWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
+      <Page Update="Views\MainWindow.xaml">
+        <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
+        <SubType>Designer</SubType>
+      </Page>
     </ItemGroup>
 
 </Project>

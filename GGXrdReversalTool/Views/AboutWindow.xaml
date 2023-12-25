@@ -5,12 +5,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:GGXrdReversalTool"
         xmlns:viewModels="clr-namespace:GGXrdReversalTool.ViewModels"
-        xmlns:contributors="clr-namespace:GGXrdReversalTool.Contributors"
-        x:Class="GGXrdReversalTool.AboutWindow"
+        xmlns:models="clr-namespace:GGXrdReversalTool.Library.Models;assembly=GGXrdReversalTool.Library"
+        x:Class="GGXrdReversalTool.Views.AboutWindow"
         mc:Ignorable="d"
         Title="{Binding Title}" 
         Height="500" Width="800"
         ResizeMode="NoResize"
+        d:DesignHeight="500"
+        d:DesignWidth="800"
         >
     <Window.DataContext>
         <viewModels:AboutViewModel x:Name="ViewModel"/>
@@ -31,6 +33,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition />
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Image Source="Haehyun.png" Height="256"/>
@@ -67,33 +70,52 @@
                         </Button>
                     </StackPanel>
                 </StackPanel>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <TextBlock Text="Donation links:"/>
+                    <ItemsControl ItemsSource="{Binding DonationLinks}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Name}" Command="{Binding Path=DonateCommand, ElementName=ViewModel}" CommandParameter="{Binding Url}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </Grid>
             <GroupBox Header="Special Thanks">
-                <ItemsControl ItemsSource="{Binding ContributorList}">
-                    <ItemsControl.Resources>
-                        <DataTemplate DataType="{x:Type viewModels:ContributorGroupViewModel}" >
-                            <Grid Margin="15">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Text="{Binding Name}"/>
-                                <ItemsControl Grid.Row="1" ItemsSource="{Binding Contributors}" Margin="15,0,0,0"/>
-                            </Grid>
-                        </DataTemplate>
-                        <DataTemplate DataType="{x:Type contributors:Contributor}">
-                            <UniformGrid Columns="2">
-                                <TextBlock Text="{Binding Name}"/>
+                <DockPanel>
+                    <ScrollViewer IsTabStop="True">
+                        <ItemsControl ItemsSource="{Binding ContributorList}">
+                            <ItemsControl.Resources>
+                                <DataTemplate DataType="{x:Type viewModels:ContributorGroupViewModel}" >
+                                    <Grid Margin="15">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="{Binding Name}"/>
+                                        <ItemsControl Grid.Row="1" ItemsSource="{Binding Contributors}" Margin="15,0,0,0"/>
+                                    </Grid>
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type models:Contributor}">
+                                    <UniformGrid Columns="2">
+                                        <TextBlock Text="{Binding Name}"/>
                                 
-                                <TextBlock>
-                                    <Hyperlink NavigateUri="{Binding Link.Url}" Command="{Binding NavigateCommand, ElementName=ViewModel}" CommandParameter="{Binding Link.Url}">
-                                        <TextBlock Text="{Binding Link.Name}"/>
-                                    </Hyperlink> 
-                                </TextBlock>
-                            </UniformGrid>
-                        </DataTemplate>
-                    </ItemsControl.Resources>
-                </ItemsControl>
+                                        <TextBlock>
+                                            <Hyperlink NavigateUri="{Binding Link.Url}" Command="{Binding NavigateCommand, ElementName=ViewModel}" CommandParameter="{Binding Link.Url}">
+                                                <TextBlock Text="{Binding Link.Name}"/>
+                                            </Hyperlink> 
+                                        </TextBlock>
+                                    </UniformGrid>
+                                </DataTemplate>
+                            </ItemsControl.Resources>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
             </GroupBox>
         </UniformGrid>
     </Grid>

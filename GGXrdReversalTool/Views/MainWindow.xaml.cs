@@ -2,7 +2,7 @@
 using System.Windows;
 using GGXrdReversalTool.ViewModels;
 
-namespace GGXrdReversalTool;
+namespace GGXrdReversalTool.Views;
 
 public partial class MainWindow : Window
 {

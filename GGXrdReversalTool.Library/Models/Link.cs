@@ -1,4 +1,4 @@
-﻿namespace GGXrdReversalTool.Contributors;
+﻿namespace GGXrdReversalTool.Library.Models;
 
 public class Link
 {

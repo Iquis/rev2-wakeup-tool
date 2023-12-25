@@ -17,6 +17,7 @@ using GGXrdReversalTool.Library.Scenarios.Event;
 using GGXrdReversalTool.Library.Scenarios.Event.Implementations;
 using GGXrdReversalTool.Library.Scenarios.Frequency;
 using GGXrdReversalTool.Updates;
+using GGXrdReversalTool.Views;
 using Microsoft.Win32;
 
 namespace GGXrdReversalTool.ViewModels;

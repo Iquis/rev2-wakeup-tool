@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.Linq;
 using GGXrdReversalTool.Commands;
-using GGXrdReversalTool.Contributors;
 using GGXrdReversalTool.Library.Configuration;
+using GGXrdReversalTool.Library.Models;
+using GGXrdReversalTool.Models;
 
 namespace GGXrdReversalTool.ViewModels;
 
@@ -13,7 +14,7 @@ public class AboutViewModel : ViewModelBase
     public string Title => $"GGXrd Rev 2 Reversal Tool v{ReversalToolConfiguration.Get("CurrentVersion")}";
 
     public IEnumerable<ContributorGroupViewModel> ContributorList =>
-        Contributor.AppContributors.GroupBy(x => x.Role)
+        Contributors.AppContributors.GroupBy(x => x.Role)
             .Select(group => new ContributorGroupViewModel
             {
                 Name = group.Key,
@@ -30,9 +31,7 @@ public class AboutViewModel : ViewModelBase
     }
 
     #endregion
-    
-    
-    
+
     #region MailToCommand
 
     public RelayCommand MailToCommand => new(MailTo);
@@ -80,4 +79,17 @@ public class AboutViewModel : ViewModelBase
     }
 
     #endregion
+
+    #region DonationCommand
+
+    public RelayCommand<string> DonateCommand => new(Donate);
+
+    private void Donate(string url)
+    {
+        Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+    }
+
+    #endregion
+
+    public IEnumerable<DonationLink> DonationLinks => Models.DonationLinks.Items;
 }
