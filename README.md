@@ -32,4 +32,9 @@ No + signs.  Heavy slash is abbreviated "H".
 3. If for some reason you have to ctrl+alt+delete and kill the tool, don't just kill the main process, there's also another helper process called frida-winjector-32 that one of the dlls spawn that helps with the magic.  Kill that too before restarting.
 
 
+## Contributors
+<a href="https://github.com/Iquis/rev2-wakeup-tool/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Iquis/rev2-wakeup-tool" />
+</a>
 
+Made with [contrib.rocks](https://contrib.rocks).
