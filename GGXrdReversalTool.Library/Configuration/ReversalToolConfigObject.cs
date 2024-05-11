@@ -19,9 +19,6 @@ public class ReversalToolConfigObject
     [JsonPropertyName("UpdateLink")]
     public string UpdateLink { get; set; }
 
-    [JsonPropertyName("ReplayTriggerType")]
-    public string ReplayTriggerType { get; set; }
-
     [JsonPropertyName("CurrentVersion")]
     public Version CurrentVersion { get; set; }
 

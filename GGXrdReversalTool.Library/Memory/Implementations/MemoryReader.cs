@@ -47,6 +47,20 @@ public class MemoryReader : IMemoryReader
         return result;
     }
 
+    public bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide)
+    {
+        if (slotNumber is < 1 or > 3)
+        {
+            throw new ArgumentException("Invalid Slot number", nameof(slotNumber));
+        }
+        var result = true;
+        result = result && Write(_pointerCollection.DummyRecInputsSlotPtr, slotNumber - 1);
+        result = result && Write(_pointerCollection.DummyRecInputsIndexPtr, inputIndex);
+        result = result && Write(_pointerCollection.DummyRecInputsSidePtr, startingSide);
+        result = result && Write(_pointerCollection.DummyModePtr, 3);
+        return result;
+    }
+
     public bool WriteInputInSlot(int slotNumber, SlotInput slotInput)
     {
         if (slotNumber is < 1 or > 3)
@@ -97,17 +111,22 @@ public class MemoryReader : IMemoryReader
         };
     }
 
-    public int GetReplayKeyCode()
-    {
-        return Read<int>(_pointerCollection.ReplayKeyPtr);
-    }
-
     public int GetBlockstun(int player)
     {
         return player switch
         {
             0 => Read<int>(_pointerCollection.P1BlockStunPtr),
             1 => Read<int>(_pointerCollection.P2BlockStunPtr),
+            _ => throw new ArgumentException($"Player index is invalid : {player}")
+        };
+    }
+
+    public int GetFacing(int player)
+    {
+        return player switch
+        {
+            0 => Read<int>(_pointerCollection.P1FacingPtr),
+            1 => Read<int>(_pointerCollection.P2FacingPtr),
             _ => throw new ArgumentException($"Player index is invalid : {player}")
         };
     }
@@ -253,11 +272,16 @@ public class MemoryReader : IMemoryReader
         public MemoryPointer RecordingSlotPtr { get; private set; } = null!;
         public MemoryPointer P1ComboCountPtr { get; private set; } = null!;
         public MemoryPointer P2ComboCountPtr { get; private set; } = null!;
-        public MemoryPointer ReplayKeyPtr { get; private set; } = null!;
         public MemoryPointer P1BlockStunPtr { get; private set; } = null!;
         public MemoryPointer P2BlockStunPtr { get; private set; } = null!;
+        public MemoryPointer P1FacingPtr { get; private set; } = null!;
+        public MemoryPointer P2FacingPtr { get; private set; } = null!;
         public MemoryPointer PlayerSidePtr { get; private set; } = null!;
         public MemoryPointer GameModePtr { get; private set; } = null!;
+        public MemoryPointer DummyModePtr { get; private set; } = null!;
+        public MemoryPointer DummyRecInputsSlotPtr { get; private set; } = null!;
+        public MemoryPointer DummyRecInputsIndexPtr { get; private set; } = null!;
+        public MemoryPointer DummyRecInputsSidePtr { get; private set; } = null!;
         public MemoryPointer WorldInTickPtr { get; private set; } = null!;
         public MemoryPointer EngineTickCountPtr { get; private set; } = null!;
 
@@ -295,6 +319,8 @@ public class MemoryReader : IMemoryReader
             P1ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x9f28);
             P1BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d54);
             P2BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x4d54);
+            P1FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d38);
+            P2FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x4d38);
 
 
             const string recordingSlotPattern = "i1QkBGnSyBIAAIHC";
@@ -311,17 +337,20 @@ public class MemoryReader : IMemoryReader
                 new MemoryPointer(_memoryReader.Read<int>(textAddr - 0x70 + FindPatternOffset(text, dummyIdPattern)) +
                                   0x200);
 
-            const string keyBindingPattern = "h0EBAACLRgiNPIDB5wSBxw==";
-            var keyBindingRelAddr = _memoryReader.Read<int>(textAddr + 16 + FindPatternOffset(text, keyBindingPattern));
-
-            ReplayKeyPtr = new MemoryPointer(keyBindingRelAddr + 0x40);
-
             // Global UREDGameCommon instance, containing high level game state and resources
             // This reference is in GetHitoriyouMainSide (name known because of debug printf)
             const string getHitoriyouMainSidePattern = "M8A4QUQPlcDDzA==";
             var gameDataPtr = _memoryReader.Read<int>(textAddr - 4 + FindPatternOffset(text, getHitoriyouMainSidePattern));
             PlayerSidePtr = new MemoryPointer(gameDataPtr, 0x44); // Internally "MainPlayer"
             GameModePtr = new MemoryPointer(gameDataPtr, 0x45); // Internally "GameModeID"
+
+            // Global structure mostly (entirely?) containing data for training and other single player modes
+            const string trainingStructPattern = "mbkDAAAA9/mNev+LRkBVULk=";
+            var trainingStructAddr = _memoryReader.Read<int>(textAddr + 17 + FindPatternOffset(text, trainingStructPattern));
+            DummyModePtr = new MemoryPointer(trainingStructAddr + 0);
+            DummyRecInputsSlotPtr = new MemoryPointer(trainingStructAddr + 4);
+            DummyRecInputsIndexPtr = new MemoryPointer(trainingStructAddr + 0x19cc);
+            DummyRecInputsSidePtr = new MemoryPointer(trainingStructAddr + 0x19d0);
 
             // Global UWorld instance
             const string theWorldPattern = "VovxV4t+KDt4UA==";

@@ -21,9 +21,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <controls:MainMenu Grid.ColumnSpan="2" 
-                           IsAsmReplayTypeChecked="{Binding IsAsmReplayTypeChecked}"
-                           IsKeyStrokeReplayTypeChecked="{Binding IsKeyStrokeReplayTypeChecked}"
-                           ChangeReplayTypeCommand="{Binding ChangeReplayTypeCommand}"
                            AutoUpdate="{Binding AutoUpdate}"
                            CheckUpdatesCommand="{Binding CheckUpdatesCommand}"
                            AboutCommand="{Binding AboutCommand}"

@@ -55,36 +55,6 @@ public class ScenarioWindowViewModel : ViewModelBase
 
     public string Title => $"GGXrd Rev 2 Reversal Tool v{ReversalToolConfiguration.Get("CurrentVersion")}";
     
-    #region ReplayTrigger
-
-    public bool IsAsmReplayTypeChecked => ReversalToolConfiguration.Get("ReplayTriggerType") == ReplayTriggerTypes.AsmInjection.ToString();
-    public bool IsKeyStrokeReplayTypeChecked => ReversalToolConfiguration.Get("ReplayTriggerType") == ReplayTriggerTypes.Keystroke.ToString();
-
-
-
-    public RelayCommand<string> ChangeReplayTypeCommand => new(ChangeReplayTypeCommandExecute, ChangeReplayTypeCommandCanExecute);
-    private void ChangeReplayTypeCommandExecute(string parameter)
-    {
-        if (!Enum.TryParse(parameter, false, out ReplayTriggerTypes value))
-        {
-            return;
-        }
-
-        var config = ReversalToolConfiguration.GetConfig();
-        config.ReplayTriggerType = parameter;
-        ReversalToolConfiguration.SaveConfig(config);
-
-        OnPropertyChanged(nameof(IsAsmReplayTypeChecked));
-        OnPropertyChanged(nameof(IsKeyStrokeReplayTypeChecked));
-    }
-    private bool ChangeReplayTypeCommandCanExecute(string parameter)
-    {
-        return ReversalToolConfiguration.Get("ReplayTriggerType") != parameter && _scenario is not { IsRunning: true };
-    }
-
-        
-
-    #endregion
     public bool AutoUpdate
     {
         get

@@ -24,12 +24,6 @@
                 <Setter Property="Padding" Value="5"/>
             </Style>
         </Menu.ItemContainerStyle>
-        <MenuItem Header="_Config">
-            <MenuItem Header="_Replay Type" IsCheckable="False">
-                <MenuItem Header="_Asm Injection" IsCheckable="True" IsChecked="{Binding ElementName=Menu, Path=IsAsmReplayTypeChecked, Mode=OneWay}" Command="{Binding ElementName=Menu, Path=ChangeReplayTypeCommand, Mode=OneWay}" CommandParameter="AsmInjection"/>
-                <MenuItem Header="_Keyboard Stroke" IsCheckable="True" IsChecked="{Binding ElementName=Menu, Path=IsKeyStrokeReplayTypeChecked, Mode=OneWay}" Command="{Binding ElementName=Menu, Path=ChangeReplayTypeCommand, Mode=OneWay}" CommandParameter="Keystroke"/>
-            </MenuItem>
-        </MenuItem>
         <MenuItem Header="_Version">
             <MenuItem Header="Check for new version on startup" IsCheckable="True" IsChecked="{Binding ElementName=Menu, Path=AutoUpdate}"/>
             <MenuItem Header="Check New Version" Command="{Binding ElementName=Menu, Path=CheckUpdatesCommand}"/>

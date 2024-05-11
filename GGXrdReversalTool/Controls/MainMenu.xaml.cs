@@ -13,31 +13,6 @@ public partial class MainMenu : UserControl
         InitializeComponent();
     }
 
-    public bool IsAsmReplayTypeChecked
-    {
-        get => (bool)GetValue(IsAsmReplayTypeCheckedProperty);
-        set => SetValue(IsAsmReplayTypeCheckedProperty, value);
-    }
-    public static readonly DependencyProperty IsAsmReplayTypeCheckedProperty = DependencyProperty.Register(
-        nameof(IsAsmReplayTypeChecked), typeof(bool), typeof(MainMenu), new PropertyMetadata(default(bool)));
-
-    public bool IsKeyStrokeReplayTypeChecked
-    {
-        get => (bool)GetValue(IsKeyStrokeReplayTypeCheckedProperty);
-        set => SetValue(IsKeyStrokeReplayTypeCheckedProperty, value);
-    }
-    public static readonly DependencyProperty IsKeyStrokeReplayTypeCheckedProperty = DependencyProperty.Register(
-        nameof(IsKeyStrokeReplayTypeChecked), typeof(bool), typeof(MainMenu), new PropertyMetadata(default(bool)));
-
-    public ICommand ChangeReplayTypeCommand
-    {
-        get => (ICommand)GetValue(ChangeReplayTypeCommandProperty);
-        set => SetValue(ChangeReplayTypeCommandProperty, value);
-    }
-
-    public static readonly DependencyProperty ChangeReplayTypeCommandProperty = DependencyProperty.Register(
-        nameof(ChangeReplayTypeCommand), typeof(ICommand), typeof(MainMenu), new PropertyMetadata(default(ICommand)));
-    
     public bool AutoUpdate
     {
         get => (bool)GetValue(AutoUpdateProperty);
