@@ -15,6 +15,7 @@ public interface IMemoryReader
     bool WriteInputInSlot(int slotNumber, SlotInput slotInput);
     int GetComboCount(int player);
     int GetBlockstun(int player);
+    int GetHitstop(int player);
     public int GetFacing(int player);
     int GetPlayerSide();
     bool IsTrainingMode();

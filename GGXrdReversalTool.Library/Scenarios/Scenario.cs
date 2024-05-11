@@ -146,7 +146,7 @@ public class Scenario : IDisposable
             case AnimationEventTypes.StartBlocking:
                 return 0;
             case AnimationEventTypes.EndBlocking:
-                return eventAnimationInfo.Delay - scenarioActionInput.ReversalFrameIndex + 8;
+                return eventAnimationInfo.Delay - scenarioActionInput.ReversalFrameIndex - 2;
             case AnimationEventTypes.Combo:
                 return 0;
             case AnimationEventTypes.Tech:

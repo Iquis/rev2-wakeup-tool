@@ -36,7 +36,7 @@ public class AnimationEvent : IScenarioEvent
             WallSplatAnimation when ShouldCheckWallSplat => new EventAnimationInfo(AnimationEventTypes.WallSplat),
             TechAnimation when ShouldCheckAirTech => new EventAnimationInfo(AnimationEventTypes.Tech),
             CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckStartBlocking && _lastAnimationString is not (CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation) => new EventAnimationInfo(AnimationEventTypes.StartBlocking, 0),
-            CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckBlockstunEnding => new EventAnimationInfo(AnimationEventTypes.EndBlocking, MemoryReader.GetBlockstun(1 - MemoryReader.GetPlayerSide())),
+            CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckBlockstunEnding => new EventAnimationInfo(AnimationEventTypes.EndBlocking, MemoryReader.GetBlockstun(1 - MemoryReader.GetPlayerSide()) + MemoryReader.GetHitstop(1 - MemoryReader.GetPlayerSide())),
             _ => new EventAnimationInfo()
         };
 

@@ -125,6 +125,15 @@ public class MemoryReader : IMemoryReader
             _ => throw new ArgumentException($"Player index is invalid : {player}")
         };
     }
+    public int GetHitstop(int player)
+    {
+        return player switch
+        {
+            0 => Read<int>(_pointerCollection.P1HitstopPtr),
+            1 => Read<int>(_pointerCollection.P2HitstopPtr),
+            _ => throw new ArgumentException($"Player index is invalid : {player}")
+        };
+    }
 
     public int GetFacing(int player)
     {
@@ -280,6 +289,8 @@ public class MemoryReader : IMemoryReader
         public MemoryPointer P2ComboCountPtr { get; private set; } = null!;
         public MemoryPointer P1BlockStunPtr { get; private set; } = null!;
         public MemoryPointer P2BlockStunPtr { get; private set; } = null!;
+        public MemoryPointer P1HitstopPtr { get; private set; } = null!;
+        public MemoryPointer P2HitstopPtr { get; private set; } = null!;
         public MemoryPointer P1FacingPtr { get; private set; } = null!;
         public MemoryPointer P2FacingPtr { get; private set; } = null!;
         public MemoryPointer PlayerSidePtr { get; private set; } = null!;
@@ -327,6 +338,8 @@ public class MemoryReader : IMemoryReader
             P1ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x9f28);
             P1BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d54);
             P2BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x4d54);
+            P1HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x1ac);
+            P2HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x1ac);
             P1FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d38);
             P2FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x4d38);
 
