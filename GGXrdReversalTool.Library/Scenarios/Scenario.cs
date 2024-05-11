@@ -135,15 +135,14 @@ public class Scenario : IDisposable
     
     private int GetTiming(EventAnimationInfo eventAnimationInfo, Character currentDummy, SlotInput scenarioActionInput)
     {
-        //TODO fix why - 2 ?
         switch (eventAnimationInfo.EventType)
         {
             case AnimationEventTypes.KDFaceUp:
-                return currentDummy.FaceUpFrames - scenarioActionInput.ReversalFrameIndex - 2;
+                return currentDummy.FaceUpFrames - scenarioActionInput.ReversalFrameIndex - 1;
             case AnimationEventTypes.KDFaceDown:
-                return currentDummy.FaceDownFrames - scenarioActionInput.ReversalFrameIndex - 2;
+                return currentDummy.FaceDownFrames - scenarioActionInput.ReversalFrameIndex - 1;
             case AnimationEventTypes.WallSplat:
-                return currentDummy.WallSplatWakeupTiming - scenarioActionInput.ReversalFrameIndex - 2;
+                return currentDummy.WallSplatWakeupTiming - scenarioActionInput.ReversalFrameIndex - 1;
             case AnimationEventTypes.StartBlocking:
                 return 0;
             case AnimationEventTypes.EndBlocking:
@@ -151,8 +150,8 @@ public class Scenario : IDisposable
             case AnimationEventTypes.Combo:
                 return 0;
             case AnimationEventTypes.Tech:
-                //TODO tech reversal recovery = 6?
-                return 6 - 2;
+                // don't ask me why this is correct
+                return 8 - scenarioActionInput.ReversalFrameIndex;
             default:
                 throw new ArgumentOutOfRangeException(nameof(eventAnimationInfo.EventType), eventAnimationInfo, null);
         }
