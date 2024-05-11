@@ -41,7 +41,12 @@ public class MemoryReader : IMemoryReader
 
     public Character GetCurrentDummy()
     {
-        var index = Read<int>(_pointerCollection.DummyIdPtr);
+        var index = GetPlayerSide() switch
+        {
+            0 => Read<byte>(_pointerCollection.P2CharIDPtr),
+            1 => Read<byte>(_pointerCollection.P1CharIDPtr),
+            _ => 0
+        };
         var result = Character.Characters[index];
 
         return result;
@@ -265,10 +270,11 @@ public class MemoryReader : IMemoryReader
 
     private class MemoryPointerCollection
     {
+        public MemoryPointer P1CharIDPtr { get; private set; } = null!;
+        public MemoryPointer P2CharIDPtr { get; private set; } = null!;
         public MemoryPointer P1AnimStringPtr { get; private set; } = null!;
         public MemoryPointer P2AnimStringPtr { get; private set; } = null!;
         public MemoryPointer FrameCountPtr { get; private set; } = null!;
-        public MemoryPointer DummyIdPtr { get; private set; } = null!;
         public MemoryPointer RecordingSlotPtr { get; private set; } = null!;
         public MemoryPointer P1ComboCountPtr { get; private set; } = null!;
         public MemoryPointer P2ComboCountPtr { get; private set; } = null!;
@@ -313,6 +319,8 @@ public class MemoryReader : IMemoryReader
             const int playerOffset = 0x169814;
             const int playerSize = 0x2d198;
 
+            P1CharIDPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x44);
+            P2CharIDPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x44);
             P1AnimStringPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x2444);
             P2AnimStringPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x2444);
             P2ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x9f28);
@@ -331,11 +339,6 @@ public class MemoryReader : IMemoryReader
             const string frameCountPattern = "0o1U0AhBiYioAAAAxwIEAAAAiV8Mx0cUAwAAAF9eiR0=";
             FrameCountPtr =
                 new MemoryPointer(_memoryReader.Read<int>(textAddr + 32 + FindPatternOffset(text, frameCountPattern)));
-
-            const string dummyIdPattern = "VmYP1kZoajjHRgQ4AAAA6A==";
-            DummyIdPtr =
-                new MemoryPointer(_memoryReader.Read<int>(textAddr - 0x70 + FindPatternOffset(text, dummyIdPattern)) +
-                                  0x200);
 
             // Global UREDGameCommon instance, containing high level game state and resources
             // This reference is in GetHitoriyouMainSide (name known because of debug printf)
