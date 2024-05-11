@@ -17,6 +17,9 @@ public interface IMemoryReader
     int GetBlockstun(int player);
     int GetPlayerSide();
     bool IsTrainingMode();
+    public bool IsWorldInTick();
+    public uint GetEngineTickCount();
+
     Process Process { get; }
     SlotInput ReadInputFromSlot(int slotNumber);
 }

@@ -65,36 +65,45 @@ public class Scenario : IDisposable
             var localRunThread = true;
 
             var oldEventType = new EventAnimationInfo();
-
+            var engineTicks = _memoryReader.GetEngineTickCount();
+            var prevEngineTicks = engineTicks;
 
             while (localRunThread)
             {
-                var eventAnimationInfo = _scenarioEvent.CheckEvent();
-                if (eventAnimationInfo.EventType != oldEventType.EventType && eventAnimationInfo.EventType != AnimationEventTypes.None)
+                // Approximately synchronise with the game's main loop finishing game state updates
+                // In practice this leaves >13ms for our work before the next tick
+                engineTicks = _memoryReader.GetEngineTickCount();
+                if (engineTicks != prevEngineTicks)
                 {
-                    LogManager.Instance.WriteLine("Event Occured");
-                    
-                    //TODO should remove from loop?
-                    var currentDummy = _memoryReader.GetCurrentDummy();
-                    
-
-                    var timing = GetTiming(eventAnimationInfo, currentDummy, _scenarioAction.Input);
-
-                    Wait(timing);
-
-                    var shouldExecuteAction = _scenarioFrequency.ShouldHappen();
-
-                    if (shouldExecuteAction)
+                    prevEngineTicks = engineTicks;
+                    // Very unlikely, but skip this tick if somehow we overslept into the middle of a new tick
+                    if (!_memoryReader.IsWorldInTick())
                     {
-                        _scenarioAction.Execute();
-                        
-                        LogManager.Instance.WriteLine("Action Executed");
+                        var eventAnimationInfo = _scenarioEvent.CheckEvent();
+                        if (eventAnimationInfo.EventType != oldEventType.EventType && eventAnimationInfo.EventType != AnimationEventTypes.None)
+                        {
+                            LogManager.Instance.WriteLine("Event Occured");
+
+                            //TODO should remove from loop?
+                            var currentDummy = _memoryReader.GetCurrentDummy();
+
+                            var timing = GetTiming(eventAnimationInfo, currentDummy, _scenarioAction.Input);
+
+                            Wait(timing);
+
+                            var shouldExecuteAction = _scenarioFrequency.ShouldHappen();
+
+                            if (shouldExecuteAction)
+                            {
+                                _scenarioAction.Execute();
+
+                                LogManager.Instance.WriteLine("Action Executed");
+                            }
+                        }
+
+                        oldEventType = eventAnimationInfo;
                     }
                 }
-                
-
-                oldEventType = eventAnimationInfo;
-
 
                 lock (RunThreadLock)
                 {

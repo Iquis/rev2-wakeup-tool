@@ -122,6 +122,17 @@ public class MemoryReader : IMemoryReader
         return Read<byte>(_pointerCollection.GameModePtr) == 6;
     }
 
+    public bool IsWorldInTick()
+    {
+        return Read<int>(_pointerCollection.WorldInTickPtr) != 0;
+    }
+
+    public uint GetEngineTickCount()
+    {
+        // Actually a 64-bit counter but it takes 28 months of continuous runtime to overflow into the high dword
+        return Read<uint>(_pointerCollection.EngineTickCountPtr);
+    }
+
 
     #region DLL Imports
 
@@ -230,6 +241,8 @@ public class MemoryReader : IMemoryReader
         return WriteProcessMemory(handle, address, byteArray, byteArray.Length, ref lpNumberOfBytesRead);
     }
 
+    private bool Write(IntPtr address, int val) => Write(address, BitConverter.GetBytes(val));
+    private bool Write(MemoryPointer memoryPointer, int val) => Write(GetAddressWithOffsets(memoryPointer), val);
 
     private class MemoryPointerCollection
     {
@@ -245,6 +258,8 @@ public class MemoryReader : IMemoryReader
         public MemoryPointer P2BlockStunPtr { get; private set; } = null!;
         public MemoryPointer PlayerSidePtr { get; private set; } = null!;
         public MemoryPointer GameModePtr { get; private set; } = null!;
+        public MemoryPointer WorldInTickPtr { get; private set; } = null!;
+        public MemoryPointer EngineTickCountPtr { get; private set; } = null!;
 
         private readonly Process _process;
         private readonly MemoryReader _memoryReader;
@@ -301,11 +316,21 @@ public class MemoryReader : IMemoryReader
 
             ReplayKeyPtr = new MemoryPointer(keyBindingRelAddr + 0x40);
 
-            // Function name known because of debug printf
+            // Global UREDGameCommon instance, containing high level game state and resources
+            // This reference is in GetHitoriyouMainSide (name known because of debug printf)
             const string getHitoriyouMainSidePattern = "M8A4QUQPlcDDzA==";
             var gameDataPtr = _memoryReader.Read<int>(textAddr - 4 + FindPatternOffset(text, getHitoriyouMainSidePattern));
-            PlayerSidePtr = new MemoryPointer(gameDataPtr, 0x44);
-            GameModePtr = new MemoryPointer(gameDataPtr, 0x45);
+            PlayerSidePtr = new MemoryPointer(gameDataPtr, 0x44); // Internally "MainPlayer"
+            GameModePtr = new MemoryPointer(gameDataPtr, 0x45); // Internally "GameModeID"
+
+            // Global UWorld instance
+            const string theWorldPattern = "VovxV4t+KDt4UA==";
+            var theWorldPtrAddr = _memoryReader.Read<int>(textAddr - 4 + FindPatternOffset(text, theWorldPattern));
+            WorldInTickPtr = new MemoryPointer(theWorldPtrAddr, 0x14c);
+
+            // Global 64 bit tick counter for the main loop incremented shortly after ticking everything
+            const string engineTickCountPattern = "dQWD+AV2FPIPEEcQ";
+            EngineTickCountPtr = new MemoryPointer(_memoryReader.Read<int>(textAddr - 4 + FindPatternOffset(text, engineTickCountPattern)));
         }
 
         private int FindPatternOffset(in byte[] haystack, in byte[] needle)
