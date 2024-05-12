@@ -5,6 +5,7 @@ using GGXrdReversalTool.Library.Models.Inputs;
 using GGXrdReversalTool.Library.Scenarios.Action;
 using GGXrdReversalTool.Library.Scenarios.Event;
 using GGXrdReversalTool.Library.Scenarios.Frequency;
+using System.Runtime.InteropServices;
 
 namespace GGXrdReversalTool.Library.Scenarios;
 
@@ -68,6 +69,8 @@ public class Scenario : IDisposable
             var engineTicks = _memoryReader.GetEngineTickCount();
             var prevEngineTicks = engineTicks;
 
+            timeBeginPeriod(1);
+
             while (localRunThread)
             {
                 // Approximately synchronise with the game's main loop finishing game state updates
@@ -75,9 +78,13 @@ public class Scenario : IDisposable
                 engineTicks = _memoryReader.GetEngineTickCount();
                 if (engineTicks != prevEngineTicks)
                 {
-                    prevEngineTicks = engineTicks;
+                    var worldInTick = _memoryReader.IsWorldInTick();
+                    if (engineTicks - prevEngineTicks > 1 || worldInTick)
+                    {
+                        LogManager.Instance.WriteLine("Overslept through tick");
+                    }
                     // Very unlikely, but skip this tick if somehow we overslept into the middle of a new tick
-                    if (!_memoryReader.IsWorldInTick())
+                    if (!worldInTick)
                     {
                         var eventAnimationInfo = _scenarioEvent.CheckEvent();
                         if (eventAnimationInfo.EventType != oldEventType.EventType && eventAnimationInfo.EventType != AnimationEventTypes.None)
@@ -99,6 +106,7 @@ public class Scenario : IDisposable
 
                                 LogManager.Instance.WriteLine("Action Executed");
                             }
+                            engineTicks = _memoryReader.GetEngineTickCount();
                         }
 
                         oldEventType = eventAnimationInfo;
@@ -110,9 +118,11 @@ public class Scenario : IDisposable
                     localRunThread = _runThread;
                 }
 
+                prevEngineTicks = engineTicks;
                 Thread.Sleep(1);
             }
 
+            timeEndPeriod(1);
 
             LogManager.Instance.WriteLine("Scenario Thread ended");
         });
@@ -165,7 +175,7 @@ public class Scenario : IDisposable
 
             do
             {
-                Thread.Sleep(10);
+                Thread.Sleep(1);
                 frameCount = _memoryReader.FrameCount() - startFrame;
             } while (frameCount < frames);
         }
@@ -176,4 +186,13 @@ public class Scenario : IDisposable
     {
         Stop();
     }
+
+    #region DLL Imports
+    [DllImport("winmm.dll")]
+    private static extern int timeBeginPeriod(uint uPeriod);
+
+    [DllImport("winmm.dll")]
+    private static extern int timeEndPeriod(uint uPeriod);
+
+    #endregion
 }
