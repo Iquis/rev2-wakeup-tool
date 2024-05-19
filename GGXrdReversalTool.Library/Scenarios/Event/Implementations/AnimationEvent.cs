@@ -26,38 +26,52 @@ public class AnimationEvent : IScenarioEvent
 
     private int _lastBlockstun;
 
-    public int FramesUntilEvent()
+    public int FramesUntilEvent(int inputReversalFrame)
     {
         if (MemoryReader is null)
             return int.MaxValue;
 
-        var dummySide = 1 - MemoryReader.GetPlayerSide();
+        var playerSide = MemoryReader.GetPlayerSide();
+        var dummySide = 1 - playerSide;
         var currentDummy = MemoryReader.GetCurrentDummy();
         var animationString = MemoryReader.ReadAnimationString(dummySide);
         var animFrame = MemoryReader.GetAnimFrame(dummySide);
         var blockstun = MemoryReader.GetBlockstun(dummySide);
         var hitstop = MemoryReader.GetHitstop(dummySide);
+        var freezeFrames = MemoryReader.GetSuperflashFreezeFrames(dummySide);
+        var slowdownFrames = MemoryReader.GetSlowdownFrames(playerSide);
         var lastBlockstun = _lastBlockstun;
         _lastBlockstun = blockstun;
 
-        switch (animationString)
+        var result = animationString switch
         {
-            case FaceDownAnimation when ShouldCheckWakingUp:
-                return currentDummy.FaceDownFrames - animFrame;
-            case FaceUpAnimation when ShouldCheckWakingUp:
-                return currentDummy.FaceUpFrames - animFrame;
-            case WallSplatAnimation when ShouldCheckWallSplat:
-                return currentDummy.WallSplatWakeupTiming - animFrame;
-            case TechAnimation when ShouldCheckAirTech:
-                return 9 - animFrame;
+            FaceDownAnimation when ShouldCheckWakingUp => currentDummy.FaceDownFrames - animFrame,
+            FaceUpAnimation when ShouldCheckWakingUp => currentDummy.FaceUpFrames - animFrame,
+            WallSplatAnimation when ShouldCheckWallSplat => currentDummy.WallSplatWakeupTiming - animFrame,
+            TechAnimation when ShouldCheckAirTech => 9 - animFrame,
+            _ => int.MaxValue,
         };
 
-        if (ShouldCheckStartBlocking && blockstun > 0 && lastBlockstun == 0)
-            return 0;
-        if (ShouldCheckBlockstunEnding && blockstun > 0)
-            return blockstun + hitstop - 1;
+        if (result == int.MaxValue && ShouldCheckStartBlocking && blockstun > 0 && lastBlockstun == 0)
+            result = 0;
+        if (result == int.MaxValue && ShouldCheckBlockstunEnding && blockstun > 0)
+            result = blockstun + hitstop - 1;
 
-        return int.MaxValue;
+        if (result < int.MaxValue)
+        {
+            result += Math.Min(result, (slowdownFrames / 2) + slowdownFrames % 2);
+            result -= inputReversalFrame;
+            if (freezeFrames > 0)
+            {
+                // Avoid trying a reversal directly out of a super freeze, where everything but blocking and throwing gets dropped
+                if (result + freezeFrames == 0)
+                    result = int.MaxValue;
+                else
+                    result += freezeFrames;
+            }
+        }
+
+        return result;
     }
     
 }

@@ -6,5 +6,5 @@ public interface IScenarioEvent
 {
     IMemoryReader? MemoryReader { get; internal set; }
     bool IsValid { get; }
-    int FramesUntilEvent();
+    int FramesUntilEvent(int inputReversalFrame);
 }

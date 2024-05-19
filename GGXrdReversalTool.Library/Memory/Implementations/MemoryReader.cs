@@ -130,6 +130,22 @@ public class MemoryReader : IMemoryReader
         return Read<int>(_pointerCollection.Players[player].AnimFramePtr);
     }
 
+    public int GetSlowdownFrames(int player)
+    {
+        if (player is < 0 or > 1)
+            throw new ArgumentException($"Player index is invalid : {player}");
+        return Read<int>(_pointerCollection.Players[player].SlowdownFramesPtr);
+    }
+
+    public int GetSuperflashFreezeFrames(int player)
+    {
+        if (player is < 0 or > 1)
+            throw new ArgumentException($"Player index is invalid : {player}");
+        if (Read<int>(_pointerCollection.SuperflashInstigatorPtr) == GetAddressWithOffsets(_pointerCollection.Players[1 - player].BasePtr).ToInt32())
+            return Read<int>(_pointerCollection.SuperflashFramesForOpponentPtr);
+        return 0;
+    }
+
     public int GetPlayerSide()
     {
         return Read<byte>(_pointerCollection.PlayerSidePtr) != 0 ? 1 : 0;
@@ -266,6 +282,7 @@ public class MemoryReader : IMemoryReader
     {
         public class PlayerData
         {
+            public readonly MemoryPointer BasePtr;
             public readonly MemoryPointer CharIDPtr;
             public readonly MemoryPointer AnimStringPtr;
             public readonly MemoryPointer ComboCountPtr;
@@ -273,11 +290,13 @@ public class MemoryReader : IMemoryReader
             public readonly MemoryPointer HitstopPtr;
             public readonly MemoryPointer FacingPtr;
             public readonly MemoryPointer AnimFramePtr;
+            public readonly MemoryPointer SlowdownFramesPtr;
 
             public PlayerData(int matchPtrAddr, int index)
             {
                 int playerOffset = 0x169814 + index * 0x2d198;
 
+                BasePtr = new MemoryPointer(matchPtrAddr, playerOffset);
                 CharIDPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x44);
                 AnimStringPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x2444);
                 ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x9f28);
@@ -285,6 +304,7 @@ public class MemoryReader : IMemoryReader
                 HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x1ac);
                 FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d38);
                 AnimFramePtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x130); // 0x134? Both work for now
+                SlowdownFramesPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x261fc);
             }
         };
         public ImmutableArray<PlayerData> Players { get; private set; }
@@ -296,6 +316,8 @@ public class MemoryReader : IMemoryReader
         public MemoryPointer DummyRecInputsSlotPtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsIndexPtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsSidePtr { get; private set; } = null!;
+        public MemoryPointer SuperflashInstigatorPtr { get; private set; } = null!;
+        public MemoryPointer SuperflashFramesForOpponentPtr { get; private set; } = null!;
         public MemoryPointer WorldInTickPtr { get; private set; } = null!;
         public MemoryPointer EngineTickCountPtr { get; private set; } = null!;
 
@@ -348,6 +370,9 @@ public class MemoryReader : IMemoryReader
             DummyRecInputsSlotPtr = new MemoryPointer(trainingStructAddr + 4);
             DummyRecInputsIndexPtr = new MemoryPointer(trainingStructAddr + 0x19cc);
             DummyRecInputsSidePtr = new MemoryPointer(trainingStructAddr + 0x19d0);
+
+            SuperflashInstigatorPtr = new MemoryPointer(matchPtrAddr, 0x1c4b0c);
+            SuperflashFramesForOpponentPtr = new MemoryPointer(matchPtrAddr, 0x1c4b10);
 
             // Global UWorld instance
             const string theWorldPattern = "VovxV4t+KDt4UA==";

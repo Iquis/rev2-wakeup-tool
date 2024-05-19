@@ -13,7 +13,7 @@ public class ComboEvent : IScenarioEvent
 
     public bool IsValid => MinComboCount <= MaxComboCount;
 
-    public int FramesUntilEvent()
+    public int FramesUntilEvent(int inputReversalFrame)
     {
         if (MemoryReader is null)
             return int.MaxValue;

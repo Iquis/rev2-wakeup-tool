@@ -18,6 +18,8 @@ public interface IMemoryReader
     int GetHitstop(int player);
     int GetFacing(int player);
     int GetAnimFrame(int player);
+    int GetSlowdownFrames(int player);
+    int GetSuperflashFreezeFrames(int player);
     int GetPlayerSide();
     bool IsTrainingMode();
     public bool IsWorldInTick();

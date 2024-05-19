@@ -87,7 +87,7 @@ public class Scenario : IDisposable
                     {
                         // Only execute a reversal on the exact frame, skipping if we miss it
                         // Potentially configurable later, e.g. executing one frame early or on the exact frame if missed
-                        if (_scenarioAction.Input.ReversalFrameIndex == _scenarioEvent.FramesUntilEvent())
+                        if (0 == _scenarioEvent.FramesUntilEvent(_scenarioAction.Input.ReversalFrameIndex))
                         {
                             LogManager.Instance.WriteLine("Event Occured");
 
