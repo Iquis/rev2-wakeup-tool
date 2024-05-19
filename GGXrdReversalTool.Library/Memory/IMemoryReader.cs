@@ -11,12 +11,13 @@ public interface IMemoryReader
     string ReadAnimationString(int player);
     int FrameCount();
     Character GetCurrentDummy();
-    public bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide);
+    bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide);
     bool WriteInputInSlot(int slotNumber, SlotInput slotInput);
     int GetComboCount(int player);
     int GetBlockstun(int player);
     int GetHitstop(int player);
-    public int GetFacing(int player);
+    int GetFacing(int player);
+    int GetAnimFrame(int player);
     int GetPlayerSide();
     bool IsTrainingMode();
     public bool IsWorldInTick();

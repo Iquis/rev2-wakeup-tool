@@ -19,5 +19,5 @@ public class PercentageFrequency : IScenarioFrequency
         return _random.Next(0, 101) <= _percentage;
     }
 
-    public IMemoryReader MemoryReader { get; set; }
+    public IMemoryReader? MemoryReader { get; set; }
 }

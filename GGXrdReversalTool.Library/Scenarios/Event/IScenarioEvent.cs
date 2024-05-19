@@ -4,7 +4,7 @@ namespace GGXrdReversalTool.Library.Scenarios.Event;
 
 public interface IScenarioEvent
 {
-    IMemoryReader MemoryReader { get; internal set; }
+    IMemoryReader? MemoryReader { get; internal set; }
     bool IsValid { get; }
-    EventAnimationInfo CheckEvent();
+    int FramesUntilEvent();
 }

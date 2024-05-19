@@ -1,4 +1,5 @@
 ﻿using GGXrdReversalTool.Library.Memory;
+using GGXrdReversalTool.Library.Memory.Implementations;
 
 namespace GGXrdReversalTool.Library.Scenarios.Event.Implementations;
 
@@ -12,7 +13,7 @@ public class AnimationEvent : IScenarioEvent
     private const string StandBlockingAnimation = "CmnActMidGuardLoop";
     private const string HighBlockingAnimation = "CmnActHighGuardLoop";
 
-    public IMemoryReader MemoryReader { get; set; }
+    public IMemoryReader? MemoryReader { get; set; }
 
     public bool ShouldCheckWakingUp { get; set; } = true;
     public bool ShouldCheckWallSplat { get; set; } = true;
@@ -23,28 +24,40 @@ public class AnimationEvent : IScenarioEvent
     public bool IsValid =>
         ShouldCheckWakingUp || ShouldCheckWallSplat || ShouldCheckAirTech || ShouldCheckStartBlocking || ShouldCheckBlockstunEnding;
 
-    private string _lastAnimationString = ""; 
+    private int _lastBlockstun;
 
-    public EventAnimationInfo CheckEvent()
+    public int FramesUntilEvent()
     {
-        var animationString = MemoryReader.ReadAnimationString(1 - MemoryReader.GetPlayerSide());
+        if (MemoryReader is null)
+            return int.MaxValue;
 
-        var result = animationString switch
+        var dummySide = 1 - MemoryReader.GetPlayerSide();
+        var currentDummy = MemoryReader.GetCurrentDummy();
+        var animationString = MemoryReader.ReadAnimationString(dummySide);
+        var animFrame = MemoryReader.GetAnimFrame(dummySide);
+        var blockstun = MemoryReader.GetBlockstun(dummySide);
+        var hitstop = MemoryReader.GetHitstop(dummySide);
+        var lastBlockstun = _lastBlockstun;
+        _lastBlockstun = blockstun;
+
+        switch (animationString)
         {
-            FaceDownAnimation when ShouldCheckWakingUp => new EventAnimationInfo(AnimationEventTypes.KDFaceDown),
-            FaceUpAnimation when ShouldCheckWakingUp => new EventAnimationInfo(AnimationEventTypes.KDFaceUp),
-            WallSplatAnimation when ShouldCheckWallSplat => new EventAnimationInfo(AnimationEventTypes.WallSplat),
-            TechAnimation when ShouldCheckAirTech => new EventAnimationInfo(AnimationEventTypes.Tech),
-            CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckStartBlocking && _lastAnimationString is not (CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation) => new EventAnimationInfo(AnimationEventTypes.StartBlocking, 0),
-            CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckBlockstunEnding => new EventAnimationInfo(AnimationEventTypes.EndBlocking, MemoryReader.GetBlockstun(1 - MemoryReader.GetPlayerSide()) + MemoryReader.GetHitstop(1 - MemoryReader.GetPlayerSide())),
-            _ => new EventAnimationInfo()
+            case FaceDownAnimation when ShouldCheckWakingUp:
+                return currentDummy.FaceDownFrames - animFrame;
+            case FaceUpAnimation when ShouldCheckWakingUp:
+                return currentDummy.FaceUpFrames - animFrame;
+            case WallSplatAnimation when ShouldCheckWallSplat:
+                return currentDummy.WallSplatWakeupTiming - animFrame;
+            case TechAnimation when ShouldCheckAirTech:
+                return 9 - animFrame;
         };
 
-        //TODO Refactor pour envoyer l'event uniquement quand changement
+        if (ShouldCheckStartBlocking && blockstun > 0 && lastBlockstun == 0)
+            return 0;
+        if (ShouldCheckBlockstunEnding && blockstun > 0)
+            return blockstun + hitstop - 1;
 
-        _lastAnimationString = animationString ;
-
-        return result;
+        return int.MaxValue;
     }
     
 }

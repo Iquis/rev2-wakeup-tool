@@ -123,6 +123,13 @@ public class MemoryReader : IMemoryReader
         return Read<int>(_pointerCollection.Players[player].FacingPtr);
     }
 
+    public int GetAnimFrame(int player)
+    {
+        if (player is < 0 or > 1)
+            throw new ArgumentException($"Player index is invalid : {player}");
+        return Read<int>(_pointerCollection.Players[player].AnimFramePtr);
+    }
+
     public int GetPlayerSide()
     {
         return Read<byte>(_pointerCollection.PlayerSidePtr) != 0 ? 1 : 0;
@@ -265,6 +272,7 @@ public class MemoryReader : IMemoryReader
             public readonly MemoryPointer BlockStunPtr;
             public readonly MemoryPointer HitstopPtr;
             public readonly MemoryPointer FacingPtr;
+            public readonly MemoryPointer AnimFramePtr;
 
             public PlayerData(int matchPtrAddr, int index)
             {
@@ -276,6 +284,7 @@ public class MemoryReader : IMemoryReader
                 BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d54);
                 HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x1ac);
                 FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d38);
+                AnimFramePtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x130); // 0x134? Both work for now
             }
         };
         public ImmutableArray<PlayerData> Players { get; private set; }
