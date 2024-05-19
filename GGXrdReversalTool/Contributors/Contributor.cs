@@ -28,6 +28,7 @@ public class Contributor
         new Contributor { Name = "AshSux", Role = "App Icon", Link = new Link { Name = "@Ash_Sux", Url = "https://twitter.com/Ash_Sux"}},
         new Contributor { Name = "Worsety", Role = "Dev contribution"},
         new Contributor { Name = "Mirri", Role = "Dev contribution"},
+        new Contributor { Name = "kkots", Role = "Technical advice"},
          
     };
 }
