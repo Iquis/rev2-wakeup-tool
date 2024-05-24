@@ -12,6 +12,9 @@ public interface IMemoryReader
     int FrameCount();
     Character GetCurrentDummy();
     bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide);
+    bool SetDummyRecordingSlot(int slotNumber);
+    int GetDummyMode();
+    int GetTrainingRecordingSlot();
     bool WriteInputInSlot(int slotNumber, SlotInput slotInput);
     int GetComboCount(int player);
     int GetBlockstun(int player);

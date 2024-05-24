@@ -85,6 +85,11 @@ public class Scenario : IDisposable
                     // Very unlikely, but skip this tick if somehow we overslept into the middle of a new tick
                     if (!worldInTick)
                     {
+                        if (_scenarioAction.IsRunning)
+                        {
+                            _scenarioAction.Tick();
+                            // TODO (low priority?): Logic for cancelling actions
+                        }
                         // Only execute a reversal on the exact frame, skipping if we miss it
                         // Potentially configurable later, e.g. executing one frame early or on the exact frame if missed
                         if (0 == _scenarioEvent.FramesUntilEvent(_scenarioAction.Input.ReversalFrameIndex))

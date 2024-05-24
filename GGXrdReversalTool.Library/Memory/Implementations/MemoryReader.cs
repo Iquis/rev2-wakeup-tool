@@ -36,16 +36,31 @@ public class MemoryReader : IMemoryReader
 
     public bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide)
     {
-        if (slotNumber is < 1 or > 3)
-        {
-            throw new ArgumentException("Invalid Slot number", nameof(slotNumber));
-        }
         var result = true;
-        result = result && Write(_pointerCollection.DummyRecInputsSlotPtr, slotNumber - 1);
+        result = result && SetDummyRecordingSlot(slotNumber);
         result = result && Write(_pointerCollection.DummyRecInputsIndexPtr, inputIndex);
         result = result && Write(_pointerCollection.DummyRecInputsSidePtr, startingSide);
         result = result && Write(_pointerCollection.DummyModePtr, 3);
         return result;
+    }
+
+    public bool SetDummyRecordingSlot(int slotNumber)
+    {
+        if (slotNumber is < 1 or > 3)
+        {
+            throw new ArgumentException("Invalid Slot number", nameof(slotNumber));
+        }
+        return Write(_pointerCollection.DummyRecInputsSlotPtr, slotNumber - 1);
+    }
+
+    public int GetDummyMode()
+    {
+        return Read<int>(_pointerCollection.DummyModePtr);
+    }
+
+    public int GetTrainingRecordingSlot()
+    {
+        return Read<int>(_pointerCollection.DummyRecInputsSlotSettingPtr);
     }
 
     public bool WriteInputInSlot(int slotNumber, SlotInput slotInput)
@@ -316,6 +331,7 @@ public class MemoryReader : IMemoryReader
         public MemoryPointer DummyRecInputsSlotPtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsIndexPtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsSidePtr { get; private set; } = null!;
+        public MemoryPointer DummyRecInputsSlotSettingPtr { get; private set; } = null!;
         public MemoryPointer SuperflashInstigatorPtr { get; private set; } = null!;
         public MemoryPointer SuperflashFramesForOpponentPtr { get; private set; } = null!;
         public MemoryPointer WorldInTickPtr { get; private set; } = null!;
@@ -370,6 +386,8 @@ public class MemoryReader : IMemoryReader
             DummyRecInputsSlotPtr = new MemoryPointer(trainingStructAddr + 4);
             DummyRecInputsIndexPtr = new MemoryPointer(trainingStructAddr + 0x19cc);
             DummyRecInputsSidePtr = new MemoryPointer(trainingStructAddr + 0x19d0);
+            // Mirrors system.dat setting, 3 = random
+            DummyRecInputsSlotSettingPtr = new MemoryPointer(trainingStructAddr + 8);
 
             SuperflashInstigatorPtr = new MemoryPointer(matchPtrAddr, 0x1c4b0c);
             SuperflashFramesForOpponentPtr = new MemoryPointer(matchPtrAddr, 0x1c4b10);
