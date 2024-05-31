@@ -7,9 +7,7 @@ namespace GGXrdReversalTool.Library.Scenarios.Action;
 public interface IScenarioAction
 {
     void Execute();
-    void Tick();
-    IMemoryReader? MemoryReader { get; internal set; }
-    bool IsRunning { get; }
+    IMemoryReader MemoryReader { get; internal set; }
     
     SlotInput Input { get; set; }
     void Init();

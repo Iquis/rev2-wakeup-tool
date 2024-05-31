@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Collections.Immutable;
 using GGXrdReversalTool.Library.Characters;
 using GGXrdReversalTool.Library.Memory.Pointer;
 using GGXrdReversalTool.Library.Models.Inputs;
@@ -23,6 +22,18 @@ public class MemoryReader : IMemoryReader
 
     public Process Process { get; }
 
+    public string ReadAnimationString(int player)
+    {
+        const int length = 32;
+
+        return player switch
+        {
+            0 => ReadString(_pointerCollection.P1AnimStringPtr, length),
+            1 => ReadString(_pointerCollection.P2AnimStringPtr, length),
+            _ => string.Empty
+        };
+    }
+
     public int FrameCount()
     {
         return Read<int>(_pointerCollection.FrameCountPtr);
@@ -30,37 +41,29 @@ public class MemoryReader : IMemoryReader
 
     public Character GetCurrentDummy()
     {
-        var index = Read<byte>(_pointerCollection.Players[1 - GetPlayerSide()].CharIDPtr);
-        return Character.Characters[index];
-    }
+        var index = GetPlayerSide() switch
+        {
+            0 => Read<byte>(_pointerCollection.P2CharIDPtr),
+            1 => Read<byte>(_pointerCollection.P1CharIDPtr),
+            _ => 0
+        };
+        var result = Character.Characters[index];
 
-    public bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide)
-    {
-        var result = true;
-        result = result && SetDummyRecordingSlot(slotNumber);
-        result = result && Write(_pointerCollection.DummyRecInputsIndexPtr, inputIndex);
-        result = result && Write(_pointerCollection.DummyRecInputsSidePtr, startingSide);
-        result = result && Write(_pointerCollection.DummyModePtr, 3);
         return result;
     }
 
-    public bool SetDummyRecordingSlot(int slotNumber)
+    public bool SetDummyPlayback(int slotNumber, int inputIndex, int startingSide)
     {
         if (slotNumber is < 1 or > 3)
         {
             throw new ArgumentException("Invalid Slot number", nameof(slotNumber));
         }
-        return Write(_pointerCollection.DummyRecInputsSlotPtr, slotNumber - 1);
-    }
-
-    public int GetDummyMode()
-    {
-        return Read<int>(_pointerCollection.DummyModePtr);
-    }
-
-    public int GetTrainingRecordingSlot()
-    {
-        return Read<int>(_pointerCollection.DummyRecInputsSlotSettingPtr);
+        var result = true;
+        result = result && Write(_pointerCollection.DummyRecInputsSlotPtr, slotNumber - 1);
+        result = result && Write(_pointerCollection.DummyRecInputsIndexPtr, inputIndex);
+        result = result && Write(_pointerCollection.DummyRecInputsSidePtr, startingSide);
+        result = result && Write(_pointerCollection.DummyModePtr, 3);
+        return result;
     }
 
     public bool WriteInputInSlot(int slotNumber, SlotInput slotInput)
@@ -103,62 +106,43 @@ public class MemoryReader : IMemoryReader
 
     }
 
-    public string ReadAnimationString(int player)
-    {
-        if (player is < 0 or > 1)
-            return string.Empty;
-        return ReadString(_pointerCollection.Players[player].AnimStringPtr, 32);
-    }
-
     public int GetComboCount(int player)
     {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        return Read<int>(_pointerCollection.Players[player].ComboCountPtr);
+        return player switch
+        {
+            0 => Read<int>(_pointerCollection.P1ComboCountPtr),
+            1 => Read<int>(_pointerCollection.P2ComboCountPtr),
+            _ => throw new ArgumentException($"Player index is invalid : {player}")
+        };
     }
 
     public int GetBlockstun(int player)
     {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        return Read<int>(_pointerCollection.Players[player].BlockStunPtr);
+        return player switch
+        {
+            0 => Read<int>(_pointerCollection.P1BlockStunPtr),
+            1 => Read<int>(_pointerCollection.P2BlockStunPtr),
+            _ => throw new ArgumentException($"Player index is invalid : {player}")
+        };
     }
-
     public int GetHitstop(int player)
     {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        return Read<int>(_pointerCollection.Players[player].HitstopPtr);
+        return player switch
+        {
+            0 => Read<int>(_pointerCollection.P1HitstopPtr),
+            1 => Read<int>(_pointerCollection.P2HitstopPtr),
+            _ => throw new ArgumentException($"Player index is invalid : {player}")
+        };
     }
 
     public int GetFacing(int player)
     {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        return Read<int>(_pointerCollection.Players[player].FacingPtr);
-    }
-
-    public int GetAnimFrame(int player)
-    {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        return Read<int>(_pointerCollection.Players[player].AnimFramePtr);
-    }
-
-    public int GetSlowdownFrames(int player)
-    {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        return Read<int>(_pointerCollection.Players[player].SlowdownFramesPtr);
-    }
-
-    public int GetSuperflashFreezeFrames(int player)
-    {
-        if (player is < 0 or > 1)
-            throw new ArgumentException($"Player index is invalid : {player}");
-        if (Read<int>(_pointerCollection.SuperflashInstigatorPtr) == GetAddressWithOffsets(_pointerCollection.Players[1 - player].BasePtr).ToInt32())
-            return Read<int>(_pointerCollection.SuperflashFramesForOpponentPtr);
-        return 0;
+        return player switch
+        {
+            0 => Read<int>(_pointerCollection.P1FacingPtr),
+            1 => Read<int>(_pointerCollection.P2FacingPtr),
+            _ => throw new ArgumentException($"Player index is invalid : {player}")
+        };
     }
 
     public int GetPlayerSide()
@@ -295,45 +279,26 @@ public class MemoryReader : IMemoryReader
 
     private class MemoryPointerCollection
     {
-        public class PlayerData
-        {
-            public readonly MemoryPointer BasePtr;
-            public readonly MemoryPointer CharIDPtr;
-            public readonly MemoryPointer AnimStringPtr;
-            public readonly MemoryPointer ComboCountPtr;
-            public readonly MemoryPointer BlockStunPtr;
-            public readonly MemoryPointer HitstopPtr;
-            public readonly MemoryPointer FacingPtr;
-            public readonly MemoryPointer AnimFramePtr;
-            public readonly MemoryPointer SlowdownFramesPtr;
-
-            public PlayerData(int matchPtrAddr, int index)
-            {
-                int playerOffset = 0x169814 + index * 0x2d198;
-
-                BasePtr = new MemoryPointer(matchPtrAddr, playerOffset);
-                CharIDPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x44);
-                AnimStringPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x2444);
-                ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x9f28);
-                BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d54);
-                HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x1ac);
-                FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d38);
-                AnimFramePtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x130); // 0x134? Both work for now
-                SlowdownFramesPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x261fc);
-            }
-        };
-        public ImmutableArray<PlayerData> Players { get; private set; }
+        public MemoryPointer P1CharIDPtr { get; private set; } = null!;
+        public MemoryPointer P2CharIDPtr { get; private set; } = null!;
+        public MemoryPointer P1AnimStringPtr { get; private set; } = null!;
+        public MemoryPointer P2AnimStringPtr { get; private set; } = null!;
         public MemoryPointer FrameCountPtr { get; private set; } = null!;
         public MemoryPointer RecordingSlotPtr { get; private set; } = null!;
+        public MemoryPointer P1ComboCountPtr { get; private set; } = null!;
+        public MemoryPointer P2ComboCountPtr { get; private set; } = null!;
+        public MemoryPointer P1BlockStunPtr { get; private set; } = null!;
+        public MemoryPointer P2BlockStunPtr { get; private set; } = null!;
+        public MemoryPointer P1HitstopPtr { get; private set; } = null!;
+        public MemoryPointer P2HitstopPtr { get; private set; } = null!;
+        public MemoryPointer P1FacingPtr { get; private set; } = null!;
+        public MemoryPointer P2FacingPtr { get; private set; } = null!;
         public MemoryPointer PlayerSidePtr { get; private set; } = null!;
         public MemoryPointer GameModePtr { get; private set; } = null!;
         public MemoryPointer DummyModePtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsSlotPtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsIndexPtr { get; private set; } = null!;
         public MemoryPointer DummyRecInputsSidePtr { get; private set; } = null!;
-        public MemoryPointer DummyRecInputsSlotSettingPtr { get; private set; } = null!;
-        public MemoryPointer SuperflashInstigatorPtr { get; private set; } = null!;
-        public MemoryPointer SuperflashFramesForOpponentPtr { get; private set; } = null!;
         public MemoryPointer WorldInTickPtr { get; private set; } = null!;
         public MemoryPointer EngineTickCountPtr { get; private set; } = null!;
 
@@ -361,7 +326,23 @@ public class MemoryReader : IMemoryReader
 
             const string playerPattern = "i4Ew5iIAi4B8AwAAM9s7w3QPi4DIAQAAg+ABiUQkKOs=";
             var matchPtrAddr = _memoryReader.Read<int>(textAddr - 4 + FindPatternOffset(text, playerPattern));
-            Players = ImmutableArray.Create(new PlayerData(matchPtrAddr, 0), new PlayerData(matchPtrAddr, 1));
+
+            const int playerOffset = 0x169814;
+            const int playerSize = 0x2d198;
+
+            P1CharIDPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x44);
+            P2CharIDPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x44);
+            P1AnimStringPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x2444);
+            P2AnimStringPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x2444);
+            P2ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x9f28);
+            P1ComboCountPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x9f28);
+            P1BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d54);
+            P2BlockStunPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x4d54);
+            P1HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x1ac);
+            P2HitstopPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x1ac);
+            P1FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + 0x4d38);
+            P2FacingPtr = new MemoryPointer(matchPtrAddr, playerOffset + playerSize + 0x4d38);
+
 
             const string recordingSlotPattern = "i1QkBGnSyBIAAIHC";
             RecordingSlotPtr =
@@ -386,11 +367,6 @@ public class MemoryReader : IMemoryReader
             DummyRecInputsSlotPtr = new MemoryPointer(trainingStructAddr + 4);
             DummyRecInputsIndexPtr = new MemoryPointer(trainingStructAddr + 0x19cc);
             DummyRecInputsSidePtr = new MemoryPointer(trainingStructAddr + 0x19d0);
-            // Mirrors system.dat setting, 3 = random
-            DummyRecInputsSlotSettingPtr = new MemoryPointer(trainingStructAddr + 8);
-
-            SuperflashInstigatorPtr = new MemoryPointer(matchPtrAddr, 0x1c4b0c);
-            SuperflashFramesForOpponentPtr = new MemoryPointer(matchPtrAddr, 0x1c4b10);
 
             // Global UWorld instance
             const string theWorldPattern = "VovxV4t+KDt4UA==";

@@ -65,6 +65,7 @@ public class Scenario : IDisposable
             LogManager.Instance.WriteLine("Scenario Thread start");
             var localRunThread = true;
 
+            var oldEventType = new EventAnimationInfo();
             var engineTicks = _memoryReader.GetEngineTickCount();
             var prevEngineTicks = engineTicks;
 
@@ -85,16 +86,17 @@ public class Scenario : IDisposable
                     // Very unlikely, but skip this tick if somehow we overslept into the middle of a new tick
                     if (!worldInTick)
                     {
-                        if (_scenarioAction.IsRunning)
-                        {
-                            _scenarioAction.Tick();
-                            // TODO (low priority?): Logic for cancelling actions
-                        }
-                        // Only execute a reversal on the exact frame, skipping if we miss it
-                        // Potentially configurable later, e.g. executing one frame early or on the exact frame if missed
-                        if (0 == _scenarioEvent.FramesUntilEvent(_scenarioAction.Input.ReversalFrameIndex))
+                        var eventAnimationInfo = _scenarioEvent.CheckEvent();
+                        if (eventAnimationInfo.EventType != oldEventType.EventType && eventAnimationInfo.EventType != AnimationEventTypes.None)
                         {
                             LogManager.Instance.WriteLine("Event Occured");
+
+                            //TODO should remove from loop?
+                            var currentDummy = _memoryReader.GetCurrentDummy();
+
+                            var timing = GetTiming(eventAnimationInfo, currentDummy, _scenarioAction.Input);
+
+                            Wait(timing);
 
                             var shouldExecuteAction = _scenarioFrequency.ShouldHappen();
 
@@ -104,7 +106,10 @@ public class Scenario : IDisposable
 
                                 LogManager.Instance.WriteLine("Action Executed");
                             }
+                            engineTicks = _memoryReader.GetEngineTickCount();
                         }
+
+                        oldEventType = eventAnimationInfo;
                     }
                 }
 
@@ -126,6 +131,9 @@ public class Scenario : IDisposable
 
     }
 
+    
+
+
     public void Stop()
     {
         lock (RunThreadLock)
@@ -133,6 +141,46 @@ public class Scenario : IDisposable
             _runThread = false;
         }
     }
+
+    
+    private int GetTiming(EventAnimationInfo eventAnimationInfo, Character currentDummy, SlotInput scenarioActionInput)
+    {
+        switch (eventAnimationInfo.EventType)
+        {
+            case AnimationEventTypes.KDFaceUp:
+                return currentDummy.FaceUpFrames - scenarioActionInput.ReversalFrameIndex - 1;
+            case AnimationEventTypes.KDFaceDown:
+                return currentDummy.FaceDownFrames - scenarioActionInput.ReversalFrameIndex - 1;
+            case AnimationEventTypes.WallSplat:
+                return currentDummy.WallSplatWakeupTiming - scenarioActionInput.ReversalFrameIndex - 1;
+            case AnimationEventTypes.StartBlocking:
+                return 0;
+            case AnimationEventTypes.EndBlocking:
+                return eventAnimationInfo.Delay - scenarioActionInput.ReversalFrameIndex - 2;
+            case AnimationEventTypes.Combo:
+                return 0;
+            case AnimationEventTypes.Tech:
+                // don't ask me why this is correct
+                return 8 - scenarioActionInput.ReversalFrameIndex;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(eventAnimationInfo.EventType), eventAnimationInfo, null);
+        }
+    }
+    private void Wait(int frames)
+    {
+        if (frames > 0)
+        {
+            int startFrame = _memoryReader.FrameCount();
+            int frameCount;
+
+            do
+            {
+                Thread.Sleep(1);
+                frameCount = _memoryReader.FrameCount() - startFrame;
+            } while (frameCount < frames);
+        }
+    }
+
 
     public void Dispose()
     {

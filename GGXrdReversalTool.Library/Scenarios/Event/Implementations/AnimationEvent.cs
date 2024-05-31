@@ -1,5 +1,4 @@
 ﻿using GGXrdReversalTool.Library.Memory;
-using GGXrdReversalTool.Library.Memory.Implementations;
 
 namespace GGXrdReversalTool.Library.Scenarios.Event.Implementations;
 
@@ -13,7 +12,7 @@ public class AnimationEvent : IScenarioEvent
     private const string StandBlockingAnimation = "CmnActMidGuardLoop";
     private const string HighBlockingAnimation = "CmnActHighGuardLoop";
 
-    public IMemoryReader? MemoryReader { get; set; }
+    public IMemoryReader MemoryReader { get; set; }
 
     public bool ShouldCheckWakingUp { get; set; } = true;
     public bool ShouldCheckWallSplat { get; set; } = true;
@@ -24,52 +23,26 @@ public class AnimationEvent : IScenarioEvent
     public bool IsValid =>
         ShouldCheckWakingUp || ShouldCheckWallSplat || ShouldCheckAirTech || ShouldCheckStartBlocking || ShouldCheckBlockstunEnding;
 
-    private int _lastBlockstun;
+    private string _lastAnimationString = ""; 
 
-    public int FramesUntilEvent(int inputReversalFrame)
+    public EventAnimationInfo CheckEvent()
     {
-        if (MemoryReader is null)
-            return int.MaxValue;
-
-        var playerSide = MemoryReader.GetPlayerSide();
-        var dummySide = 1 - playerSide;
-        var currentDummy = MemoryReader.GetCurrentDummy();
-        var animationString = MemoryReader.ReadAnimationString(dummySide);
-        var animFrame = MemoryReader.GetAnimFrame(dummySide);
-        var blockstun = MemoryReader.GetBlockstun(dummySide);
-        var hitstop = MemoryReader.GetHitstop(dummySide);
-        var freezeFrames = MemoryReader.GetSuperflashFreezeFrames(dummySide);
-        var slowdownFrames = MemoryReader.GetSlowdownFrames(playerSide);
-        var lastBlockstun = _lastBlockstun;
-        _lastBlockstun = blockstun;
+        var animationString = MemoryReader.ReadAnimationString(1 - MemoryReader.GetPlayerSide());
 
         var result = animationString switch
         {
-            FaceDownAnimation when ShouldCheckWakingUp => currentDummy.FaceDownFrames - animFrame,
-            FaceUpAnimation when ShouldCheckWakingUp => currentDummy.FaceUpFrames - animFrame,
-            WallSplatAnimation when ShouldCheckWallSplat => currentDummy.WallSplatWakeupTiming - animFrame,
-            TechAnimation when ShouldCheckAirTech => 9 - animFrame,
-            _ => int.MaxValue,
+            FaceDownAnimation when ShouldCheckWakingUp => new EventAnimationInfo(AnimationEventTypes.KDFaceDown),
+            FaceUpAnimation when ShouldCheckWakingUp => new EventAnimationInfo(AnimationEventTypes.KDFaceUp),
+            WallSplatAnimation when ShouldCheckWallSplat => new EventAnimationInfo(AnimationEventTypes.WallSplat),
+            TechAnimation when ShouldCheckAirTech => new EventAnimationInfo(AnimationEventTypes.Tech),
+            CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckStartBlocking && _lastAnimationString is not (CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation) => new EventAnimationInfo(AnimationEventTypes.StartBlocking, 0),
+            CrouchBlockingAnimation or StandBlockingAnimation or HighBlockingAnimation when ShouldCheckBlockstunEnding => new EventAnimationInfo(AnimationEventTypes.EndBlocking, MemoryReader.GetBlockstun(1 - MemoryReader.GetPlayerSide()) + MemoryReader.GetHitstop(1 - MemoryReader.GetPlayerSide())),
+            _ => new EventAnimationInfo()
         };
 
-        if (result == int.MaxValue && ShouldCheckStartBlocking && blockstun > 0 && lastBlockstun == 0)
-            result = 0;
-        if (result == int.MaxValue && ShouldCheckBlockstunEnding && blockstun > 0)
-            result = blockstun + hitstop - 1;
+        //TODO Refactor pour envoyer l'event uniquement quand changement
 
-        if (result < int.MaxValue)
-        {
-            result += Math.Min(result, (slowdownFrames / 2) + slowdownFrames % 2);
-            result -= inputReversalFrame;
-            if (freezeFrames > 0)
-            {
-                // Avoid trying a reversal directly out of a super freeze, where everything but blocking and throwing gets dropped
-                if (result + freezeFrames == 0)
-                    result = int.MaxValue;
-                else
-                    result += freezeFrames;
-            }
-        }
+        _lastAnimationString = animationString ;
 
         return result;
     }
