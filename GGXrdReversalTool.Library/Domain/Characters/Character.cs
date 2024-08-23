@@ -1,10 +1,11 @@
 ﻿using System.Collections.Immutable;
+using GGXrdReversalTool.Library.Domain.Types;
 
 namespace GGXrdReversalTool.Library.Domain.Characters;
 
 public record Character 
 {
-    public CharacterName CharName { get; }
+    public NonEmptyString CharName { get; }
     public int FaceUpFrames { get; }
     public int FaceDownFrames { get; }
 

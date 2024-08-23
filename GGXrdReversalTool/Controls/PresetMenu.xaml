@@ -36,7 +36,7 @@
         <Image x:Shared="false" x:Key="DizzyIcon" Source="../../Images/Characters/GGXRD-R2_Dizzy_Icon.png"/>
         <Image x:Shared="false" x:Key="BaikenIcon" Source="../../Images/Characters/GGXRD-R2_Baiken_Icon.png"/>
         <Image x:Shared="false" x:Key="AnswerIcon" Source="../../Images/Characters/GGXRD-R2_Answer_Icon.png"/>
-        <converters:CharacterNameConverter x:Key="CharacterNameConverter"/>
+        <converters:NonEmptyStringConverter x:Key="NonEmptyStringConverter"/>
     </UserControl.Resources>
     
     <Menu>
@@ -44,79 +44,79 @@
             <MenuItem.ItemContainerStyle>
                 <Style TargetType="{x:Type MenuItem}">
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Sol" >
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Sol" >
                             <Setter Property="Icon" Value="{StaticResource SolIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Ky">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Ky">
                             <Setter Property="Icon" Value="{StaticResource KyIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="May">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="May">
                             <Setter Property="Icon" Value="{StaticResource MayIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Millia">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Millia">
                             <Setter Property="Icon" Value="{StaticResource MilliaIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Zato">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Zato">
                             <Setter Property="Icon" Value="{StaticResource ZatoIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Potemkin">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Potemkin">
                             <Setter Property="Icon" Value="{StaticResource PotemkinIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Chipp">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Chipp">
                             <Setter Property="Icon" Value="{StaticResource ChippIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Faust">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Faust">
                             <Setter Property="Icon" Value="{StaticResource FaustIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Axl">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Axl">
                             <Setter Property="Icon" Value="{StaticResource AxlIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Venom">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Venom">
                             <Setter Property="Icon" Value="{StaticResource VenomIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Slayer">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Slayer">
                             <Setter Property="Icon" Value="{StaticResource SlayerIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="I-No">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="I-No">
                             <Setter Property="Icon" Value="{StaticResource INoIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Bedman">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Bedman">
                             <Setter Property="Icon" Value="{StaticResource BedmanIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Ramlethal">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Ramlethal">
                             <Setter Property="Icon" Value="{StaticResource RamlethalIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Sin">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Sin">
                             <Setter Property="Icon" Value="{StaticResource SinIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Elphelt">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Elphelt">
                             <Setter Property="Icon" Value="{StaticResource ElpheltIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Leo">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Leo">
                             <Setter Property="Icon" Value="{StaticResource LeoIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Johnny">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Johnny">
                             <Setter Property="Icon" Value="{StaticResource JohnnyIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Jack-O">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Jack-O">
                             <Setter Property="Icon" Value="{StaticResource JackOIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Jam">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Jam">
                             <Setter Property="Icon" Value="{StaticResource JamIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Haehyun">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Haehyun">
                             <Setter Property="Icon" Value="{StaticResource HaehyunIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Raven">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Raven">
                             <Setter Property="Icon" Value="{StaticResource RavenIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Dizzy">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Dizzy">
                             <Setter Property="Icon" Value="{StaticResource DizzyIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Baiken">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Baiken">
                             <Setter Property="Icon" Value="{StaticResource BaikenIcon}"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource CharacterNameConverter}}" Value="Answer">
+                        <DataTrigger Binding="{Binding Character.CharName, Converter={StaticResource NonEmptyStringConverter}}" Value="Answer">
                             <Setter Property="Icon" Value="{StaticResource AnswerIcon}"/>
                         </DataTrigger>
                     </Style.Triggers>

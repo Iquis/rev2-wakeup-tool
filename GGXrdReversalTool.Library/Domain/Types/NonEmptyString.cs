@@ -1,6 +1,6 @@
-﻿namespace GGXrdReversalTool.Library.Domain.Characters;
+﻿namespace GGXrdReversalTool.Library.Domain.Types;
 
-public record CharacterName(string Value)
+public record NonEmptyString(string Value)
 {
     private string Value { get; } =
         !string.IsNullOrWhiteSpace(Value)
@@ -8,7 +8,7 @@ public record CharacterName(string Value)
             : throw new ArgumentException("Character name must be a non-empty string");
             
 
-    public static implicit operator CharacterName(string value) => new(value);
+    public static implicit operator NonEmptyString(string value) => new(value);
 
     public override string ToString() => Value;
 }
