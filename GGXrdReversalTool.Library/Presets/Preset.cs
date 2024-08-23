@@ -151,7 +151,7 @@ public class Preset
         },
         new Preset
         {
-            Character = Character.I_No,
+            Character = Character.Ino,
             CharacterMoves = new[]
             {
                 new CharacterMove { Name = "Longing Desperation", Input = "6,3,2,1,4,!6H" },
@@ -219,7 +219,7 @@ public class Preset
         },
         new Preset
         {
-            Character = Character.Jack_O,
+            Character = Character.JackO,
             CharacterMoves = new[]
             {
                 new CharacterMove { Name = "2D (DP)", Input = "!2D" },
