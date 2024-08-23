@@ -1,5 +1,4 @@
-﻿using GGXrdReversalTool.Library.Characters;
-using GGXrdReversalTool.Library.Logging;
+﻿using GGXrdReversalTool.Library.Logging;
 using GGXrdReversalTool.Library.Memory;
 using GGXrdReversalTool.Library.Models.Inputs;
 using GGXrdReversalTool.Library.Scenarios.Action;

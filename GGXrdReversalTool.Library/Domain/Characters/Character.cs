@@ -1,8 +1,8 @@
-﻿namespace GGXrdReversalTool.Library.Characters;
+﻿namespace GGXrdReversalTool.Library.Domain.Characters;
 
 public class Character : IEquatable<Character>
 {
-    public String CharName { get; }
+    public CharacterName CharName { get; }
     public int FaceUpFrames { get; }
     public int FaceDownFrames { get; }
 

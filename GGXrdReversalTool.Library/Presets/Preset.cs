@@ -1,4 +1,4 @@
-﻿using GGXrdReversalTool.Library.Characters;
+﻿using GGXrdReversalTool.Library.Domain.Characters;
 
 namespace GGXrdReversalTool.Library.Presets;
 

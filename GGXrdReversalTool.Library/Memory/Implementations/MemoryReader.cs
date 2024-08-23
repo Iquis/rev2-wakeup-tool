@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Collections.Immutable;
-using GGXrdReversalTool.Library.Characters;
+using GGXrdReversalTool.Library.Domain.Characters;
 using GGXrdReversalTool.Library.Memory.Pointer;
 using GGXrdReversalTool.Library.Models.Inputs;
 
