@@ -1,4 +1,4 @@
-﻿namespace GGXrdReversalTool.Library.Presets;
+﻿namespace GGXrdReversalTool.Library.Domain.Characters;
 
 public class CharacterMove
 {

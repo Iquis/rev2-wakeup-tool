@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:presets="clr-namespace:GGXrdReversalTool.Library.Presets;assembly=GGXrdReversalTool.Library"
              xmlns:converters="clr-namespace:GGXrdReversalTool.Converters"
+             xmlns:characters="clr-namespace:GGXrdReversalTool.Library.Domain.Characters;assembly=GGXrdReversalTool.Library"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              HorizontalAlignment="Center"
@@ -133,7 +134,7 @@
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type presets:CharacterMove}">                                                    
+                <HierarchicalDataTemplate DataType="{x:Type characters:CharacterMove}">                                                    
                     <TextBlock Text="{Binding Name}"/>
                 </HierarchicalDataTemplate>
             </MenuItem.Resources>
