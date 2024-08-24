@@ -1,3 +1,9 @@
-﻿namespace GGXrdReversalTool.Library.Domain.Characters;
+﻿using GGXrdReversalTool.Library.Domain.Types;
 
-public record CharacterMove(string Name, string Input);
+namespace GGXrdReversalTool.Library.Domain.Characters;
+
+public record CharacterMove(NonEmptyString Name, NonEmptyString Input)
+{
+    public CharacterMove(string name, string input)
+        : this(new NonEmptyString(name), new NonEmptyString(input)) { }
+}

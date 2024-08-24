@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows;
-using System.Windows.Data;
 using GGXrdReversalTool.Commands;
 using GGXrdReversalTool.Library.Logging;
 using GGXrdReversalTool.Library.Models.Inputs;
@@ -147,10 +145,7 @@ public sealed partial class ActionControl
             MessageBox.Show("Failed to export inputs!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-    private bool CanExport()
-    {
-        return ScenarioAction is { Input.IsValid: true };
-    }
+    private bool CanExport() => ScenarioAction is { Input.IsValid: true };
 
     #region InsertPresetInputCommand
 
@@ -165,10 +160,7 @@ public sealed partial class ActionControl
                        input;
     }
 
-    private bool CanInsertPresetInput(string input)
-    {
-        return IsEnabled;
-    }
+    private bool CanInsertPresetInput(string input) => IsEnabled;
 
     #endregion
     
@@ -223,18 +215,8 @@ public sealed partial class ActionControl
             NoStartMarkerWarningVisible = Visibility.Collapsed;
             return;
         }
-        if (!RawInputText.Contains('!')) {
-            NoStartMarkerWarningVisible = Visibility.Visible;
-        } else {
-            NoStartMarkerWarningVisible = Visibility.Collapsed;
-        }
+
+        NoStartMarkerWarningVisible = RawInputText.Contains('!') ? Visibility.Collapsed : Visibility.Visible;
     }
 
-    //TODO Remove
-    private bool IsLegacyFile(string content)
-    {
-        Regex regex = new Regex("[0-9a-fA-F]+");
-
-        return content.Split(",").All(x => regex.IsMatch(x));
-    }
 }

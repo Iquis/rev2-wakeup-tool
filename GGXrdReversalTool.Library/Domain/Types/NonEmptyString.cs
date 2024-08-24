@@ -1,8 +1,8 @@
 ﻿namespace GGXrdReversalTool.Library.Domain.Types;
 
-public readonly record struct NonEmptyString(string Value)
+public record NonEmptyString(string Value)
 {
-    private string Value { get; } =
+    public string Value { get; } =
         !string.IsNullOrWhiteSpace(Value)
             ? Value.Trim()
             : throw new ArgumentException("Character name must be a non-empty string");

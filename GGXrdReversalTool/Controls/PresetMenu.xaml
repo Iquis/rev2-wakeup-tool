@@ -125,18 +125,18 @@
             </MenuItem.ItemContainerStyle>
             <MenuItem.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type presets:Preset}" ItemsSource="{Binding CharacterMoves}">
-                    <TextBlock Text="{Binding Character.CharName, FallbackValue=Universal}"/>
+                    <TextBlock Text="{Binding Character.CharName.Value, FallbackValue=Universal}"/>
                     <HierarchicalDataTemplate.ItemContainerStyle>
                         <Style TargetType="{x:Type MenuItem}">
                             <Setter Property="Command" Value="{Binding InsertPresetInputCommand, ElementName=Control}" />
                             <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
-                            <Setter Property="CommandParameter" Value="{Binding Path=Input}" /> 
+                            <Setter Property="CommandParameter" Value="{Binding Path=Input.Value}" />
                         </Style>
                     </HierarchicalDataTemplate.ItemContainerStyle>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type characters:CharacterMove}">                                                    
+                <DataTemplate DataType="{x:Type characters:CharacterMove}">
                     <TextBlock Text="{Binding Name}"/>
-                </HierarchicalDataTemplate>
+                </DataTemplate>
             </MenuItem.Resources>
         </MenuItem>
     </Menu>
