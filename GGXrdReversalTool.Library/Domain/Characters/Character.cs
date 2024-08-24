@@ -3,7 +3,19 @@ using GGXrdReversalTool.Library.Domain.Types;
 
 namespace GGXrdReversalTool.Library.Domain.Characters;
 
-public record Character 
+public interface ICharacter
+{
+    public static ICharacter Zero => NoCharacter.Value;
+}
+
+public class NoCharacter : ICharacter
+{
+    private NoCharacter() { }
+    public static NoCharacter Value => new();
+
+}
+
+public record Character : ICharacter 
 {
     public NonEmptyString CharName { get; }
     public FrameCount FaceUpFrames { get; }
