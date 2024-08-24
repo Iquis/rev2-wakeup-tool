@@ -12,7 +12,7 @@ public record Character
     public int WallSplatWakeupTiming => 15;
 
     private Character(string charName, int faceUpFrames, int faceDownFrames) =>
-        (CharName, FaceUpFrames, FaceDownFrames) = (charName, faceUpFrames, faceDownFrames);
+        (CharName, FaceUpFrames, FaceDownFrames) = (new NonEmptyString(charName), faceUpFrames, faceDownFrames);
      
 
     public static readonly Character Sol = new("Sol", 25, 21);
