@@ -6,13 +6,13 @@ namespace GGXrdReversalTool.Library.Domain.Characters;
 public record Character 
 {
     public NonEmptyString CharName { get; }
-    public int FaceUpFrames { get; }
-    public int FaceDownFrames { get; }
+    public FrameCount FaceUpFrames { get; }
+    public FrameCount FaceDownFrames { get; }
 
-    public int WallSplatWakeupTiming => 15;
+    public FrameCount WallSplatWakeupTiming => new(15);
 
     private Character(string charName, int faceUpFrames, int faceDownFrames) =>
-        (CharName, FaceUpFrames, FaceDownFrames) = (new NonEmptyString(charName), faceUpFrames, faceDownFrames);
+        (CharName, FaceUpFrames, FaceDownFrames) = (new NonEmptyString(charName), new FrameCount(faceUpFrames), new FrameCount(faceDownFrames));
      
 
     public static readonly Character Sol = new("Sol", 25, 21);
