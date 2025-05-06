@@ -1,0 +1,33 @@
+﻿<Window x:Class="GGXrdReversalTool.Controls.BlockSwitchingControlHelpWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GGXrdReversalTool.Controls"
+        mc:Ignorable="d"
+        x:Name="Control"
+        Title="Block Switching Help" Height="350" Width="400">
+    <Grid Margin="5,5,5,5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" TextWrapping="Wrap"  Text="You can configure block switching by specifying how the dummy should block each hit, what block type they should use, what stance, etc. You can begin by pressing the 'Add New Blocked Hit' button on the 'Block Switching' tab.&#10;&#10;To enable block switching, you'll need to select some event on the 'Scenario' tab and click the 'Enable' button there to enable the scenario."/>
+        <Button Grid.Row="1" Click="HyperlinkClick" Margin="0,15,0,0">
+            <Button.Template>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <TextBlock Text="{Binding ElementName=Control, Path=HyperlinkText}" Foreground="Blue" TextDecorations="Underline" Cursor="Hand"/>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        <TextBlock Grid.Row="2" Visibility="{Binding ElementName=Control, Path=ShowMoreInfo, Converter={StaticResource VisibilityCollapsedConverter}}"
+            TextWrapping="Wrap"
+            Text="Caveat 1: crouching stance generates a monotonous '2' (Down) input in the input buffer with the implication that rapid switching to/from crouch produces 22222 inputs that can be interpreted as a special.&#10;&#10;Caveat 2: in order for pushback to be consistent with the type of block that was used, all block type changes are applied with a 1 frame delay."/>
+        <Button Grid.Row="3" HorizontalAlignment="Right" Content="Close" Click="CloseClick" Margin="0,3,0,3" Width="80"/>
+    </Grid>
+</Window>

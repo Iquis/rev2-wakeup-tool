@@ -577,9 +577,14 @@ namespace GGXrdReversalTool.Controls
                     + (next.End >= BlockSwitchingText.Length ? string.Empty : BlockSwitchingText.Substring(next.End)),
                 next.Start + element.End - element.Start);
         }
-        
+
+        private void HelpClick(object sender, RoutedEventArgs e)
+        {
+            BlockSwitchingControlHelpWindow helpWindow = new BlockSwitchingControlHelpWindow();
+            helpWindow.Show();
+        }
     }
-    
+
     public struct SplitStringElement
     {
         public int Start;
