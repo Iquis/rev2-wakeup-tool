@@ -14,15 +14,18 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Text="Block sequence :" VerticalAlignment="Center"/>
-            <Image HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Source="../Images/question.png" Height="16"
-                ToolTipService.ToolTip="Block switching works only when you enable the scenario on the 'Scenario' tab using the 'Enable' button.&#10;Warning: crouching stance generates a monotonous '2' (Down) input in the input buffer with the implication that rapid switching to/from crouch produces 22222 inputs that can be interpreted as a special.&#10;Warning: in order for pushback to be consistent with the type of block that was used, all block type changes are applied with a 1 frame delay."/>
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,3,0,3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Block sequence :" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Content="Help" Width="65" Click="HelpClick"/>
+        </Grid>
         <TextBox x:Name="TextBoxControl" Grid.Row="1" Height="60" Text="{Binding ElementName=Control, Path=BlockSwitchingText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" IsEnabled="{Binding IsRunning, Converter={StaticResource AntiBooleanConverter}}" SelectionChanged="TextBoxControl_SelectionChanged"/>
         <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,5,0,0" Orientation="Horizontal" IsEnabled="{Binding IsRunning, Converter={StaticResource AntiBooleanConverter}}">
-            <Button Content="Add New Element" Command="{Binding ElementName=Control, Path=AddNewElementCommand}"/>
-            <Button Content="Edit Current Element" Margin="35,0,0,0" Command="{Binding ElementName=Control, Path=EditCurrentElementCommand}" ToolTipService.ToolTip="The current element is determined by where the text caret is."/>
+            <Button Content="Add New Blocked Hit" Command="{Binding ElementName=Control, Path=AddNewElementCommand}"/>
+            <Button Content="Edit Current Blocked Hit" Margin="35,0,0,0" Command="{Binding ElementName=Control, Path=EditCurrentElementCommand}" ToolTipService.ToolTip="The current element is determined by where the text caret is."/>
             <TextBlock Text="Block hit counter expiry (in frames):" Margin="35,0,5,0" VerticalAlignment="Center"/>
             <local:NumericTextInput Width="60" Text="{Binding ElementName=Control, Path=BlockTimerText, Mode=TwoWay}"/>
             <Image HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Source="../Images/question.png" Height="16" ToolTipService.ToolTip="This timer determines for how long after blockstun has ended we treat the next hit as part of the same block sequence.&#10;It also affects the blocked hit counter for Events of type 'Blocked a certain hit' on the 'Scenario' tab.&#10;Default value is 30."/>
